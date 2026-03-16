@@ -1,0 +1,89 @@
+// Schéma Prisma pour PostgreSQL (adaptateur 2)
+// Pour activer : DB_ADAPTER=postgresql dans les variables d'environnement
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id       String   @id
+  nom      String
+  email    String   @unique
+  adresse  String
+  commandes Commande[]
+}
+
+model Restaurant {
+  id            String     @id
+  nom           String
+  adresse       String
+  latitude      Float
+  longitude     Float
+  proprietaireId String
+  plats         PlatMenu[]
+  commandes     Commande[]
+}
+
+model PlatMenu {
+  id             String     @id
+  nom            String
+  description    String
+  prixCentimes   Int
+  allergenes     String[]
+  stockJournalier Int
+  restaurantId   String
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Commande {
+  id               String   @id
+  clientId         String
+  restaurantId     String
+  statut           String
+  prixPlatsCentimes       Int
+  fraisLivCentimes        Int
+  fraisServiceCentimes    Int
+  adresseLivraison String
+  livreurId        String?
+  tempsPreparation Int?
+  creeLe           DateTime @default(now())
+  client           Client     @relation(fields: [clientId], references: [id])
+  restaurant       Restaurant @relation(fields: [restaurantId], references: [id])
+  articles         ArticleCommande[]
+  facture          Facture?
+}
+
+model ArticleCommande {
+  id           String   @id @default(uuid())
+  commandeId   String
+  menuItemId   String
+  nom          String
+  prixCentimes Int
+  quantite     Int
+  restaurantId String
+  commande     Commande @relation(fields: [commandeId], references: [id])
+}
+
+model Facture {
+  id           String   @id
+  commandeId   String   @unique
+  clientId     String
+  genereLe     DateTime @default(now())
+  total        Int
+  commande     Commande @relation(fields: [commandeId], references: [id])
+}
+
+model Livreur {
+  id         String  @id
+  nom        String
+  telephone  String
+  latitude   Float
+  longitude  Float
+  statut     String  @default("INDISPONIBLE")
+  portefeuilleCentimes Int @default(0)
+}

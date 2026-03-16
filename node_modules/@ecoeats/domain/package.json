@@ -1,0 +1,13 @@
+{
+  "name": "@ecoeats/domain",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs --dts",
+    "dev": "tsup src/index.ts --format cjs --dts --watch"
+  },
+  "devDependencies": {
+    "tsup": "^8.1.0"
+  }
+}

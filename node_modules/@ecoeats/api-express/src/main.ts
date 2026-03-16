@@ -1,0 +1,74 @@
+import express from "express";
+import { creerRoutesClient } from "@ecoeats/interface";
+import { creerRoutesRestaurant } from "@ecoeats/interface";
+import { creerRoutesLivreur } from "@ecoeats/interface";
+import { gestionnaireErreurs } from "@ecoeats/interface";
+
+// =====================================================================
+// COMPOSITION ROOT — c'est ici qu'on choisit les adaptateurs à injecter
+// Changer DB_ADAPTER=postgresql pour passer sur PostgreSQL
+// =====================================================================
+import {
+  DepotCommandesEnMemoire, DepotRestaurantsEnMemoire, DepotPlatsEnMemoire,
+  DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire,
+  CartographieHaversine, PaiementSimule,
+  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotLivreursPrisma,
+} from "@ecoeats/infrastructure";
+import {
+  ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
+  PasserCommandeUseCase, PayerCommandeUseCase, AjouterPlatUseCase, ModifierPlatUseCase,
+  SupprimerPlatUseCase, AccepterCommandeUseCase, RefuserCommandeUseCase,
+  MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
+  TerminerLivraisonUseCase,
+} from "@ecoeats/application";
+
+const utiliserPostgres = process.env.DB_ADAPTER === "postgresql";
+
+console.log(`[Config] Adaptateur DB : ${utiliserPostgres ? "PostgreSQL (Prisma)" : "In-Memory"}`);
+
+// --- Sélection des adaptateurs ---
+const depotCommandes   = utiliserPostgres ? new DepotCommandesPrisma(null as any)   : new DepotCommandesEnMemoire();
+const depotRestaurants = utiliserPostgres ? new DepotRestaurantsPrisma(null as any)  : new DepotRestaurantsEnMemoire();
+const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(null as any)        : new DepotPlatsEnMemoire();
+const depotClients     = new DepotClientsEnMemoire();
+const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(null as any)     : new DepotLivreursEnMemoire();
+const depotFactures    = new DepotFacturesEnMemoire();
+const cartographie     = new CartographieHaversine();
+const paiement         = new PaiementSimule();
+
+// --- Instanciation des Use Cases ---
+const listerRestaurants = new ListerRestaurantsUseCase(depotRestaurants);
+const voirMenu          = new VoirMenuRestaurantUseCase(depotPlats);
+const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
+const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaurants, depotClients, depotPlats, cartographie);
+const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement);
+
+const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
+const modifierPlat      = new ModifierPlatUseCase(depotPlats);
+const supprimerPlat     = new SupprimerPlatUseCase(depotPlats);
+const accepterCommande  = new AccepterCommandeUseCase(depotCommandes);
+const refuserCommande   = new RefuserCommandeUseCase(depotCommandes);
+const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes);
+
+const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs);
+const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
+const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
+
+// --- Serveur Express ---
+const app = express();
+app.use(express.json());
+
+app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPostgres ? "postgresql" : "in-memory" }));
+
+app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande }));
+app.use("/api", creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete }));
+app.use("/api", creerRoutesLivreur({ changerStatut, attribuerLivraison, terminerLivraison }));
+
+app.use(gestionnaireErreurs);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`[EcoEATS - Express] Serveur démarré sur http://localhost:${PORT}`);
+});
+
+export default app;
