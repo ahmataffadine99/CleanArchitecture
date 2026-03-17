@@ -12,7 +12,7 @@ import {
   DepotCommandesEnMemoire, DepotRestaurantsEnMemoire, DepotPlatsEnMemoire,
   DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire,
   CartographieHaversine, PaiementSimule,
-  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotLivreursPrisma,
+  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma,
 } from "@ecoeats/infrastructure";
 import {
   ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
@@ -22,16 +22,20 @@ import {
   TerminerLivraisonUseCase,
 } from "@ecoeats/application";
 
+import { PrismaClient } from "@prisma/client";
+
 const utiliserPostgres = process.env.DB_ADAPTER === "postgresql";
 
 console.log(`[Config] Adaptateur DB : ${utiliserPostgres ? "PostgreSQL (Prisma)" : "In-Memory"}`);
 
+const prismaClient = utiliserPostgres ? new PrismaClient() : null;
+
 // --- Sélection des adaptateurs ---
-const depotCommandes   = utiliserPostgres ? new DepotCommandesPrisma(null as any)   : new DepotCommandesEnMemoire();
-const depotRestaurants = utiliserPostgres ? new DepotRestaurantsPrisma(null as any)  : new DepotRestaurantsEnMemoire();
-const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(null as any)        : new DepotPlatsEnMemoire();
-const depotClients     = new DepotClientsEnMemoire();
-const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(null as any)     : new DepotLivreursEnMemoire();
+const depotCommandes   = utiliserPostgres ? new DepotCommandesPrisma(prismaClient!)   : new DepotCommandesEnMemoire();
+const depotRestaurants = utiliserPostgres ? new DepotRestaurantsPrisma(prismaClient!) : new DepotRestaurantsEnMemoire();
+const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(prismaClient!)       : new DepotPlatsEnMemoire();
+const depotClients     = utiliserPostgres ? new DepotClientsPrisma(prismaClient!)     : new DepotClientsEnMemoire();
+const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(prismaClient!)    : new DepotLivreursEnMemoire();
 const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();

@@ -7,33 +7,45 @@ export class DepotCommandesPrisma implements DepotCommandes {
   constructor(private readonly prisma: PrismaClient) {}
 
   async sauvegarder(commande: Commande): Promise<void> {
-    await this.prisma.commande.upsert({
+    // On vérifie si la commande existe déjà
+    const existe = await this.prisma.commande.findUnique({
       where: { id: commande.id },
-      update: {
-        statut: commande.getStatut(),
-        livreurId: commande.getLivreurId(),
-        tempsPreparation: commande.getTempsPreparation(),
-      },
-      create: {
-        id: commande.id,
-        clientId: commande.clientId,
-        restaurantId: commande.restaurantId,
-        statut: commande.getStatut(),
-        prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
-        fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
-        fraisServiceCentimes: commande.getFraisService().enCentimes(),
-        adresseLivraison: commande.getAdresseLivraison(),
-        articles: {
-          create: commande.getArticles().map(a => ({
-            menuItemId: a.menuItemId,
-            nom: a.nom,
-            prixCentimes: a.prixSnapshot.enCentimes(),
-            quantite: a.quantite,
-            restaurantId: a.restaurantId,
-          })),
-        },
-      },
     });
+
+    if (existe) {
+      // Mise à jour seulement des champs qui changent (statut, livreur, tempsPrepa)
+      await this.prisma.commande.update({
+        where: { id: commande.id },
+        data: {
+          statut: commande.getStatut(),
+          livreurId: commande.getLivreurId(),
+          tempsPreparation: commande.getTempsPreparation(),
+        },
+      });
+    } else {
+      // Création initiale avec tous les articles
+      await this.prisma.commande.create({
+        data: {
+          id: commande.id,
+          clientId: commande.clientId,
+          restaurantId: commande.restaurantId,
+          statut: commande.getStatut(),
+          prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
+          fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
+          fraisServiceCentimes: commande.getFraisService().enCentimes(),
+          adresseLivraison: commande.getAdresseLivraison(),
+          articles: {
+            create: commande.getArticles().map((a) => ({
+              menuItemId: a.menuItemId,
+              nom: a.nom,
+              prixCentimes: a.prixSnapshot.enCentimes(),
+              quantite: a.quantite,
+              restaurantId: a.restaurantId,
+            })),
+          },
+        },
+      });
+    }
   }
 
   async trouverParId(id: string): Promise<Commande> {
@@ -50,7 +62,7 @@ export class DepotCommandesPrisma implements DepotCommandes {
       where: { restaurantId },
       include: { articles: true },
     });
-    return rows.map(r => this.reconstruire(r));
+    return rows.map((r) => this.reconstruire(r));
   }
 
   async trouverParClient(clientId: string): Promise<Commande[]> {
@@ -58,11 +70,11 @@ export class DepotCommandesPrisma implements DepotCommandes {
       where: { clientId },
       include: { articles: true },
     });
-    return rows.map(r => this.reconstruire(r));
+    return rows.map((r) => this.reconstruire(r));
   }
 
   private reconstruire(row: any): Commande {
-    const articles = row.articles.map(
+    const articles = (row.articles ?? []).map(
       (a: any) =>
         new ArticlePanier(
           a.menuItemId,
@@ -72,7 +84,8 @@ export class DepotCommandesPrisma implements DepotCommandes {
           a.restaurantId
         )
     );
-    return new Commande(
+
+    const commande = new Commande(
       row.id,
       row.clientId,
       row.restaurantId,
@@ -82,5 +95,31 @@ export class DepotCommandesPrisma implements DepotCommandes {
       Money.fromCentimes(row.fraisServiceCentimes),
       row.adresseLivraison
     );
+
+    // Restaurer le statut via la machine à états
+    const transitions: StatutCommande[] = this.retrouverTransitions(row.statut as StatutCommande);
+    for (const t of transitions) {
+      try { commande.changerStatut(t); } catch (_) {}
+    }
+
+    return commande;
+  }
+
+  /**
+   * Retrouve la suite minimale de transitions pour passer de EN_ATTENTE au statut cible.
+   * Respecte strictement la machine à états du Domain.
+   */
+  private retrouverTransitions(statut: StatutCommande): StatutCommande[] {
+    const chemin: Record<StatutCommande, StatutCommande[]> = {
+      [StatutCommande.EN_ATTENTE]:    [],
+      [StatutCommande.PAYEE]:         [StatutCommande.PAYEE],
+      [StatutCommande.ACCEPTEE]:      [StatutCommande.PAYEE, StatutCommande.ACCEPTEE],
+      [StatutCommande.EN_PREPARATION]:[StatutCommande.PAYEE, StatutCommande.ACCEPTEE, StatutCommande.EN_PREPARATION],
+      [StatutCommande.PRETE]:         [StatutCommande.PAYEE, StatutCommande.ACCEPTEE, StatutCommande.EN_PREPARATION, StatutCommande.PRETE],
+      [StatutCommande.EN_LIVRAISON]:  [StatutCommande.PAYEE, StatutCommande.ACCEPTEE, StatutCommande.EN_PREPARATION, StatutCommande.PRETE, StatutCommande.EN_LIVRAISON],
+      [StatutCommande.LIVREE]:        [StatutCommande.PAYEE, StatutCommande.ACCEPTEE, StatutCommande.EN_PREPARATION, StatutCommande.PRETE, StatutCommande.EN_LIVRAISON, StatutCommande.LIVREE],
+      [StatutCommande.REFUSEE]:       [StatutCommande.PAYEE, StatutCommande.REFUSEE],
+    };
+    return chemin[statut] ?? [];
   }
 }

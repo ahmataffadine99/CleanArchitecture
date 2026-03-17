@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Livreur, Coordonnees, Money, StatutLivreur } from "@ecoeats/domain";
+import { Livreur, Coordonnees, StatutLivreur } from "@ecoeats/domain";
 import { DepotLivreurs } from "@ecoeats/application";
 
 export class DepotLivreursPrisma implements DepotLivreurs {
@@ -33,17 +33,31 @@ export class DepotLivreursPrisma implements DepotLivreurs {
   }
 
   async listerDisponibles(): Promise<Livreur[]> {
-    const rows = await this.prisma.livreur.findMany({ where: { statut: "DISPONIBLE" } });
-    return rows.map(r => this.reconstruire(r));
+    const rows = await this.prisma.livreur.findMany({
+      where: { statut: StatutLivreur.DISPONIBLE },
+    });
+    return rows.map((r) => this.reconstruire(r));
   }
 
-  private reconstruire(row: any): Livreur {
+  private reconstruire(row: {
+    id: string;
+    nom: string;
+    telephone: string;
+    latitude: number;
+    longitude: number;
+    statut: string;
+    portefeuilleCentimes: number;
+  }): Livreur {
     const livreur = new Livreur(
-      row.id, row.nom,
+      row.id,
+      row.nom,
       new Coordonnees(row.latitude, row.longitude),
       row.telephone
     );
-    if (row.statut === StatutLivreur.DISPONIBLE) livreur.seDeclarerDisponible();
+    // On restaure le statut depuis la base
+    if (row.statut === StatutLivreur.DISPONIBLE) {
+      livreur.seDeclarerDisponible();
+    }
     return livreur;
   }
 }

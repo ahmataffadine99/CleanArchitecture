@@ -10,6 +10,7 @@ export { DepotFacturesEnMemoire } from "./in-memory/DepotFacturesEnMemoire";
 export { DepotCommandesPrisma } from "./postgresql/DepotCommandesPrisma";
 export { DepotRestaurantsPrisma } from "./postgresql/DepotRestaurantsPrisma";
 export { DepotPlatsPrisma } from "./postgresql/DepotPlatsPrisma";
+export { DepotClientsPrisma } from "./postgresql/DepotClientsPrisma";
 export { DepotLivreursPrisma } from "./postgresql/DepotLivreursPrisma";
 
 // Services externes

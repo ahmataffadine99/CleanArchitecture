@@ -2,7 +2,7 @@
   "name": "@ecoeats/api-express",
   "version": "1.0.0",
   "scripts": {
-    "dev": "tsx src/main.ts",
+    "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
     "build": "tsup src/main.ts --format cjs"
   },

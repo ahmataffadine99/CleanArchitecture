@@ -1,12 +1,12 @@
 // Ports
-export type { DepotCommandes } from "./ports/DepotCommandes";
-export type { DepotRestaurants } from "./ports/DepotRestaurants";
-export type { DepotPlats } from "./ports/DepotPlats";
-export type { DepotClients } from "./ports/DepotClients";
-export type { DepotLivreurs } from "./ports/DepotLivreurs";
-export type { DepotFactures } from "./ports/DepotFactures";
-export type { ServiceCartographie } from "./ports/ServiceCartographie";
-export type { ServicePaiement } from "./ports/ServicePaiement";
+export { DepotCommandes } from "./ports/DepotCommandes";
+export { DepotRestaurants } from "./ports/DepotRestaurants";
+export { DepotPlats } from "./ports/DepotPlats";
+export { DepotClients } from "./ports/DepotClients";
+export { DepotLivreurs } from "./ports/DepotLivreurs";
+export { DepotFactures } from "./ports/DepotFactures";
+export { ServiceCartographie } from "./ports/ServiceCartographie";
+export { ServicePaiement } from "./ports/ServicePaiement";
 
 // Use Cases Client
 export { ListerRestaurantsUseCase } from "./use-cases/client/ListerRestaurantsUseCase";

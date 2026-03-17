@@ -31,12 +31,31 @@ export class DepotPlatsPrisma implements DepotPlats {
   async trouverParId(id: string): Promise<PlatMenu> {
     const row = await this.prisma.platMenu.findUnique({ where: { id } });
     if (!row) throw new PlatIntrouvableError(id);
-    return new PlatMenu(row.id, row.nom, row.description, Money.fromCentimes(row.prixCentimes), row.allergenes, row.stockJournalier, row.restaurantId);
+    return new PlatMenu(
+      row.id,
+      row.nom,
+      row.description,
+      Money.fromCentimes(row.prixCentimes),
+      row.allergenes,
+      row.stockJournalier,
+      row.restaurantId
+    );
   }
 
   async trouverParRestaurant(restaurantId: string): Promise<PlatMenu[]> {
     const rows = await this.prisma.platMenu.findMany({ where: { restaurantId } });
-    return rows.map(r => new PlatMenu(r.id, r.nom, r.description, Money.fromCentimes(r.prixCentimes), r.allergenes, r.stockJournalier, r.restaurantId));
+    return rows.map(
+      (r) =>
+        new PlatMenu(
+          r.id,
+          r.nom,
+          r.description,
+          Money.fromCentimes(r.prixCentimes),
+          r.allergenes,
+          r.stockJournalier,
+          r.restaurantId
+        )
+    );
   }
 
   async supprimer(id: string): Promise<void> {

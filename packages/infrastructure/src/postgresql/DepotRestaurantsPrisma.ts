@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Restaurant, Coordonnees } from "@ecoeats/domain";
+import { Restaurant } from "@ecoeats/domain";
+import { Coordonnees } from "@ecoeats/domain";
 import { RestaurantIntrouvableError } from "@ecoeats/domain";
 import { DepotRestaurants } from "@ecoeats/application";
 
@@ -41,7 +42,14 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
   async listerTous(): Promise<Restaurant[]> {
     const rows = await this.prisma.restaurant.findMany();
     return rows.map(
-      r => new Restaurant(r.id, r.nom, r.adresse, new Coordonnees(r.latitude, r.longitude), r.proprietaireId)
+      (r) =>
+        new Restaurant(
+          r.id,
+          r.nom,
+          r.adresse,
+          new Coordonnees(r.latitude, r.longitude),
+          r.proprietaireId
+        )
     );
   }
 }
