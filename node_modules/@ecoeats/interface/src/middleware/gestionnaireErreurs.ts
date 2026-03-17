@@ -5,6 +5,8 @@ import { Request, Response, NextFunction } from "express";
 const codesHttp: Record<string, number> = {
   PANIER_CONFLIT_RESTAURANT: 409,
   PLAT_EN_RUPTURE: 409,
+  IDENTIFIANTS_INVALIDES: 401,
+  EMAIL_DEJA_UTILISE: 400,
   COMMANDE_INTROUVABLE: 404,
   RESTAURANT_INTROUVABLE: 404,
   CLIENT_INTROUVABLE: 404,

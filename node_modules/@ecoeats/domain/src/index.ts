@@ -6,6 +6,8 @@ export { Panier } from "./entities/Panier";
 export { Client } from "./entities/Client";
 export { Livreur } from "./entities/Livreur";
 export { Facture } from "./entities/Facture";
+export { CompteUtilisateur } from "./entities/CompteUtilisateur";
+export type { RoleUtilisateur } from "./entities/CompteUtilisateur";
 
 // Value Objects
 export { Money } from "./value-objects/Money";
@@ -24,6 +26,8 @@ export { TransitionStatutInvalideError } from "./errors/TransitionStatutInvalide
 export { RestaurantIntrouvableError } from "./errors/RestaurantIntrouvableError";
 export { ClientIntrouvableError } from "./errors/ClientIntrouvableError";
 export { PlatIntrouvableError } from "./errors/PlatIntrouvableError";
+export { IdentifiantsInvalidesError } from "./errors/IdentifiantsInvalidesError";
+export { EmailDejaUtiliseError } from "./errors/EmailDejaUtiliseError";
 
 // Services domain
 export { CalculDistanceService } from "./services/CalculDistanceService";

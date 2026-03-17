@@ -5,6 +5,7 @@ export { DepotPlatsEnMemoire } from "./in-memory/DepotPlatsEnMemoire";
 export { DepotClientsEnMemoire } from "./in-memory/DepotClientsEnMemoire";
 export { DepotLivreursEnMemoire } from "./in-memory/DepotLivreursEnMemoire";
 export { DepotFacturesEnMemoire } from "./in-memory/DepotFacturesEnMemoire";
+export { DepotComptesEnMemoire } from "./in-memory/DepotComptesEnMemoire";
 
 // Adaptateurs PostgreSQL - Prisma (production)
 export { DepotCommandesPrisma } from "./postgresql/DepotCommandesPrisma";
@@ -12,6 +13,7 @@ export { DepotRestaurantsPrisma } from "./postgresql/DepotRestaurantsPrisma";
 export { DepotPlatsPrisma } from "./postgresql/DepotPlatsPrisma";
 export { DepotClientsPrisma } from "./postgresql/DepotClientsPrisma";
 export { DepotLivreursPrisma } from "./postgresql/DepotLivreursPrisma";
+export { DepotComptesPrisma } from "./postgresql/DepotComptesPrisma";
 
 // Services externes
 export { CartographieHaversine } from "./services/CartographieHaversine";

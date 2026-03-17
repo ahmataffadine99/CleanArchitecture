@@ -2,7 +2,9 @@ import express from "express";
 import { creerRoutesClient } from "@ecoeats/interface";
 import { creerRoutesRestaurant } from "@ecoeats/interface";
 import { creerRoutesLivreur } from "@ecoeats/interface";
+import { creerRoutesAuth } from "@ecoeats/interface";
 import { gestionnaireErreurs } from "@ecoeats/interface";
+import { creerAuthMiddleware } from "@ecoeats/interface";
 
 // =====================================================================
 // COMPOSITION ROOT — c'est ici qu'on choisit les adaptateurs à injecter
@@ -10,16 +12,16 @@ import { gestionnaireErreurs } from "@ecoeats/interface";
 // =====================================================================
 import {
   DepotCommandesEnMemoire, DepotRestaurantsEnMemoire, DepotPlatsEnMemoire,
-  DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire,
+  DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire, DepotComptesEnMemoire,
   CartographieHaversine, PaiementSimule,
-  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma,
+  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma
 } from "@ecoeats/infrastructure";
 import {
   ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
   PasserCommandeUseCase, PayerCommandeUseCase, AjouterPlatUseCase, ModifierPlatUseCase,
   SupprimerPlatUseCase, AccepterCommandeUseCase, RefuserCommandeUseCase,
   MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
-  TerminerLivraisonUseCase,
+  TerminerLivraisonUseCase, InscriptionUseCase, ConnexionUseCase
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -36,6 +38,7 @@ const depotRestaurants = utiliserPostgres ? new DepotRestaurantsPrisma(prismaCli
 const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(prismaClient!)       : new DepotPlatsEnMemoire();
 const depotClients     = utiliserPostgres ? new DepotClientsPrisma(prismaClient!)     : new DepotClientsEnMemoire();
 const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(prismaClient!)    : new DepotLivreursEnMemoire();
+const depotComptes     = utiliserPostgres ? new DepotComptesPrisma(prismaClient!)     : new DepotComptesEnMemoire();
 const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();
@@ -58,15 +61,27 @@ const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs);
 const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 
+// --- JWT Secret (en dur pour la démo, normalement dans .env) ---
+const SECRET_JWT = process.env.JWT_SECRET || "mon_super_secret_jwt_hyper_securise";
+const inscription       = new InscriptionUseCase(depotComptes, depotClients);
+const connexion         = new ConnexionUseCase(depotComptes, SECRET_JWT);
+
 // --- Serveur Express ---
 const app = express();
 app.use(express.json());
 
+const requireAuth = creerAuthMiddleware(SECRET_JWT);
+
 app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPostgres ? "postgresql" : "in-memory" }));
 
+app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
+
+// Routes publiques
 app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande }));
-app.use("/api", creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete }));
-app.use("/api", creerRoutesLivreur({ changerStatut, attribuerLivraison, terminerLivraison }));
+
+// Routes nécessitant une authentification (le token JWT doit être présent)
+app.use("/api", requireAuth, creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete }));
+app.use("/api", requireAuth, creerRoutesLivreur({ changerStatut, attribuerLivraison, terminerLivraison }));
 
 app.use(gestionnaireErreurs);
 

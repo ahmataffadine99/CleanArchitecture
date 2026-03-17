@@ -7,6 +7,11 @@ export { DepotLivreurs } from "./ports/DepotLivreurs";
 export { DepotFactures } from "./ports/DepotFactures";
 export { ServiceCartographie } from "./ports/ServiceCartographie";
 export { ServicePaiement } from "./ports/ServicePaiement";
+export { DepotComptes } from "./ports/DepotComptes";
+
+// Use Cases Auth
+export { InscriptionUseCase } from "./use-cases/auth/InscriptionUseCase";
+export { ConnexionUseCase } from "./use-cases/auth/ConnexionUseCase";
 
 // Use Cases Client
 export { ListerRestaurantsUseCase } from "./use-cases/client/ListerRestaurantsUseCase";

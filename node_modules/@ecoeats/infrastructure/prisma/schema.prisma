@@ -87,3 +87,12 @@ model Livreur {
   statut     String  @default("INDISPONIBLE")
   portefeuilleCentimes Int @default(0)
 }
+
+model CompteUtilisateur {
+  id              String   @id
+  email           String   @unique
+  motDePasseHache String
+  role            String   // "CLIENT", "RESTAURATEUR", "LIVREUR"
+  profilId        String   // ID du profil associé
+  creeLe          DateTime @default(now())
+}
