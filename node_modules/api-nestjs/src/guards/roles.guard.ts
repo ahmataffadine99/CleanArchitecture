@@ -1,0 +1,27 @@
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!roles) {
+      return true; // Pas de rôle requis pour cette route
+    }
+    
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+
+    if (!user || !roles.includes(user.role)) {
+      throw new ForbiddenException(`Accès refusé. Rôle requis : ${roles.join(' ou ')}`);
+    }
+
+    return true;
+  }
+}
+
+// Décorateur personnalisé pour attacher les rôles aux routes
+import { SetMetadata } from '@nestjs/common';
+export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
