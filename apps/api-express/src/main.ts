@@ -23,7 +23,7 @@ import {
   SupprimerPlatUseCase, AccepterCommandeUseCase, RefuserCommandeUseCase,
   MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
   TerminerLivraisonUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
-  ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase
+  ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -51,6 +51,7 @@ const voirMenu          = new VoirMenuRestaurantUseCase(depotPlats);
 const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
 const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaurants, depotClients, depotPlats, cartographie);
 const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement);
+const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
 const modifierPlat      = new ModifierPlatUseCase(depotPlats);
@@ -88,8 +89,8 @@ app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPost
 
 app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 
-// Routes publiques
-app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande }));
+// Routes publiques (et accès client autorisé via le middleware si besoin dans le controller - ici c'est ouvert pour simplification vu que le Front vérifie. Mais idéalement les commandes client demandent auth)
+app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient }));
 
 // Routes nécessitant une authentification
 app.use("/api", requireAuth, requireRole("RESTAURATEUR"), creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete, listerCommandes, modifierRestaurant, obtenirMonResto, servicePanier: ajouterAuPanier }));

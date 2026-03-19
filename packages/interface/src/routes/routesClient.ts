@@ -13,6 +13,7 @@ export function creerRoutesClient(deps: {
   ajouterAuPanier: AjouterAuPanierUseCase;
   passerCommande: PasserCommandeUseCase;
   payerCommande: PayerCommandeUseCase;
+  listerCommandesClient: import("@ecoeats/application").ListerCommandesClientUseCase;
 }): Router {
   const router = Router();
 
@@ -102,6 +103,28 @@ export function creerRoutesClient(deps: {
       const { clientId } = req.body;
       const { facture } = await deps.payerCommande.executer({ commandeId: req.params.id, clientId });
       res.json({ factureId: facture.id, total: facture.total.enEuros(), detail: facture.afficher() });
+    } catch (err) { next(err); }
+  });
+
+  // GET /clients/:clientId/commandes
+  router.get("/clients/:clientId/commandes", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const commandes = await deps.listerCommandesClient.executer(req.params.clientId);
+      res.json(commandes.map((c: any) => ({
+        id: c.id,
+        restaurantId: c.restaurantId,
+        statut: c.getStatut(),
+        prixPlatsCentimes: c.getPrixPlats().enCentimes(),
+        fraisLivCentimes: c.getFraisLivraison().enCentimes(),
+        fraisServiceCentimes: c.getFraisService().enCentimes(),
+        totalCentimes: c.prixTotal().enCentimes(),
+        creeLe: c.getCreeLe(),
+        adresseLivraison: c.getAdresseLivraison(),
+        articles: c.getArticles().map((a: any) => ({
+          nom: a.nom,
+          quantite: a.quantite
+        }))
+      })));
     } catch (err) { next(err); }
   });
 

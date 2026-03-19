@@ -19,6 +19,7 @@ export { VoirMenuRestaurantUseCase } from "./use-cases/client/VoirMenuRestaurant
 export { AjouterAuPanierUseCase } from "./use-cases/client/AjouterAuPanierUseCase";
 export { PasserCommandeUseCase } from "./use-cases/client/PasserCommandeUseCase";
 export { PayerCommandeUseCase } from "./use-cases/client/PayerCommandeUseCase";
+export { ListerCommandesClientUseCase } from "./use-cases/client/ListerCommandesClientUseCase";
 
 // Use Cases Restaurateur
 export { AjouterPlatUseCase } from "./use-cases/restaurant/AjouterPlatUseCase";

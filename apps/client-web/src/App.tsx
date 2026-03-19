@@ -6,6 +6,7 @@ import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CartSidebar from './components/CartSidebar';
+import ClientHistory from './pages/ClientHistory';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/history" element={<ClientHistory />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
