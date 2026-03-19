@@ -15,6 +15,7 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
         adresse: restaurant.adresse,
         latitude: restaurant.position.latitude,
         longitude: restaurant.position.longitude,
+        imageUrl: restaurant.imageUrl,
       },
       create: {
         id: restaurant.id,
@@ -23,6 +24,7 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
         latitude: restaurant.position.latitude,
         longitude: restaurant.position.longitude,
         proprietaireId: restaurant.proprietaireId,
+        imageUrl: restaurant.imageUrl,
       },
     });
   }
@@ -35,21 +37,29 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
       row.nom,
       row.adresse,
       new Coordonnees(row.latitude, row.longitude),
-      row.proprietaireId
+      row.proprietaireId,
+      row.imageUrl
     );
   }
 
   async listerTous(): Promise<Restaurant[]> {
     const rows = await this.prisma.restaurant.findMany();
-    return rows.map(
-      (r) =>
-        new Restaurant(
-          r.id,
-          r.nom,
-          r.adresse,
-          new Coordonnees(r.latitude, r.longitude),
-          r.proprietaireId
-        )
+    return rows.map(r => this.mapToEntity(r));
+  }
+
+  async trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null> {
+    const row = await this.prisma.restaurant.findFirst({ where: { proprietaireId } });
+    return row ? this.mapToEntity(row) : null;
+  }
+
+  private mapToEntity(row: any): Restaurant {
+    return new Restaurant(
+      row.id,
+      row.nom,
+      row.adresse,
+      new Coordonnees(row.latitude, row.longitude),
+      row.proprietaireId,
+      row.imageUrl
     );
   }
 }

@@ -1,6 +1,6 @@
 import { PlatMenu, Money } from "@ecoeats/domain";
-import { DepotPlats } from "../ports/DepotPlats";
-import { DepotRestaurants } from "../ports/DepotRestaurants";
+import { DepotPlats } from "../../ports/DepotPlats";
+import { DepotRestaurants } from "../../ports/DepotRestaurants";
 import { v4 as uuid } from "uuid";
 
 type Req = {
@@ -10,6 +10,8 @@ type Req = {
   prixEuros: number;
   allergenes: string[];
   stockJournalier: number;
+  imageUrl?: string;
+  actif?: boolean;
 };
 
 export class AjouterPlatUseCase {
@@ -25,10 +27,12 @@ export class AjouterPlatUseCase {
       uuid(),
       req.nom,
       req.description,
-      Money.fromEuros(req.prixEuros),
-      req.allergenes,
-      req.stockJournalier,
-      req.restaurantId
+      req.prixEuros ? Money.fromEuros(req.prixEuros) : Money.zero(),
+      req.allergenes || [],
+      req.stockJournalier || 0,
+      req.restaurantId,
+      req.imageUrl,
+      req.actif ?? true
     );
 
     await this.depotPlats.sauvegarder(plat);

@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LivreurController = void 0;
 const common_1 = require("@nestjs/common");
@@ -80,6 +79,8 @@ exports.LivreurController = LivreurController = __decorate([
     (0, common_1.Controller)(),
     (0, common_2.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('LIVREUR'),
-    __metadata("design:paramtypes", [typeof (_a = typeof application_1.ChangerStatutLivreurUseCase !== "undefined" && application_1.ChangerStatutLivreurUseCase) === "function" ? _a : Object, typeof (_b = typeof application_1.AttribuerLivraisonUseCase !== "undefined" && application_1.AttribuerLivraisonUseCase) === "function" ? _b : Object, typeof (_c = typeof application_1.TerminerLivraisonUseCase !== "undefined" && application_1.TerminerLivraisonUseCase) === "function" ? _c : Object])
+    __metadata("design:paramtypes", [application_1.ChangerStatutLivreurUseCase,
+        application_1.AttribuerLivraisonUseCase,
+        application_1.TerminerLivraisonUseCase])
 ], LivreurController);
 //# sourceMappingURL=livreur.controller.js.map

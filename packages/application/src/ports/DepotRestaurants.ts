@@ -4,4 +4,5 @@ export interface DepotRestaurants {
   sauvegarder(restaurant: Restaurant): Promise<void>;
   trouverParId(id: string): Promise<Restaurant>;
   listerTous(): Promise<Restaurant[]>;
+  trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null>;
 }

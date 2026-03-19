@@ -6,6 +6,7 @@ export class Restaurant {
     public nom: string,
     public adresse: string,
     public position: Coordonnees,
-    public readonly proprietaireId: string
+    public readonly proprietaireId: string,
+    public imageUrl: string | null = null
   ) {}
 }

@@ -8,23 +8,23 @@ export declare class RestaurantController {
     private readonly marquerPrete;
     constructor(ajouterPlat: AjouterPlatUseCase, modifierPlat: ModifierPlatUseCase, supprimerPlat: SupprimerPlatUseCase, accepterCommande: AccepterCommandeUseCase, refuserCommande: RefuserCommandeUseCase, marquerPrete: MarquerCommandePreteUseCase);
     ajouterUnPlat(id: string, body: any): Promise<{
-        id: any;
-        nom: any;
-        prix: any;
+        id: string;
+        nom: string;
+        prix: number;
     }>;
     modifierUnPlat(id: string, body: any): Promise<void>;
     supprimerUnPlat(id: string): Promise<void>;
     accepterLaCommande(id: string, body: {
         tempsPreparationMinutes: number;
     }): Promise<{
-        statut: any;
-        tempsPreparation: any;
+        statut: import("@ecoeats/domain").StatutCommande;
+        tempsPreparation: number | null;
     }>;
     refuserLaCommande(id: string): Promise<{
-        statut: any;
+        statut: import("@ecoeats/domain").StatutCommande;
     }>;
     marquerLaCommandePrete(id: string): Promise<{
-        statut: any;
+        statut: import("@ecoeats/domain").StatutCommande;
     }>;
 }
 //# sourceMappingURL=restaurant.controller.d.ts.map

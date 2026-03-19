@@ -28,9 +28,12 @@ __export(index_exports, {
   ClientIntrouvableError: () => ClientIntrouvableError,
   Commande: () => Commande,
   CommandeIntrouvableError: () => CommandeIntrouvableError,
+  CompteUtilisateur: () => CompteUtilisateur,
   Coordonnees: () => Coordonnees,
+  EmailDejaUtiliseError: () => EmailDejaUtiliseError,
   ErreurMetier: () => ErreurMetier,
   Facture: () => Facture,
+  IdentifiantsInvalidesError: () => IdentifiantsInvalidesError,
   Livreur: () => Livreur,
   Money: () => Money,
   Panier: () => Panier,
@@ -166,7 +169,7 @@ var Commande = class {
 
 // src/entities/PlatMenu.ts
 var PlatMenu = class {
-  constructor(id, nom, description, prix, allergenes, stockJournalier, restaurantId) {
+  constructor(id, nom, description, prix, allergenes, stockJournalier, restaurantId, imageUrl = null, actif = true) {
     this.id = id;
     this.nom = nom;
     this.description = description;
@@ -174,6 +177,8 @@ var PlatMenu = class {
     this.allergenes = allergenes;
     this.stockJournalier = stockJournalier;
     this.restaurantId = restaurantId;
+    this.imageUrl = imageUrl;
+    this.actif = actif;
   }
   estDisponible() {
     return this.stockJournalier > 0;
@@ -190,17 +195,20 @@ var PlatMenu = class {
     if (infos.prix !== void 0) this.prix = infos.prix;
     if (infos.allergenes !== void 0) this.allergenes = infos.allergenes;
     if (infos.stockJournalier !== void 0) this.stockJournalier = infos.stockJournalier;
+    if (infos.imageUrl !== void 0) this.imageUrl = infos.imageUrl;
+    if (infos.actif !== void 0) this.actif = infos.actif;
   }
 };
 
 // src/entities/Restaurant.ts
 var Restaurant = class {
-  constructor(id, nom, adresse, position, proprietaireId) {
+  constructor(id, nom, adresse, position, proprietaireId, imageUrl = null) {
     this.id = id;
     this.nom = nom;
     this.adresse = adresse;
     this.position = position;
     this.proprietaireId = proprietaireId;
+    this.imageUrl = imageUrl;
   }
 };
 
@@ -289,6 +297,19 @@ var Panier = class {
       this.articles[index] = existant.avecQuantite(existant.quantite + article.quantite);
     } else {
       this.articles.push(article);
+    }
+  }
+  retirerArticle(platId) {
+    const existant = this.articles.find((a) => a.menuItemId === platId);
+    if (!existant) return;
+    if (existant.quantite > 1) {
+      const index = this.articles.indexOf(existant);
+      this.articles[index] = existant.avecQuantite(existant.quantite - 1);
+    } else {
+      this.articles = this.articles.filter((a) => a.menuItemId !== platId);
+      if (this.articles.length === 0) {
+        this.restaurantIdActuel = null;
+      }
     }
   }
   vider() {
@@ -411,6 +432,17 @@ var Facture = class {
   }
 };
 
+// src/entities/CompteUtilisateur.ts
+var CompteUtilisateur = class {
+  constructor(id, email, motDePasseHache, role, profilId) {
+    this.id = id;
+    this.email = email;
+    this.motDePasseHache = motDePasseHache;
+    this.role = role;
+    this.profilId = profilId;
+  }
+};
+
 // src/value-objects/Coordonnees.ts
 var Coordonnees = class {
   constructor(latitude, longitude) {
@@ -505,6 +537,20 @@ var PlatIntrouvableError = class extends ErreurMetier {
   platId;
 };
 
+// src/errors/IdentifiantsInvalidesError.ts
+var IdentifiantsInvalidesError = class extends ErreurMetier {
+  constructor() {
+    super("IDENTIFIANTS_INVALIDES", "Email ou mot de passe incorrect.");
+  }
+};
+
+// src/errors/EmailDejaUtiliseError.ts
+var EmailDejaUtiliseError = class extends ErreurMetier {
+  constructor(email) {
+    super("EMAIL_DEJA_UTILISE", `L'email "${email}" est d\xE9j\xE0 associ\xE9 \xE0 un compte.`);
+  }
+};
+
 // src/services/CalculDistanceService.ts
 var CalculDistanceService = class _CalculDistanceService {
   static RAYON_TERRE_KM = 6371;
@@ -574,9 +620,12 @@ var SelectionLivreurService = class {
   ClientIntrouvableError,
   Commande,
   CommandeIntrouvableError,
+  CompteUtilisateur,
   Coordonnees,
+  EmailDejaUtiliseError,
   ErreurMetier,
   Facture,
+  IdentifiantsInvalidesError,
   Livreur,
   Money,
   Panier,

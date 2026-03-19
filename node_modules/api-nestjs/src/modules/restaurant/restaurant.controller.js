@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestaurantController = void 0;
 const common_1 = require("@nestjs/common");
@@ -118,6 +117,11 @@ __decorate([
 exports.RestaurantController = RestaurantController = __decorate([
     (0, common_1.Controller)('restaurant'),
     (0, common_2.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
-    __metadata("design:paramtypes", [typeof (_a = typeof application_1.AjouterPlatUseCase !== "undefined" && application_1.AjouterPlatUseCase) === "function" ? _a : Object, typeof (_b = typeof application_1.ModifierPlatUseCase !== "undefined" && application_1.ModifierPlatUseCase) === "function" ? _b : Object, typeof (_c = typeof application_1.SupprimerPlatUseCase !== "undefined" && application_1.SupprimerPlatUseCase) === "function" ? _c : Object, typeof (_d = typeof application_1.AccepterCommandeUseCase !== "undefined" && application_1.AccepterCommandeUseCase) === "function" ? _d : Object, typeof (_e = typeof application_1.RefuserCommandeUseCase !== "undefined" && application_1.RefuserCommandeUseCase) === "function" ? _e : Object, typeof (_f = typeof application_1.MarquerCommandePreteUseCase !== "undefined" && application_1.MarquerCommandePreteUseCase) === "function" ? _f : Object])
+    __metadata("design:paramtypes", [application_1.AjouterPlatUseCase,
+        application_1.ModifierPlatUseCase,
+        application_1.SupprimerPlatUseCase,
+        application_1.AccepterCommandeUseCase,
+        application_1.RefuserCommandeUseCase,
+        application_1.MarquerCommandePreteUseCase])
 ], RestaurantController);
 //# sourceMappingURL=restaurant.controller.js.map

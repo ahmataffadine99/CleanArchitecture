@@ -34,8 +34,16 @@ export function creerRoutesClient(deps: {
       const formater = (p: any) => ({
         id: p.id, nom: p.nom, description: p.description,
         prix: p.prix.enEuros(), allergenes: p.allergenes, stock: p.stockJournalier,
+        imageUrl: p.imageUrl,
+        actif: p.actif,
       });
-      res.json({ disponibles: disponibles.map(formater), rupture: rupture.map(formater) });
+
+      const actifsSeulement = (p: any) => p.actif !== false;
+
+      res.json({ 
+        disponibles: disponibles.filter(actifsSeulement).map(formater), 
+        rupture: rupture.filter(actifsSeulement).map(formater) 
+      });
     } catch (err) { next(err); }
   });
 
@@ -58,6 +66,12 @@ export function creerRoutesClient(deps: {
   // DELETE /panier/:clientId
   router.delete("/panier/:clientId", (req: Request, res: Response) => {
     deps.ajouterAuPanier.viderPanier(req.params.clientId);
+    res.status(204).send();
+  });
+
+  // DELETE /panier/:clientId/articles/:platId
+  router.delete("/panier/:clientId/articles/:platId", (req: Request, res: Response) => {
+    deps.ajouterAuPanier.retirerDuPanier(req.params.clientId, req.params.platId);
     res.status(204).send();
   });
 

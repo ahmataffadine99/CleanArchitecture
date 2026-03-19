@@ -33,6 +33,21 @@ export class Panier {
     }
   }
 
+  retirerArticle(platId: string): void {
+    const existant = this.articles.find(a => a.menuItemId === platId);
+    if (!existant) return;
+
+    if (existant.quantite > 1) {
+      const index = this.articles.indexOf(existant);
+      this.articles[index] = existant.avecQuantite(existant.quantite - 1);
+    } else {
+      this.articles = this.articles.filter(a => a.menuItemId !== platId);
+      if (this.articles.length === 0) {
+        this.restaurantIdActuel = null;
+      }
+    }
+  }
+
   vider(): void {
     this.articles = [];
     this.restaurantIdActuel = null;

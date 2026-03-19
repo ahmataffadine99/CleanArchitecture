@@ -23,4 +23,8 @@ export class DepotCommandesEnMemoire implements DepotCommandes {
   async trouverParClient(clientId: string): Promise<Commande[]> {
     return [...this.store.values()].filter(c => c.clientId === clientId);
   }
+
+  async trouverTout(): Promise<Commande[]> {
+    return [...this.store.values()];
+  }
 }

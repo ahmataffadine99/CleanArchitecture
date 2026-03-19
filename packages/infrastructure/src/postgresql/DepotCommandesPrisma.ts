@@ -73,6 +73,13 @@ export class DepotCommandesPrisma implements DepotCommandes {
     return rows.map((r) => this.reconstruire(r));
   }
 
+  async trouverTout(): Promise<Commande[]> {
+    const rows = await this.prisma.commande.findMany({
+      include: { articles: true },
+    });
+    return rows.map((r) => this.reconstruire(r));
+  }
+
   private reconstruire(row: any): Commande {
     const articles = (row.articles ?? []).map(
       (a: any) =>

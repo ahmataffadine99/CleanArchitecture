@@ -18,4 +18,8 @@ export class DepotRestaurantsEnMemoire implements DepotRestaurants {
   async listerTous(): Promise<Restaurant[]> {
     return [...this.store.values()];
   }
+
+  async trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null> {
+    return [...this.store.values()].find(r => r.proprietaireId === proprietaireId) || null;
+  }
 }

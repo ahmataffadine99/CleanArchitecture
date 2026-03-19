@@ -27,6 +27,9 @@ export { SupprimerPlatUseCase } from "./use-cases/restaurant/SupprimerPlatUseCas
 export { AccepterCommandeUseCase } from "./use-cases/restaurant/AccepterCommandeUseCase";
 export { RefuserCommandeUseCase } from "./use-cases/restaurant/RefuserCommandeUseCase";
 export { MarquerCommandePreteUseCase } from "./use-cases/restaurant/MarquerCommandePreteUseCase";
+export { ListerCommandesRestaurantUseCase } from "./use-cases/restaurant/ListerCommandesRestaurantUseCase";
+export { ModifierRestaurantUseCase } from "./use-cases/restaurant/ModifierRestaurantUseCase";
+export { ObtenirMonRestaurantUseCase } from "./use-cases/restaurant/ObtenirMonRestaurantUseCase";
 
 // Use Cases Livreur
 export { ChangerStatutLivreurUseCase } from "./use-cases/livreur/ChangerStatutLivreurUseCase";

@@ -15,6 +15,8 @@ export class DepotPlatsPrisma implements DepotPlats {
         prixCentimes: plat.prix.enCentimes(),
         allergenes: plat.allergenes,
         stockJournalier: plat.stockJournalier,
+        imageUrl: plat.imageUrl,
+        actif: plat.actif,
       },
       create: {
         id: plat.id,
@@ -24,6 +26,8 @@ export class DepotPlatsPrisma implements DepotPlats {
         allergenes: plat.allergenes,
         stockJournalier: plat.stockJournalier,
         restaurantId: plat.restaurantId,
+        imageUrl: plat.imageUrl,
+        actif: plat.actif,
       },
     });
   }
@@ -38,7 +42,9 @@ export class DepotPlatsPrisma implements DepotPlats {
       Money.fromCentimes(row.prixCentimes),
       row.allergenes,
       row.stockJournalier,
-      row.restaurantId
+      row.restaurantId,
+      row.imageUrl,
+      row.actif
     );
   }
 
@@ -53,7 +59,9 @@ export class DepotPlatsPrisma implements DepotPlats {
           Money.fromCentimes(r.prixCentimes),
           r.allergenes,
           r.stockJournalier,
-          r.restaurantId
+          r.restaurantId,
+          r.imageUrl,
+          r.actif
         )
     );
   }

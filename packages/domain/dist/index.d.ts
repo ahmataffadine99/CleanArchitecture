@@ -74,7 +74,9 @@ declare class PlatMenu {
     allergenes: string[];
     stockJournalier: number;
     readonly restaurantId: string;
-    constructor(id: string, nom: string, description: string, prix: Money, allergenes: string[], stockJournalier: number, restaurantId: string);
+    imageUrl: string | null;
+    actif: boolean;
+    constructor(id: string, nom: string, description: string, prix: Money, allergenes: string[], stockJournalier: number, restaurantId: string, imageUrl?: string | null, actif?: boolean);
     estDisponible(): boolean;
     diminuerStock(quantite?: number): void;
     mettreAJour(infos: {
@@ -83,6 +85,8 @@ declare class PlatMenu {
         prix?: Money;
         allergenes?: string[];
         stockJournalier?: number;
+        imageUrl?: string | null;
+        actif?: boolean;
     }): void;
 }
 
@@ -100,7 +104,8 @@ declare class Restaurant {
     adresse: string;
     position: Coordonnees;
     readonly proprietaireId: string;
-    constructor(id: string, nom: string, adresse: string, position: Coordonnees, proprietaireId: string);
+    imageUrl: string | null;
+    constructor(id: string, nom: string, adresse: string, position: Coordonnees, proprietaireId: string, imageUrl?: string | null);
 }
 
 declare class Panier {
@@ -109,6 +114,7 @@ declare class Panier {
     private restaurantIdActuel;
     constructor(clientId: string);
     ajouterArticle(article: ArticlePanier): void;
+    retirerArticle(platId: string): void;
     vider(): void;
     getArticles(): ReadonlyArray<ArticlePanier>;
     getRestaurantId(): string | null;
@@ -163,6 +169,16 @@ declare class Facture {
     afficher(): string;
 }
 
+type RoleUtilisateur = "CLIENT" | "RESTAURATEUR" | "LIVREUR";
+declare class CompteUtilisateur {
+    readonly id: string;
+    readonly email: string;
+    readonly motDePasseHache: string;
+    readonly role: RoleUtilisateur;
+    readonly profilId: string;
+    constructor(id: string, email: string, motDePasseHache: string, role: RoleUtilisateur, profilId: string);
+}
+
 declare abstract class ErreurMetier extends Error {
     readonly code: string;
     constructor(code: string, message: string);
@@ -206,6 +222,14 @@ declare class ClientIntrouvableError extends ErreurMetier {
 declare class PlatIntrouvableError extends ErreurMetier {
     constructor(platId: string);
     readonly platId: string;
+}
+
+declare class IdentifiantsInvalidesError extends ErreurMetier {
+    constructor();
+}
+
+declare class EmailDejaUtiliseError extends ErreurMetier {
+    constructor(email: string);
 }
 
 declare class CalculDistanceService {
@@ -272,4 +296,4 @@ type CommandeLivree = {
 };
 type EvenementCommande = CommandeCreee | CommandePayee | CommandeAcceptee | CommandeRefusee | CommandePrete | CommandeLivree;
 
-export { ArticlePanier, AucunLivreurDisponibleError, CalculDistanceService, CalculPrixService, Client, ClientIntrouvableError, Commande, type CommandeAcceptee, type CommandeCreee, CommandeIntrouvableError, type CommandeLivree, type CommandePayee, type CommandePrete, type CommandeRefusee, Coordonnees, ErreurMetier, type EvenementCommande, Facture, Livreur, Money, Panier, PanierConflitRestaurantError, PlatEnRuptureError, PlatIntrouvableError, PlatMenu, Restaurant, RestaurantIntrouvableError, SelectionLivreurService, StatutCommande, StatutLivreur, TransitionStatutInvalideError, transitionAutorisee };
+export { ArticlePanier, AucunLivreurDisponibleError, CalculDistanceService, CalculPrixService, Client, ClientIntrouvableError, Commande, type CommandeAcceptee, type CommandeCreee, CommandeIntrouvableError, type CommandeLivree, type CommandePayee, type CommandePrete, type CommandeRefusee, CompteUtilisateur, Coordonnees, EmailDejaUtiliseError, ErreurMetier, type EvenementCommande, Facture, IdentifiantsInvalidesError, Livreur, Money, Panier, PanierConflitRestaurantError, PlatEnRuptureError, PlatIntrouvableError, PlatMenu, Restaurant, RestaurantIntrouvableError, type RoleUtilisateur, SelectionLivreurService, StatutCommande, StatutLivreur, TransitionStatutInvalideError, transitionAutorisee };

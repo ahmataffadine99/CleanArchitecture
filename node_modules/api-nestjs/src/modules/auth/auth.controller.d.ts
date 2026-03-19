@@ -9,6 +9,10 @@ export declare class AuthController {
         role: any;
         profilId: any;
     }>;
-    login(body: any): Promise<any>;
+    login(body: any): Promise<{
+        token: string;
+        role: string;
+        profilId: string;
+    }>;
 }
 //# sourceMappingURL=auth.controller.d.ts.map

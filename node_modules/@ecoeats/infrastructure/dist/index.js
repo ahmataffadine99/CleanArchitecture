@@ -21,8 +21,11 @@ var index_exports = {};
 __export(index_exports, {
   CartographieHaversine: () => CartographieHaversine,
   DepotClientsEnMemoire: () => DepotClientsEnMemoire,
+  DepotClientsPrisma: () => DepotClientsPrisma,
   DepotCommandesEnMemoire: () => DepotCommandesEnMemoire,
   DepotCommandesPrisma: () => DepotCommandesPrisma,
+  DepotComptesEnMemoire: () => DepotComptesEnMemoire,
+  DepotComptesPrisma: () => DepotComptesPrisma,
   DepotFacturesEnMemoire: () => DepotFacturesEnMemoire,
   DepotLivreursEnMemoire: () => DepotLivreursEnMemoire,
   DepotLivreursPrisma: () => DepotLivreursPrisma,
@@ -52,6 +55,9 @@ var DepotCommandesEnMemoire = class {
   async trouverParClient(clientId) {
     return [...this.store.values()].filter((c) => c.clientId === clientId);
   }
+  async trouverTout() {
+    return [...this.store.values()];
+  }
 };
 
 // src/in-memory/DepotRestaurantsEnMemoire.ts
@@ -68,6 +74,9 @@ var DepotRestaurantsEnMemoire = class {
   }
   async listerTous() {
     return [...this.store.values()];
+  }
+  async trouverParProprietaireId(proprietaireId) {
+    return [...this.store.values()].find((r) => r.proprietaireId === proprietaireId) || null;
   }
 };
 
@@ -132,6 +141,23 @@ var DepotFacturesEnMemoire = class {
   }
 };
 
+// src/in-memory/DepotComptesEnMemoire.ts
+var DepotComptesEnMemoire = class {
+  store = /* @__PURE__ */ new Map();
+  async sauvegarder(compte) {
+    this.store.set(compte.email, compte);
+  }
+  async trouverParEmail(email) {
+    return this.store.get(email) ?? null;
+  }
+  async trouverParId(id) {
+    for (const compte of this.store.values()) {
+      if (compte.id === id) return compte;
+    }
+    return null;
+  }
+};
+
 // src/postgresql/DepotCommandesPrisma.ts
 var import_domain5 = require("@ecoeats/domain");
 var import_domain6 = require("@ecoeats/domain");
@@ -140,33 +166,41 @@ var DepotCommandesPrisma = class {
     this.prisma = prisma;
   }
   async sauvegarder(commande) {
-    await this.prisma.commande.upsert({
-      where: { id: commande.id },
-      update: {
-        statut: commande.getStatut(),
-        livreurId: commande.getLivreurId(),
-        tempsPreparation: commande.getTempsPreparation()
-      },
-      create: {
-        id: commande.id,
-        clientId: commande.clientId,
-        restaurantId: commande.restaurantId,
-        statut: commande.getStatut(),
-        prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
-        fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
-        fraisServiceCentimes: commande.getFraisService().enCentimes(),
-        adresseLivraison: commande.getAdresseLivraison(),
-        articles: {
-          create: commande.getArticles().map((a) => ({
-            menuItemId: a.menuItemId,
-            nom: a.nom,
-            prixCentimes: a.prixSnapshot.enCentimes(),
-            quantite: a.quantite,
-            restaurantId: a.restaurantId
-          }))
-        }
-      }
+    const existe = await this.prisma.commande.findUnique({
+      where: { id: commande.id }
     });
+    if (existe) {
+      await this.prisma.commande.update({
+        where: { id: commande.id },
+        data: {
+          statut: commande.getStatut(),
+          livreurId: commande.getLivreurId(),
+          tempsPreparation: commande.getTempsPreparation()
+        }
+      });
+    } else {
+      await this.prisma.commande.create({
+        data: {
+          id: commande.id,
+          clientId: commande.clientId,
+          restaurantId: commande.restaurantId,
+          statut: commande.getStatut(),
+          prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
+          fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
+          fraisServiceCentimes: commande.getFraisService().enCentimes(),
+          adresseLivraison: commande.getAdresseLivraison(),
+          articles: {
+            create: commande.getArticles().map((a) => ({
+              menuItemId: a.menuItemId,
+              nom: a.nom,
+              prixCentimes: a.prixSnapshot.enCentimes(),
+              quantite: a.quantite,
+              restaurantId: a.restaurantId
+            }))
+          }
+        }
+      });
+    }
   }
   async trouverParId(id) {
     const row = await this.prisma.commande.findUnique({
@@ -190,8 +224,14 @@ var DepotCommandesPrisma = class {
     });
     return rows.map((r) => this.reconstruire(r));
   }
+  async trouverTout() {
+    const rows = await this.prisma.commande.findMany({
+      include: { articles: true }
+    });
+    return rows.map((r) => this.reconstruire(r));
+  }
   reconstruire(row) {
-    const articles = row.articles.map(
+    const articles = (row.articles ?? []).map(
       (a) => new import_domain5.ArticlePanier(
         a.menuItemId,
         a.nom,
@@ -200,7 +240,7 @@ var DepotCommandesPrisma = class {
         a.restaurantId
       )
     );
-    return new import_domain5.Commande(
+    const commande = new import_domain5.Commande(
       row.id,
       row.clientId,
       row.restaurantId,
@@ -210,12 +250,38 @@ var DepotCommandesPrisma = class {
       import_domain5.Money.fromCentimes(row.fraisServiceCentimes),
       row.adresseLivraison
     );
+    const transitions = this.retrouverTransitions(row.statut);
+    for (const t of transitions) {
+      try {
+        commande.changerStatut(t);
+      } catch (_) {
+      }
+    }
+    return commande;
+  }
+  /**
+   * Retrouve la suite minimale de transitions pour passer de EN_ATTENTE au statut cible.
+   * Respecte strictement la machine à états du Domain.
+   */
+  retrouverTransitions(statut) {
+    const chemin = {
+      [import_domain5.StatutCommande.EN_ATTENTE]: [],
+      [import_domain5.StatutCommande.PAYEE]: [import_domain5.StatutCommande.PAYEE],
+      [import_domain5.StatutCommande.ACCEPTEE]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.ACCEPTEE],
+      [import_domain5.StatutCommande.EN_PREPARATION]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.ACCEPTEE, import_domain5.StatutCommande.EN_PREPARATION],
+      [import_domain5.StatutCommande.PRETE]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.ACCEPTEE, import_domain5.StatutCommande.EN_PREPARATION, import_domain5.StatutCommande.PRETE],
+      [import_domain5.StatutCommande.EN_LIVRAISON]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.ACCEPTEE, import_domain5.StatutCommande.EN_PREPARATION, import_domain5.StatutCommande.PRETE, import_domain5.StatutCommande.EN_LIVRAISON],
+      [import_domain5.StatutCommande.LIVREE]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.ACCEPTEE, import_domain5.StatutCommande.EN_PREPARATION, import_domain5.StatutCommande.PRETE, import_domain5.StatutCommande.EN_LIVRAISON, import_domain5.StatutCommande.LIVREE],
+      [import_domain5.StatutCommande.REFUSEE]: [import_domain5.StatutCommande.PAYEE, import_domain5.StatutCommande.REFUSEE]
+    };
+    return chemin[statut] ?? [];
   }
 };
 
 // src/postgresql/DepotRestaurantsPrisma.ts
 var import_domain7 = require("@ecoeats/domain");
 var import_domain8 = require("@ecoeats/domain");
+var import_domain9 = require("@ecoeats/domain");
 var DepotRestaurantsPrisma = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -227,7 +293,8 @@ var DepotRestaurantsPrisma = class {
         nom: restaurant.nom,
         adresse: restaurant.adresse,
         latitude: restaurant.position.latitude,
-        longitude: restaurant.position.longitude
+        longitude: restaurant.position.longitude,
+        imageUrl: restaurant.imageUrl
       },
       create: {
         id: restaurant.id,
@@ -235,32 +302,46 @@ var DepotRestaurantsPrisma = class {
         adresse: restaurant.adresse,
         latitude: restaurant.position.latitude,
         longitude: restaurant.position.longitude,
-        proprietaireId: restaurant.proprietaireId
+        proprietaireId: restaurant.proprietaireId,
+        imageUrl: restaurant.imageUrl
       }
     });
   }
   async trouverParId(id) {
     const row = await this.prisma.restaurant.findUnique({ where: { id } });
-    if (!row) throw new import_domain8.RestaurantIntrouvableError(id);
+    if (!row) throw new import_domain9.RestaurantIntrouvableError(id);
     return new import_domain7.Restaurant(
       row.id,
       row.nom,
       row.adresse,
-      new import_domain7.Coordonnees(row.latitude, row.longitude),
-      row.proprietaireId
+      new import_domain8.Coordonnees(row.latitude, row.longitude),
+      row.proprietaireId,
+      row.imageUrl
     );
   }
   async listerTous() {
     const rows = await this.prisma.restaurant.findMany();
-    return rows.map(
-      (r) => new import_domain7.Restaurant(r.id, r.nom, r.adresse, new import_domain7.Coordonnees(r.latitude, r.longitude), r.proprietaireId)
+    return rows.map((r) => this.mapToEntity(r));
+  }
+  async trouverParProprietaireId(proprietaireId) {
+    const row = await this.prisma.restaurant.findFirst({ where: { proprietaireId } });
+    return row ? this.mapToEntity(row) : null;
+  }
+  mapToEntity(row) {
+    return new import_domain7.Restaurant(
+      row.id,
+      row.nom,
+      row.adresse,
+      new import_domain8.Coordonnees(row.latitude, row.longitude),
+      row.proprietaireId,
+      row.imageUrl
     );
   }
 };
 
 // src/postgresql/DepotPlatsPrisma.ts
-var import_domain9 = require("@ecoeats/domain");
 var import_domain10 = require("@ecoeats/domain");
+var import_domain11 = require("@ecoeats/domain");
 var DepotPlatsPrisma = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -273,7 +354,9 @@ var DepotPlatsPrisma = class {
         description: plat.description,
         prixCentimes: plat.prix.enCentimes(),
         allergenes: plat.allergenes,
-        stockJournalier: plat.stockJournalier
+        stockJournalier: plat.stockJournalier,
+        imageUrl: plat.imageUrl,
+        actif: plat.actif
       },
       create: {
         id: plat.id,
@@ -282,26 +365,76 @@ var DepotPlatsPrisma = class {
         prixCentimes: plat.prix.enCentimes(),
         allergenes: plat.allergenes,
         stockJournalier: plat.stockJournalier,
-        restaurantId: plat.restaurantId
+        restaurantId: plat.restaurantId,
+        imageUrl: plat.imageUrl,
+        actif: plat.actif
       }
     });
   }
   async trouverParId(id) {
     const row = await this.prisma.platMenu.findUnique({ where: { id } });
-    if (!row) throw new import_domain10.PlatIntrouvableError(id);
-    return new import_domain9.PlatMenu(row.id, row.nom, row.description, import_domain9.Money.fromCentimes(row.prixCentimes), row.allergenes, row.stockJournalier, row.restaurantId);
+    if (!row) throw new import_domain11.PlatIntrouvableError(id);
+    return new import_domain10.PlatMenu(
+      row.id,
+      row.nom,
+      row.description,
+      import_domain10.Money.fromCentimes(row.prixCentimes),
+      row.allergenes,
+      row.stockJournalier,
+      row.restaurantId,
+      row.imageUrl,
+      row.actif
+    );
   }
   async trouverParRestaurant(restaurantId) {
     const rows = await this.prisma.platMenu.findMany({ where: { restaurantId } });
-    return rows.map((r) => new import_domain9.PlatMenu(r.id, r.nom, r.description, import_domain9.Money.fromCentimes(r.prixCentimes), r.allergenes, r.stockJournalier, r.restaurantId));
+    return rows.map(
+      (r) => new import_domain10.PlatMenu(
+        r.id,
+        r.nom,
+        r.description,
+        import_domain10.Money.fromCentimes(r.prixCentimes),
+        r.allergenes,
+        r.stockJournalier,
+        r.restaurantId,
+        r.imageUrl,
+        r.actif
+      )
+    );
   }
   async supprimer(id) {
     await this.prisma.platMenu.delete({ where: { id } });
   }
 };
 
+// src/postgresql/DepotClientsPrisma.ts
+var import_domain12 = require("@ecoeats/domain");
+var import_domain13 = require("@ecoeats/domain");
+var DepotClientsPrisma = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  async sauvegarder(client) {
+    await this.prisma.client.upsert({
+      where: { id: client.id },
+      update: { nom: client.nom, email: client.email, adresse: client.adresse },
+      create: {
+        id: client.id,
+        nom: client.nom,
+        email: client.email,
+        adresse: client.adresse
+      }
+    });
+  }
+  async trouverParId(id) {
+    const row = await this.prisma.client.findUnique({ where: { id } });
+    if (!row) throw new import_domain13.ClientIntrouvableError(id);
+    return new import_domain12.Client(row.id, row.nom, row.email, row.adresse);
+  }
+};
+
 // src/postgresql/DepotLivreursPrisma.ts
-var import_domain11 = require("@ecoeats/domain");
+var import_domain14 = require("@ecoeats/domain");
 var DepotLivreursPrisma = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -332,25 +465,77 @@ var DepotLivreursPrisma = class {
     return this.reconstruire(row);
   }
   async listerDisponibles() {
-    const rows = await this.prisma.livreur.findMany({ where: { statut: "DISPONIBLE" } });
+    const rows = await this.prisma.livreur.findMany({
+      where: { statut: import_domain14.StatutLivreur.DISPONIBLE }
+    });
     return rows.map((r) => this.reconstruire(r));
   }
   reconstruire(row) {
-    const livreur = new import_domain11.Livreur(
+    const livreur = new import_domain14.Livreur(
       row.id,
       row.nom,
-      new import_domain11.Coordonnees(row.latitude, row.longitude),
+      new import_domain14.Coordonnees(row.latitude, row.longitude),
       row.telephone
     );
-    if (row.statut === import_domain11.StatutLivreur.DISPONIBLE) livreur.seDeclarerDisponible();
+    if (row.statut === import_domain14.StatutLivreur.DISPONIBLE) {
+      livreur.seDeclarerDisponible();
+    }
     return livreur;
   }
 };
 
+// src/postgresql/DepotComptesPrisma.ts
+var import_domain15 = require("@ecoeats/domain");
+var DepotComptesPrisma = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  async sauvegarder(compte) {
+    await this.prisma.compteUtilisateur.upsert({
+      where: { id: compte.id },
+      update: {
+        email: compte.email,
+        motDePasseHache: compte.motDePasseHache,
+        role: compte.role,
+        profilId: compte.profilId
+      },
+      create: {
+        id: compte.id,
+        email: compte.email,
+        motDePasseHache: compte.motDePasseHache,
+        role: compte.role,
+        profilId: compte.profilId
+      }
+    });
+  }
+  async trouverParEmail(email) {
+    const row = await this.prisma.compteUtilisateur.findUnique({ where: { email } });
+    if (!row) return null;
+    return new import_domain15.CompteUtilisateur(
+      row.id,
+      row.email,
+      row.motDePasseHache,
+      row.role,
+      row.profilId
+    );
+  }
+  async trouverParId(id) {
+    const row = await this.prisma.compteUtilisateur.findUnique({ where: { id } });
+    if (!row) return null;
+    return new import_domain15.CompteUtilisateur(
+      row.id,
+      row.email,
+      row.motDePasseHache,
+      row.role,
+      row.profilId
+    );
+  }
+};
+
 // src/services/CartographieHaversine.ts
-var import_domain12 = require("@ecoeats/domain");
+var import_domain16 = require("@ecoeats/domain");
 var CartographieHaversine = class {
-  calculateur = new import_domain12.CalculDistanceService();
+  calculateur = new import_domain16.CalculDistanceService();
   calculerDistanceKm(pointA, pointB) {
     return this.calculateur.calculerKm(pointA, pointB);
   }
@@ -369,8 +554,11 @@ var PaiementSimule = class {
 0 && (module.exports = {
   CartographieHaversine,
   DepotClientsEnMemoire,
+  DepotClientsPrisma,
   DepotCommandesEnMemoire,
   DepotCommandesPrisma,
+  DepotComptesEnMemoire,
+  DepotComptesPrisma,
   DepotFacturesEnMemoire,
   DepotLivreursEnMemoire,
   DepotLivreursPrisma,

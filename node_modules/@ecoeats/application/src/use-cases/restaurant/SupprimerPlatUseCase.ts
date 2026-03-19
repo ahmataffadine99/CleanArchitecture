@@ -1,4 +1,4 @@
-import { DepotPlats } from "../ports/DepotPlats";
+import { DepotPlats } from "../../ports/DepotPlats";
 
 export class SupprimerPlatUseCase {
   constructor(private readonly depotPlats: DepotPlats) {}

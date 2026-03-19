@@ -1,10 +1,11 @@
+import "dotenv/config";
 import express from "express";
 import { creerRoutesClient } from "@ecoeats/interface";
 import { creerRoutesRestaurant } from "@ecoeats/interface";
 import { creerRoutesLivreur } from "@ecoeats/interface";
 import { creerRoutesAuth } from "@ecoeats/interface";
 import { gestionnaireErreurs } from "@ecoeats/interface";
-import { creerAuthMiddleware } from "@ecoeats/interface";
+import { creerAuthMiddleware, requireRole } from "@ecoeats/interface";
 
 // =====================================================================
 // COMPOSITION ROOT — c'est ici qu'on choisit les adaptateurs à injecter
@@ -21,7 +22,8 @@ import {
   PasserCommandeUseCase, PayerCommandeUseCase, AjouterPlatUseCase, ModifierPlatUseCase,
   SupprimerPlatUseCase, AccepterCommandeUseCase, RefuserCommandeUseCase,
   MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
-  TerminerLivraisonUseCase, InscriptionUseCase, ConnexionUseCase
+  TerminerLivraisonUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
+  ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -56,18 +58,28 @@ const supprimerPlat     = new SupprimerPlatUseCase(depotPlats);
 const accepterCommande  = new AccepterCommandeUseCase(depotCommandes);
 const refuserCommande   = new RefuserCommandeUseCase(depotCommandes);
 const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes);
+const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes);
+const modifierRestaurant = new ModifierRestaurantUseCase(depotRestaurants);
+const obtenirMonResto   = new ObtenirMonRestaurantUseCase(depotRestaurants);
 
 const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs);
 const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 
+import cors from "cors";
+
 // --- JWT Secret (en dur pour la démo, normalement dans .env) ---
 const SECRET_JWT = process.env.JWT_SECRET || "mon_super_secret_jwt_hyper_securise";
-const inscription       = new InscriptionUseCase(depotComptes, depotClients);
+const inscription       = new InscriptionUseCase(depotComptes, depotClients, depotRestaurants, SECRET_JWT);
 const connexion         = new ConnexionUseCase(depotComptes, SECRET_JWT);
 
 // --- Serveur Express ---
 const app = express();
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
 
 const requireAuth = creerAuthMiddleware(SECRET_JWT);
@@ -79,8 +91,8 @@ app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 // Routes publiques
 app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande }));
 
-// Routes nécessitant une authentification (le token JWT doit être présent)
-app.use("/api", requireAuth, creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete }));
+// Routes nécessitant une authentification
+app.use("/api", requireAuth, requireRole("RESTAURATEUR"), creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete, listerCommandes, modifierRestaurant, obtenirMonResto, servicePanier: ajouterAuPanier }));
 app.use("/api", requireAuth, creerRoutesLivreur({ changerStatut, attribuerLivraison, terminerLivraison }));
 
 app.use(gestionnaireErreurs);

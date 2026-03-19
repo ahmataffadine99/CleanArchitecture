@@ -1,7 +1,7 @@
 import { Commande, StatutCommande, Facture } from "@ecoeats/domain";
-import { DepotCommandes } from "../ports/DepotCommandes";
-import { DepotFactures } from "../ports/DepotFactures";
-import { ServicePaiement } from "../ports/ServicePaiement";
+import { DepotCommandes } from "../../ports/DepotCommandes";
+import { DepotFactures } from "../../ports/DepotFactures";
+import { ServicePaiement } from "../../ports/ServicePaiement";
 import { v4 as uuid } from "uuid";
 
 type Req = {

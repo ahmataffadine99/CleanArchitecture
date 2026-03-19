@@ -18,31 +18,58 @@ export declare class ClientController {
     private readonly passerCommande;
     private readonly payerCommande;
     constructor(listerRestaurants: ListerRestaurantsUseCase, voirMenu: VoirMenuRestaurantUseCase, ajouterAuPanier: AjouterAuPanierUseCase, passerCommande: PasserCommandeUseCase, payerCommande: PayerCommandeUseCase);
-    getRestaurants(): Promise<any>;
+    getRestaurants(): Promise<{
+        id: string;
+        nom: string;
+        adresse: string;
+        position: {
+            lat: number;
+            lon: number;
+        };
+    }[]>;
     getMenu(id: string): Promise<{
-        disponibles: any;
-        rupture: any;
+        disponibles: {
+            id: any;
+            nom: any;
+            description: any;
+            prix: any;
+            allergenes: any;
+            stock: any;
+        }[];
+        rupture: {
+            id: any;
+            nom: any;
+            description: any;
+            prix: any;
+            allergenes: any;
+            stock: any;
+        }[];
     }>;
     ajouterArticlePanier(rawDto: AjoutArticleDto): Promise<{
-        restaurantId: any;
-        articles: any;
-        total: any;
+        restaurantId: string | null;
+        articles: {
+            platId: string;
+            nom: string;
+            prix: number;
+            quantite: number;
+        }[];
+        total: number;
     }>;
     viderPanier(clientId: string): void;
     passerLaCommande(dto: PasserCommandeDto): Promise<{
-        id: any;
-        statut: any;
-        total: any;
+        id: string;
+        statut: import("@ecoeats/domain").StatutCommande;
+        total: number;
         detail: {
-            plats: any;
-            livraison: any;
-            service: any;
+            plats: number;
+            livraison: number;
+            service: number;
         };
     }>;
     payerLaCommande(id: string, dto: PayerCommandeDto): Promise<{
-        factureId: any;
-        total: any;
-        detail: any;
+        factureId: string;
+        total: number;
+        detail: string;
     }>;
 }
 export {};

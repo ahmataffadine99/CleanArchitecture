@@ -25,6 +25,7 @@ model Restaurant {
   latitude      Float
   longitude     Float
   proprietaireId String
+  imageUrl      String?
   plats         PlatMenu[]
   commandes     Commande[]
 }
@@ -37,6 +38,8 @@ model PlatMenu {
   allergenes     String[]
   stockJournalier Int
   restaurantId   String
+  imageUrl       String?
+  actif          Boolean    @default(true)
   restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
 }
 

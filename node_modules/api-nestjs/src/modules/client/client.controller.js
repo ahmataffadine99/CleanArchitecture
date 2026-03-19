@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientController = void 0;
 const common_1 = require("@nestjs/common");
@@ -146,6 +145,10 @@ __decorate([
 ], ClientController.prototype, "payerLaCommande", null);
 exports.ClientController = ClientController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof application_1.ListerRestaurantsUseCase !== "undefined" && application_1.ListerRestaurantsUseCase) === "function" ? _a : Object, typeof (_b = typeof application_1.VoirMenuRestaurantUseCase !== "undefined" && application_1.VoirMenuRestaurantUseCase) === "function" ? _b : Object, typeof (_c = typeof application_1.AjouterAuPanierUseCase !== "undefined" && application_1.AjouterAuPanierUseCase) === "function" ? _c : Object, typeof (_d = typeof application_1.PasserCommandeUseCase !== "undefined" && application_1.PasserCommandeUseCase) === "function" ? _d : Object, typeof (_e = typeof application_1.PayerCommandeUseCase !== "undefined" && application_1.PayerCommandeUseCase) === "function" ? _e : Object])
+    __metadata("design:paramtypes", [application_1.ListerRestaurantsUseCase,
+        application_1.VoirMenuRestaurantUseCase,
+        application_1.AjouterAuPanierUseCase,
+        application_1.PasserCommandeUseCase,
+        application_1.PayerCommandeUseCase])
 ], ClientController);
 //# sourceMappingURL=client.controller.js.map

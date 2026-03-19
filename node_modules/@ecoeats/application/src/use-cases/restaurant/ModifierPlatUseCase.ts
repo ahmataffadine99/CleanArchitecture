@@ -1,5 +1,5 @@
 import { Money } from "@ecoeats/domain";
-import { DepotPlats } from "../ports/DepotPlats";
+import { DepotPlats } from "../../ports/DepotPlats";
 
 type Req = {
   platId: string;
@@ -8,6 +8,8 @@ type Req = {
   prixEuros?: number;
   allergenes?: string[];
   stockJournalier?: number;
+  imageUrl?: string | null;
+  actif?: boolean;
 };
 
 export class ModifierPlatUseCase {
@@ -22,6 +24,8 @@ export class ModifierPlatUseCase {
       prix: req.prixEuros !== undefined ? Money.fromEuros(req.prixEuros) : undefined,
       allergenes: req.allergenes,
       stockJournalier: req.stockJournalier,
+      imageUrl: req.imageUrl,
+      actif: req.actif,
     });
 
     await this.depotPlats.sauvegarder(plat);

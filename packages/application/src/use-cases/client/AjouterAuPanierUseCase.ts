@@ -1,7 +1,7 @@
 import { Panier, ArticlePanier, Money } from "@ecoeats/domain";
 import { PlatIntrouvableError, PlatEnRuptureError } from "@ecoeats/domain";
-import { DepotPlats } from "../ports/DepotPlats";
-import { DepotClients } from "../ports/DepotClients";
+import { DepotPlats } from "../../ports/DepotPlats";
+import { DepotClients } from "../../ports/DepotClients";
 
 type Commande = {
   clientId: string;
@@ -44,6 +44,19 @@ export class AjouterAuPanierUseCase {
   viderPanier(clientId: string): void {
     const panier = this.paniers.get(clientId);
     if (panier) panier.vider();
+  }
+
+  retirerDuPanier(clientId: string, platId: string): void {
+    const panier = this.paniers.get(clientId);
+    if (panier) {
+      panier.retirerArticle(platId);
+    }
+  }
+
+  getTousLesPaniersParRestaurant(restaurantId: string): Panier[] {
+    return Array.from(this.paniers.values()).filter(p => 
+      !p.estVide() && p.getRestaurantId() === restaurantId
+    );
   }
 
   getPanier(clientId: string): Panier | null {

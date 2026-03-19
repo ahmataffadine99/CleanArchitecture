@@ -16,7 +16,7 @@ async function main() {
       adresse: "10 Rue de la Paix, 75000 Paris",
     },
   });
-  console.log("👤 Client créé :", client.nom);
+  console.log(" Client créé :", client.nom);
 
   // 2. Créer un restaurant
   const restaurant = await prisma.restaurant.upsert({
@@ -61,7 +61,79 @@ async function main() {
       restaurantId: restaurant.id,
     },
   });
-  console.log("🍟 Plats menus créés.");
+  console.log("Plats menus créés.");
+
+  // --- RESTAURANT 2 : Pizzeria Solidaire ---
+  const resto2 = await prisma.restaurant.upsert({
+    where: { id: "resto-2" },
+    update: {},
+    create: {
+      id: "resto-2",
+      nom: "La Pizzeria Solidaire",
+      adresse: "42 Rue de la République, 69002 Lyon",
+      latitude: 45.7640,
+      longitude: 4.8357,
+      proprietaireId: "proprio-2",
+    },
+  });
+  console.log("Restaurant créé :", resto2.nom);
+
+  await prisma.platMenu.upsert({
+    where: { id: "plat-3" },
+    update: {},
+    create: {
+      id: "plat-3",
+      nom: "Pizza Margherita Locale",
+      description: "Tomates anciennes de la ferme, Mozzarella artisanale, basilic frais",
+      prixCentimes: 1050, // 10,50€
+      allergenes: ["Gluten", "Lactose"],
+      stockJournalier: 30,
+      restaurantId: resto2.id,
+    },
+  });
+
+  await prisma.platMenu.upsert({
+    where: { id: "plat-4" },
+    update: {},
+    create: {
+      id: "plat-4",
+      nom: "Tiramisu au café équitable",
+      description: "Véritable tiramisu italien, café bio pur arabica",
+      prixCentimes: 600, // 6,00€
+      allergenes: ["Gluten", "Lactose", "Œufs"],
+      stockJournalier: 20,
+      restaurantId: resto2.id,
+    },
+  });
+
+  // --- RESTAURANT 3 : Sushi Éco ---
+  const resto3 = await prisma.restaurant.upsert({
+    where: { id: "resto-3" },
+    update: {},
+    create: {
+      id: "resto-3",
+      nom: "Sushi Éco",
+      adresse: "12 Rue Sainte-Catherine, 33000 Bordeaux",
+      latitude: 44.8378,
+      longitude: -0.5792,
+      proprietaireId: "proprio-3",
+    },
+  });
+  console.log(" Restaurant créé :", resto3.nom);
+
+  await prisma.platMenu.upsert({
+    where: { id: "plat-5" },
+    update: {},
+    create: {
+      id: "plat-5",
+      nom: "Plateau Maki & Sushi (12 pcs)",
+      description: "Saumon label rouge, thon albacore pêche responsable, riz vinaigré, gingembre bio",
+      prixCentimes: 1690, // 16,90€
+      allergenes: ["Poisson", "Soja"],
+      stockJournalier: 40,
+      restaurantId: resto3.id,
+    },
+  });
 
   // 4. Créer un livreur disponible
   const livreur = await prisma.livreur.upsert({
@@ -77,14 +149,14 @@ async function main() {
       portefeuilleCentimes: 0,
     },
   });
-  console.log("🚴 Livreur créé :", livreur.nom);
+  console.log(" Livreur créé :", livreur.nom);
 
-  console.log("✅ Seeding terminé avec succès !");
+  console.log("Seeding terminé avec succès !");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Erreur lors du seeding :", e);
+    console.error("Erreur lors du seeding :", e);
     process.exit(1);
   })
   .finally(async () => {

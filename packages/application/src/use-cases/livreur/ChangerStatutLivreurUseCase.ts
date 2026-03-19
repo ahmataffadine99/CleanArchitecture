@@ -1,5 +1,5 @@
 import { Livreur, StatutLivreur } from "@ecoeats/domain";
-import { DepotLivreurs } from "../ports/DepotLivreurs";
+import { DepotLivreurs } from "../../ports/DepotLivreurs";
 
 type Req = {
   livreurId: string;

@@ -1,5 +1,5 @@
 import { IdentifiantsInvalidesError } from "@ecoeats/domain";
-import { DepotComptes } from "../ports/DepotComptes";
+import { DepotComptes } from "../../ports/DepotComptes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -10,8 +10,12 @@ type Req = {
 
 type Res = {
   token: string;
-  role: string;
-  profilId: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    profilId: string;
+  };
 };
 
 export class ConnexionUseCase {
@@ -41,6 +45,14 @@ export class ConnexionUseCase {
       { expiresIn: "24h" }
     );
 
-    return { token, role: compte.role, profilId: compte.profilId };
+    return {
+      token,
+      user: {
+        id: compte.id,
+        email: compte.email,
+        role: compte.role,
+        profilId: compte.profilId,
+      },
+    };
   }
 }

@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #10b981; /* Emerald 500 - Brand green */
+  --color-primary-dark: #059669; /* Emerald 600 */
+  --color-secondary: #f59e0b; /* Amber 500 */
+  --color-background: #f8fafc; /* Slate 50 */
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-background)] text-slate-800 font-sans antialiased;
+  }
+}
+
+/* Animations that make the app feel alive */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

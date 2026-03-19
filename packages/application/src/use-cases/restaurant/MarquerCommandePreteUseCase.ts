@@ -1,5 +1,5 @@
 import { Commande } from "@ecoeats/domain";
-import { DepotCommandes } from "../ports/DepotCommandes";
+import { DepotCommandes } from "../../ports/DepotCommandes";
 
 export class MarquerCommandePreteUseCase {
   constructor(private readonly depotCommandes: DepotCommandes) {}
