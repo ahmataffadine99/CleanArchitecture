@@ -21,16 +21,27 @@ export class CalculPrixService {
     );
   }
 
-  calculerTotal(articles: ReadonlyArray<ArticlePanier>, distanceKm: number): {
+  getTauxReduction(points: number): number {
+    if (points >= 250) return 0.15; // Platine 15%
+    if (points >= 100) return 0.10; // Or 10%
+    if (points >= 50) return 0.05;  // Argent 5%
+    return 0; // Bronze 0%
+  }
+
+  calculerTotal(articles: ReadonlyArray<ArticlePanier>, distanceKm: number, tauxReduction: number = 0): {
     prixPlats: Money;
     fraisLivraison: Money;
     fraisService: Money;
+    reduction: Money;
     total: Money;
   } {
     const prixPlats = this.calculerSousTotalPlats(articles);
     const fraisLivraison = this.calculerFraisLivraison(distanceKm);
     const fraisService = this.calculerFraisService(prixPlats);
-    const total = prixPlats.ajouter(fraisLivraison).ajouter(fraisService);
-    return { prixPlats, fraisLivraison, fraisService, total };
+    
+    const montantReduction = Money.fromEuros(prixPlats.enEuros() * tauxReduction);
+    const total = prixPlats.ajouter(fraisLivraison).ajouter(fraisService).soustraire(montantReduction);
+    
+    return { prixPlats, fraisLivraison, fraisService, reduction: montantReduction, total };
   }
 }

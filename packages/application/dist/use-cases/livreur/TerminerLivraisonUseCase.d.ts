@@ -1,8 +1,8 @@
 import { Livreur, Money } from "@ecoeats/domain";
-import { DepotCommandes } from "../ports/DepotCommandes";
-import { DepotLivreurs } from "../ports/DepotLivreurs";
-import { ServiceCartographie } from "../ports/ServiceCartographie";
-import { DepotRestaurants } from "../ports/DepotRestaurants";
+import { DepotCommandes } from "../../ports/DepotCommandes";
+import { DepotLivreurs } from "../../ports/DepotLivreurs";
+import { ServiceCartographie } from "../../ports/ServiceCartographie";
+import { DepotRestaurants } from "../../ports/DepotRestaurants";
 type Req = {
     commandeId: string;
     livreurId: string;

@@ -5,6 +5,7 @@ import {
   AjouterAuPanierUseCase,
   PasserCommandeUseCase,
   PayerCommandeUseCase,
+  ListerCommandesClientUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesClient(deps: {
@@ -13,7 +14,7 @@ export function creerRoutesClient(deps: {
   ajouterAuPanier: AjouterAuPanierUseCase;
   passerCommande: PasserCommandeUseCase;
   payerCommande: PayerCommandeUseCase;
-  listerCommandesClient: import("@ecoeats/application").ListerCommandesClientUseCase;
+  listerCommandesClient: ListerCommandesClientUseCase;
 }): Router {
   const router = Router();
 
@@ -125,6 +126,22 @@ export function creerRoutesClient(deps: {
           quantite: a.quantite
         }))
       })));
+    } catch (err) { next(err); }
+  });
+
+  // GET /clients/:clientId/points - Points de fidélité du client
+  router.get("/clients/:clientId/points", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clientId = req.params.clientId;
+      const commandes = await deps.listerCommandesClient.executer(clientId);
+      // Calculer le total de points depuis les commandes payées/terminées
+      const totalPoints = commandes
+        .filter((c: any) => ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'LIVREE'].includes(typeof c.getStatut === 'function' ? c.getStatut() : c.statut))
+        .reduce((sum: number, c: any) => {
+          const total = typeof c.prixTotal === 'function' ? c.prixTotal().enCentimes() : (c.totalCentimes ?? 0);
+          return sum + Math.floor(total / 100);
+        }, 0);
+      res.json({ pointsFidelite: totalPoints });
     } catch (err) { next(err); }
   });
 

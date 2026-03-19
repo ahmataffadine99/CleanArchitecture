@@ -30,7 +30,15 @@ class ConnexionUseCase {
             profilId: compte.profilId,
             email: compte.email,
         }, this.secretJwt, { expiresIn: "24h" });
-        return { token, role: compte.role, profilId: compte.profilId };
+        return {
+            token,
+            user: {
+                id: compte.id,
+                email: compte.email,
+                role: compte.role,
+                profilId: compte.profilId,
+            },
+        };
     }
 }
 exports.ConnexionUseCase = ConnexionUseCase;

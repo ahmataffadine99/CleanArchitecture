@@ -1,0 +1,1 @@
+{"version":3,"file":"TransitionStatutInvalideError.js","sourceRoot":"","sources":["../../src/errors/TransitionStatutInvalideError.ts"],"names":[],"mappings":";;;AAAA,iDAA8C;AAG9C,MAAa,6BAA8B,SAAQ,2BAAY;IAC7D,YAAY,MAAsB,EAAE,IAAoB;QACtD,KAAK,CACH,4BAA4B,EAC5B,mCAAmC,MAAM,WAAW,IAAI,IAAI,CAC7D,CAAC;IACJ,CAAC;CACF;AAPD,sEAOC"}

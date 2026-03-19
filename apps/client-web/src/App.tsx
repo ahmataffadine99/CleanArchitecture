@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CartSidebar from './components/CartSidebar';
 import ClientHistory from './pages/ClientHistory';
+import LoyaltyPage from './pages/LoyaltyPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/history" element={<ClientHistory />} />
+          <Route path="/loyalty" element={<LoyaltyPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

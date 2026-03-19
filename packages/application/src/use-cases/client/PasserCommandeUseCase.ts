@@ -49,9 +49,14 @@ export class PasserCommandeUseCase {
       await this.depotPlats.sauvegarder(plat);
     }
 
-    const { prixPlats, fraisLivraison, fraisService } = this.calculPrix.calculerTotal(
+    // Calculer la réduction basée sur les points de fidélité
+    const points = (client as any).getPointsFidelite ? (client as any).getPointsFidelite() : 0;
+    const tauxReduction = this.calculPrix.getTauxReduction(points);
+
+    const { prixPlats, fraisLivraison, fraisService, reduction } = this.calculPrix.calculerTotal(
       req.panier.getArticles(),
-      distanceKm
+      distanceKm,
+      tauxReduction
     );
 
     const commande = new Commande(
@@ -62,7 +67,8 @@ export class PasserCommandeUseCase {
       prixPlats,
       fraisLivraison,
       fraisService,
-      req.adresseLivraison
+      req.adresseLivraison,
+      reduction
     );
 
     await this.depotCommandes.sauvegarder(commande);

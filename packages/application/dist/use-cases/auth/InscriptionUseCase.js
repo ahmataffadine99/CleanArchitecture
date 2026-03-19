@@ -31,7 +31,7 @@ class InscriptionUseCase {
         // Créer l'identifiant de profil (Client ou Restaurant)
         const profilId = (0, uuid_1.v4)();
         if (req.role === "CLIENT") {
-            const client = new domain_1.Client(profilId, req.nom, req.email, "À renseigner");
+            const client = new domain_1.Client(profilId, req.nom, req.email, req.adresse || "À renseigner", req.telephone);
             await this.depotClients.sauvegarder(client);
         }
         else if (req.role === "RESTAURATEUR") {

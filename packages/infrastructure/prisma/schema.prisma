@@ -11,10 +11,12 @@ datasource db {
 }
 
 model Client {
-  id       String   @id
-  nom      String
-  email    String   @unique
-  adresse  String
+  id              String   @id
+  nom             String
+  email           String   @unique
+  adresse         String
+  telephone       String?
+  pointsFidelite  Int      @default(0)
   commandes Commande[]
 }
 
@@ -51,6 +53,7 @@ model Commande {
   prixPlatsCentimes       Int
   fraisLivCentimes        Int
   fraisServiceCentimes    Int
+  reductionCentimes       Int      @default(0)
   adresseLivraison String
   livreurId        String?
   tempsPreparation Int?

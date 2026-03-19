@@ -50,7 +50,7 @@ const listerRestaurants = new ListerRestaurantsUseCase(depotRestaurants);
 const voirMenu          = new VoirMenuRestaurantUseCase(depotPlats);
 const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
 const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaurants, depotClients, depotPlats, cartographie);
-const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement);
+const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement, depotClients);
 const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);

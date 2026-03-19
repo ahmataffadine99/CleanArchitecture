@@ -1,5 +1,5 @@
 import { PlatMenu } from "@ecoeats/domain";
-import { DepotPlats } from "../ports/DepotPlats";
+import { DepotPlats } from "../../ports/DepotPlats";
 type Resultat = {
     disponibles: PlatMenu[];
     rupture: PlatMenu[];

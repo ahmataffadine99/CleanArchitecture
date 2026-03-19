@@ -33,6 +33,7 @@ export class DepotCommandesPrisma implements DepotCommandes {
           prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
           fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
           fraisServiceCentimes: commande.getFraisService().enCentimes(),
+          reductionCentimes: commande.getReduction().enCentimes(),
           adresseLivraison: commande.getAdresseLivraison(),
           articles: {
             create: commande.getArticles().map((a) => ({
@@ -100,7 +101,8 @@ export class DepotCommandesPrisma implements DepotCommandes {
       Money.fromCentimes(row.prixPlatsCentimes),
       Money.fromCentimes(row.fraisLivCentimes),
       Money.fromCentimes(row.fraisServiceCentimes),
-      row.adresseLivraison
+      row.adresseLivraison,
+      Money.fromCentimes(row.reductionCentimes ?? 0)
     );
 
     // Restaurer le statut via la machine à états

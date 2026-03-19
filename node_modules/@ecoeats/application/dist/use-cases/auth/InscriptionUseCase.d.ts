@@ -8,6 +8,7 @@ type Req = {
     motDePasse: string;
     role: RoleUtilisateur;
     adresse?: string;
+    telephone?: string;
 };
 type Res = {
     token: string;

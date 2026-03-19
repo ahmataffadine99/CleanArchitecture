@@ -25,6 +25,11 @@ export class Money {
     return new Money(this.centimes + autre.centimes);
   }
 
+  soustraire(autre: Money): Money {
+    const nouveauMontant = this.centimes - autre.centimes;
+    return new Money(nouveauMontant < 0 ? 0 : nouveauMontant);
+  }
+
   multiplier(facteur: number): Money {
     return new Money(this.centimes * facteur);
   }

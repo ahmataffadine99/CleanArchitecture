@@ -1,0 +1,1 @@
+{"version":3,"file":"PanierConflitRestaurantError.d.ts","sourceRoot":"","sources":["../../src/errors/PanierConflitRestaurantError.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAG9C,qBAAa,4BAA6B,SAAQ,YAAY;gBAChD,kBAAkB,EAAE,MAAM,EAAE,yBAAyB,EAAE,MAAM;IAUzE,QAAQ,CAAC,kBAAkB,EAAE,MAAM,CAAC;IACpC,QAAQ,CAAC,yBAAyB,EAAE,MAAM,CAAC;CAC5C"}

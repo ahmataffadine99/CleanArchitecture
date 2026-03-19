@@ -25,7 +25,7 @@ export class ListerCommandesRestaurantUseCase {
         return {
           ...cmd,
           clientNom: client.nom,
-          clientTelephone: client.telephone || 'Non renseigné',
+          clientTelephone: (client as any).telephone || 'Non renseigné',
           statut: cmd.getStatut(),
           creeLe: cmd.getCreeLe(),
           prixPlatsCentimes: cmd.getPrixPlats().enCentimes(),

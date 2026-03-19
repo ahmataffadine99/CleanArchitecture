@@ -1,12 +1,16 @@
-import { DepotComptes } from "../ports/DepotComptes";
+import { DepotComptes } from "../../ports/DepotComptes";
 type Req = {
     email: string;
     motDePasse: string;
 };
 type Res = {
     token: string;
-    role: string;
-    profilId: string;
+    user: {
+        id: string;
+        email: string;
+        role: string;
+        profilId: string;
+    };
 };
 export declare class ConnexionUseCase {
     private readonly depotComptes;

@@ -7,10 +7,12 @@ class PayerCommandeUseCase {
     depotCommandes;
     depotFactures;
     servicePaiement;
-    constructor(depotCommandes, depotFactures, servicePaiement) {
+    depotClients;
+    constructor(depotCommandes, depotFactures, servicePaiement, depotClients) {
         this.depotCommandes = depotCommandes;
         this.depotFactures = depotFactures;
         this.servicePaiement = servicePaiement;
+        this.depotClients = depotClients;
     }
     async executer(req) {
         const commande = await this.depotCommandes.trouverParId(req.commandeId);
@@ -22,6 +24,19 @@ class PayerCommandeUseCase {
         const facture = new domain_1.Facture((0, uuid_1.v4)(), commande.id, req.clientId, commande.getArticles(), commande.getPrixPlats(), commande.getFraisLivraison(), commande.getFraisService(), commande.prixTotal());
         await this.depotCommandes.sauvegarder(commande);
         await this.depotFactures.sauvegarder(facture);
+        // Créditer les points de fidélité : 1 point par euro dépensé
+        if (this.depotClients) {
+            try {
+                const client = await this.depotClients.trouverParId(req.clientId);
+                const pointsGagnes = Math.floor(commande.prixTotal().enCentimes() / 100);
+                client.crediterPoints(pointsGagnes);
+                await this.depotClients.sauvegarder(client);
+            }
+            catch (_) {
+                // Non bloquant : si le client n'est pas trouvé, on log silencieusement
+                console.warn(`[Fidélité] Client ${req.clientId} introuvable pour créditer les points.`);
+            }
+        }
         return { commande, facture };
     }
 }

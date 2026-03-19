@@ -9,12 +9,20 @@ export class DepotClientsPrisma implements DepotClients {
   async sauvegarder(client: Client): Promise<void> {
     await this.prisma.client.upsert({
       where: { id: client.id },
-      update: { nom: client.nom, email: client.email, adresse: client.adresse },
+      update: { 
+        nom: client.nom, 
+        email: client.email, 
+        adresse: client.adresse,
+        telephone: client.telephone,
+        pointsFidelite: client.getPointsFidelite()
+      },
       create: {
         id: client.id,
         nom: client.nom,
         email: client.email,
         adresse: client.adresse,
+        telephone: client.telephone,
+        pointsFidelite: client.getPointsFidelite()
       },
     });
   }
@@ -22,6 +30,6 @@ export class DepotClientsPrisma implements DepotClients {
   async trouverParId(id: string): Promise<Client> {
     const row = await this.prisma.client.findUnique({ where: { id } });
     if (!row) throw new ClientIntrouvableError(id);
-    return new Client(row.id, row.nom, row.email, row.adresse);
+    return new Client(row.id, row.nom, row.email, row.adresse, row.telephone ?? undefined, (row as any).pointsFidelite ?? 0);
   }
 }

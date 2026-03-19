@@ -17,7 +17,8 @@ export class Commande {
     private readonly prixPlats: Money,
     private readonly fraisLivraison: Money,
     private readonly fraisService: Money,
-    private readonly adresseLivraison: string
+    private readonly adresseLivraison: string,
+    private readonly reduction: Money = Money.zero()
   ) {
     this.creeLe = new Date();
   }
@@ -49,7 +50,7 @@ export class Commande {
   }
 
   prixTotal(): Money {
-    return this.prixPlats.ajouter(this.fraisLivraison).ajouter(this.fraisService);
+    return this.prixPlats.ajouter(this.fraisLivraison).ajouter(this.fraisService).soustraire(this.reduction);
   }
 
   getStatut(): StatutCommande {
@@ -63,6 +64,7 @@ export class Commande {
   getPrixPlats(): Money { return this.prixPlats; }
   getFraisLivraison(): Money { return this.fraisLivraison; }
   getFraisService(): Money { return this.fraisService; }
+  getReduction(): Money { return this.reduction; }
   getLivreurId(): string | null { return this.livreurId; }
   getTempsPreparation(): number | null { return this.tempsPreparationEstime; }
   getCreeLe(): Date { return this.creeLe; }

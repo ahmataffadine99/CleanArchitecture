@@ -1,6 +1,7 @@
 import { Commande, StatutCommande, Facture } from "@ecoeats/domain";
 import { DepotCommandes } from "../../ports/DepotCommandes";
 import { DepotFactures } from "../../ports/DepotFactures";
+import { DepotClients } from "../../ports/DepotClients";
 import { ServicePaiement } from "../../ports/ServicePaiement";
 import { v4 as uuid } from "uuid";
 
@@ -18,7 +19,8 @@ export class PayerCommandeUseCase {
   constructor(
     private readonly depotCommandes: DepotCommandes,
     private readonly depotFactures: DepotFactures,
-    private readonly servicePaiement: ServicePaiement
+    private readonly servicePaiement: ServicePaiement,
+    private readonly depotClients?: DepotClients
   ) {}
 
   async executer(req: Req): Promise<Resultat> {
@@ -48,6 +50,19 @@ export class PayerCommandeUseCase {
 
     await this.depotCommandes.sauvegarder(commande);
     await this.depotFactures.sauvegarder(facture);
+
+    // Créditer les points de fidélité : 1 point par euro dépensé
+    if (this.depotClients) {
+      try {
+        const client = await this.depotClients.trouverParId(req.clientId);
+        const pointsGagnes = Math.floor(commande.prixTotal().enCentimes() / 100);
+        (client as any).crediterPoints(pointsGagnes);
+        await this.depotClients.sauvegarder(client);
+      } catch (_) {
+        // Non bloquant : si le client n'est pas trouvé, on log silencieusement
+        console.warn(`[Fidélité] Client ${req.clientId} introuvable pour créditer les points.`);
+      }
+    }
 
     return { commande, facture };
   }

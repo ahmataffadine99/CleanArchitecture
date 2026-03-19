@@ -21,8 +21,38 @@ export default function Checkout() {
   const [step, setStep] = useState<'form' | 'processing' | 'success'>('form');
   const [error, setError] = useState<string | null>(null);
   const [facture, setFacture] = useState<any>(null);
-
+  const [points, setPoints] = useState<number>(0);
   const clientId = user?.profilId;
+
+  const fetchPoints = async () => {
+    if (!clientId || !token) return;
+    try {
+      const res = await fetch(`/api/clients/${clientId}/points`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPoints(data.pointsFidelite ?? 0);
+      }
+    } catch (err) {
+      console.error('Erreur points:', err);
+    }
+  };
+
+  useState(() => {
+    fetchPoints();
+  });
+
+  const getTauxReduction = () => {
+    if (points >= 250) return 0.15;
+    if (points >= 100) return 0.10;
+    if (points >= 50) return 0.05;
+    return 0;
+  };
+
+  const tauxReduc = getTauxReduction();
+  const montantReduc = total() * tauxReduc;
+  const netAPayer = total() - montantReduc;
 
   const processOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -279,7 +309,7 @@ export default function Checkout() {
               <div className="pt-12 border-t border-slate-100">
                 <div className="flex justify-between items-end mb-8">
                   <span className="text-slate-400 font-black uppercase tracking-widest text-xs">Total de la commande</span>
-                  <span className="text-4xl font-black text-slate-900 leading-none">{total().toFixed(2)} €</span>
+                  <span className="text-4xl font-black text-slate-900 leading-none">{netAPayer.toFixed(2)} €</span>
                 </div>
                 <button 
                   type="submit" 
@@ -322,12 +352,22 @@ export default function Checkout() {
                 </ul>
                 <div className="mt-10 pt-8 border-t border-white/10 space-y-4 relative z-10">
                   <div className="flex justify-between text-sm font-bold text-slate-400">
+                    <span>Sous-total</span>
+                    <span>{total().toFixed(2)} €</span>
+                  </div>
+                  {tauxReduc > 0 && (
+                    <div className="flex justify-between text-sm font-black text-emerald-400">
+                      <span>Réduction ({points >= 250 ? 'Platine' : points >= 100 ? 'Or' : 'Argent'} -{tauxReduc * 100}%)</span>
+                      <span>-{montantReduc.toFixed(2)} €</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm font-bold text-slate-400">
                     <span>Livraison Éco</span>
                     <span className="text-emerald-400">OFFERTE</span>
                   </div>
-                  <div className="flex justify-between text-xl font-black pt-2">
-                    <span>Total</span>
-                    <span className="text-emerald-400">{total().toFixed(2)} €</span>
+                  <div className="flex justify-between text-xl font-black pt-2 border-t border-white/5 mt-2">
+                    <span>Net à payer</span>
+                    <span className="text-emerald-400">{netAPayer.toFixed(2)} €</span>
                   </div>
                 </div>
               </div>
