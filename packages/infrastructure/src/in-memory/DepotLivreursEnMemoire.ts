@@ -15,6 +15,12 @@ export class DepotLivreursEnMemoire implements DepotLivreurs {
   }
 
   async listerDisponibles(): Promise<Livreur[]> {
-    return [...this.store.values()].filter(l => l.estDisponible());
+    return [...this.store.values()].filter(l => l.getStatut() === "DISPONIBLE");
+  }
+
+  async retirerPropositionDeTous(commandeId: string): Promise<void> {
+    for (const livreur of this.store.values()) {
+      livreur.refuserProposition(commandeId);
+    }
   }
 }

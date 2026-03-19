@@ -22,7 +22,8 @@ import {
   PasserCommandeUseCase, PayerCommandeUseCase, AjouterPlatUseCase, ModifierPlatUseCase,
   SupprimerPlatUseCase, AccepterCommandeUseCase, RefuserCommandeUseCase,
   MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
-  TerminerLivraisonUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
+  ProposerLivraisonUseCase, AccepterLivraisonUseCase, RefuserLivraisonUseCase, ObtenirPropositionsLivreurUseCase,
+  TerminerLivraisonUseCase, ObtenirLivreurUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
   ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase
 } from "@ecoeats/application";
 
@@ -56,14 +57,19 @@ const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes);
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
 const modifierPlat      = new ModifierPlatUseCase(depotPlats);
 const supprimerPlat     = new SupprimerPlatUseCase(depotPlats);
-const accepterCommande  = new AccepterCommandeUseCase(depotCommandes);
+const proposerLivraison = new ProposerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
+const accepterCommande  = new AccepterCommandeUseCase(depotCommandes, proposerLivraison);
 const refuserCommande   = new RefuserCommandeUseCase(depotCommandes);
-const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes);
+const accepterLivraison = new AccepterLivraisonUseCase(depotCommandes, depotLivreurs);
+const refuserLivraison  = new RefuserLivraisonUseCase(depotLivreurs);
+const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes, proposerLivraison);
 const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes, depotClients);
 const modifierRestaurant = new ModifierRestaurantUseCase(depotRestaurants);
 const obtenirMonResto   = new ObtenirMonRestaurantUseCase(depotRestaurants);
 
-const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs);
+const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs, depotCommandes);
+const obtenirLivreur    = new ObtenirLivreurUseCase(depotLivreurs);
+const obtenirPropositions = new ObtenirPropositionsLivreurUseCase(depotLivreurs, depotCommandes, depotRestaurants);
 const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 
@@ -71,7 +77,7 @@ import cors from "cors";
 
 // --- JWT Secret (en dur pour la démo, normalement dans .env) ---
 const SECRET_JWT = process.env.JWT_SECRET || "mon_super_secret_jwt_hyper_securise";
-const inscription       = new InscriptionUseCase(depotComptes, depotClients, depotRestaurants, SECRET_JWT);
+const inscription       = new InscriptionUseCase(depotComptes, depotClients, depotRestaurants, depotLivreurs, SECRET_JWT);
 const connexion         = new ConnexionUseCase(depotComptes, SECRET_JWT);
 
 // --- Serveur Express ---
@@ -93,8 +99,30 @@ app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient }));
 
 // Routes nécessitant une authentification
-app.use("/api", requireAuth, requireRole("RESTAURATEUR"), creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete, listerCommandes, modifierRestaurant, obtenirMonResto, servicePanier: ajouterAuPanier }));
-app.use("/api", requireAuth, creerRoutesLivreur({ changerStatut, attribuerLivraison, terminerLivraison }));
+app.use("/api", requireAuth, (req, res, next) => {
+  const restoPaths = ["/restaurant", "/plats", "/commandes"];
+  const isRestoCommand = (req.path.includes("/accepter") || req.path.includes("/refuser") || req.path.includes("/prete")) && !req.path.includes("/livreurs");
+  if (req.path.startsWith("/restaurant") || req.path.startsWith("/plats") || isRestoCommand) {
+    return requireRole("RESTAURATEUR")(req, res, next);
+  }
+  next();
+}, creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete, listerCommandes, modifierRestaurant, obtenirMonResto, servicePanier: ajouterAuPanier }));
+
+app.use("/api", requireAuth, (req, res, next) => {
+  const isLivreurCommand = req.path.includes("/attribuer-livreur") || req.path.includes("/livree") || req.path.includes("/propositions");
+  if (req.path.startsWith("/livreurs") || isLivreurCommand) {
+    return requireRole("LIVREUR")(req, res, next);
+  }
+  next();
+}, creerRoutesLivreur({ 
+  changerStatut, 
+  attribuerLivraison, 
+  terminerLivraison, 
+  obtenirLivreur,
+  accepterLivraison,
+  refuserLivraison,
+  obtenirPropositions,
+}));
 
 app.use(gestionnaireErreurs);
 

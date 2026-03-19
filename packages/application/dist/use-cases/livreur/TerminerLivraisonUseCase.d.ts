@@ -13,6 +13,7 @@ export declare class TerminerLivraisonUseCase {
     private readonly depotLivreurs;
     private readonly depotRestaurants;
     private readonly cartographie;
+    private readonly calculGains;
     constructor(depotCommandes: DepotCommandes, depotLivreurs: DepotLivreurs, depotRestaurants: DepotRestaurants, cartographie: ServiceCartographie);
     executer(req: Req): Promise<{
         livreur: Livreur;

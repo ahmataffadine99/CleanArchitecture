@@ -13,12 +13,14 @@ class InscriptionUseCase {
     depotComptes;
     depotClients;
     depotRestaurants;
+    depotLivreurs;
     secretJwt;
     SALT_ROUNDS = 10;
-    constructor(depotComptes, depotClients, depotRestaurants, secretJwt) {
+    constructor(depotComptes, depotClients, depotRestaurants, depotLivreurs, secretJwt) {
         this.depotComptes = depotComptes;
         this.depotClients = depotClients;
         this.depotRestaurants = depotRestaurants;
+        this.depotLivreurs = depotLivreurs;
         this.secretJwt = secretJwt;
     }
     async executer(req) {
@@ -41,6 +43,13 @@ class InscriptionUseCase {
             profilId // Le profilId sert d'identifiant stable pour le dashboard
             );
             await this.depotRestaurants.sauvegarder(restaurant);
+        }
+        else if (req.role === "LIVREUR") {
+            const livreur = new domain_1.Livreur(profilId, req.nom, new domain_1.Coordonnees(48.8566, 2.3522), // Position par défaut (Paris)
+            req.telephone || "À renseigner", false, // Pas expert par défaut
+            domain_1.Money.zero() // Portefeuille vide au départ
+            );
+            await this.depotLivreurs.sauvegarder(livreur);
         }
         // Créer et sauvegarder le compte
         const compteId = (0, uuid_1.v4)();

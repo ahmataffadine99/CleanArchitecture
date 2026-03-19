@@ -12,7 +12,7 @@ export class SelectionLivreurService {
     positionRestaurant: Coordonnees,
     restaurantId: string
   ): Livreur {
-    const dispos = livreurs.filter(l => l.estDisponible());
+    const dispos = livreurs.filter(l => l.estDisponible(restaurantId));
 
     if (dispos.length === 0) {
       throw new AucunLivreurDisponibleError(restaurantId);

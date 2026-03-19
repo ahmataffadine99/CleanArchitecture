@@ -120,6 +120,7 @@ export function creerRoutesClient(deps: {
         fraisServiceCentimes: c.getFraisService().enCentimes(),
         totalCentimes: c.prixTotal().enCentimes(),
         creeLe: c.getCreeLe(),
+        tempsPreparationEstime: c.getTempsPreparation(),
         adresseLivraison: c.getAdresseLivraison(),
         articles: c.getArticles().map((a: any) => ({
           nom: a.nom,

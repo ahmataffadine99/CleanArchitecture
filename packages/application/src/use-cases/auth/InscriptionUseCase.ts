@@ -1,8 +1,9 @@
-import { CompteUtilisateur, RoleUtilisateur, Client, Restaurant, Coordonnees } from "@ecoeats/domain";
+import { CompteUtilisateur, RoleUtilisateur, Client, Restaurant, Coordonnees, Livreur, Money } from "@ecoeats/domain";
 import { EmailDejaUtiliseError } from "@ecoeats/domain";
 import { DepotComptes } from "../../ports/DepotComptes";
 import { DepotClients } from "../../ports/DepotClients";
 import { DepotRestaurants } from "../../ports/DepotRestaurants";
+import { DepotLivreurs } from "../../ports/DepotLivreurs";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -33,6 +34,7 @@ export class InscriptionUseCase {
     private readonly depotComptes: DepotComptes,
     private readonly depotClients: DepotClients,
     private readonly depotRestaurants: DepotRestaurants,
+    private readonly depotLivreurs: DepotLivreurs,
     private readonly secretJwt: string
   ) {}
 
@@ -60,6 +62,16 @@ export class InscriptionUseCase {
         profilId // Le profilId sert d'identifiant stable pour le dashboard
       );
       await this.depotRestaurants.sauvegarder(restaurant);
+    } else if (req.role === "LIVREUR") {
+      const livreur = new Livreur(
+        profilId,
+        req.nom,
+        new Coordonnees(48.8566, 2.3522), // Position par défaut (Paris)
+        req.telephone || "À renseigner",
+        false, // Pas expert par défaut
+        Money.zero() // Portefeuille vide au départ
+      );
+      await this.depotLivreurs.sauvegarder(livreur);
     }
 
     // Créer et sauvegarder le compte

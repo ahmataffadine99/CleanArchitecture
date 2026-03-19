@@ -81,6 +81,17 @@ export class DepotCommandesPrisma implements DepotCommandes {
     return rows.map((r) => this.reconstruire(r));
   }
 
+  async trouverCommandesSansLivreur(): Promise<Commande[]> {
+    const rows = await this.prisma.commande.findMany({
+      where: {
+        statut: { in: [StatutCommande.EN_PREPARATION, StatutCommande.PRETE] },
+        livreurId: null,
+      },
+      include: { articles: true },
+    });
+    return rows.map((r) => this.reconstruire(r));
+  }
+
   private reconstruire(row: any): Commande {
     const articles = (row.articles ?? []).map(
       (a: any) =>
@@ -105,10 +116,15 @@ export class DepotCommandesPrisma implements DepotCommandes {
       Money.fromCentimes(row.reductionCentimes ?? 0)
     );
 
-    // Restaurer le statut via la machine à états
+    // Restaurer le statut via la machine à états (ceci ne restaure pas le temps de préparation)
     const transitions: StatutCommande[] = this.retrouverTransitions(row.statut as StatutCommande);
     for (const t of transitions) {
       try { commande.changerStatut(t); } catch (_) {}
+    }
+
+    // Restaurer le temps de préparation s'il est présent
+    if (row.tempsPreparation !== null && row.tempsPreparation !== undefined) {
+      commande.restaurerTempsPreparation(row.tempsPreparation);
     }
 
     return commande;

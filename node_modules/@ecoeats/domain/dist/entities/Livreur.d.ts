@@ -8,15 +8,21 @@ export declare class Livreur {
     telephone: string;
     private statut;
     private portefeuille;
-    private commandeEnCoursId;
-    constructor(id: string, nom: string, position: Coordonnees, telephone: string);
+    private commandesEnCoursIds;
+    private propositionsIds;
+    estExpert: boolean;
+    constructor(id: string, nom: string, position: Coordonnees, telephone: string, estExpert?: boolean, portefeuille?: Money, propositionsIds?: string[]);
     seDeclarerDisponible(): void;
     seDeclarerIndisponible(): void;
     prendreEnCharge(commandeId: string): void;
-    terminerLivraison(gains: Money): void;
-    estDisponible(): boolean;
+    terminerLivraison(commandeId: string, gains: Money): void;
+    estDisponible(restaurantId?: string): boolean;
     getStatut(): StatutLivreur;
     getPortefeuille(): Money;
-    getCommandeEnCoursId(): string | null;
+    getCommandesEnCoursIds(): string[];
+    getPropositionsIds(): string[];
+    recevoirProposition(commandeId: string): void;
+    accepterProposition(commandeId: string): void;
+    refuserProposition(commandeId: string): void;
 }
 //# sourceMappingURL=Livreur.d.ts.map

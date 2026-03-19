@@ -27,4 +27,10 @@ export class DepotCommandesEnMemoire implements DepotCommandes {
   async trouverTout(): Promise<Commande[]> {
     return [...this.store.values()];
   }
+
+  async trouverCommandesSansLivreur(): Promise<Commande[]> {
+    return [...this.store.values()].filter(c => 
+      ['EN_PREPARATION', 'PRETE'].includes(c.getStatut()) && !c.getLivreurId()
+    );
+  }
 }

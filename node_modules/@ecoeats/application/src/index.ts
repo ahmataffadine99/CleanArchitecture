@@ -34,5 +34,10 @@ export { ObtenirMonRestaurantUseCase } from "./use-cases/restaurant/ObtenirMonRe
 
 // Use Cases Livreur
 export { ChangerStatutLivreurUseCase } from "./use-cases/livreur/ChangerStatutLivreurUseCase";
+export { ProposerLivraisonUseCase } from "./use-cases/livreur/ProposerLivraisonUseCase";
+export { AccepterLivraisonUseCase } from "./use-cases/livreur/AccepterLivraisonUseCase";
+export { RefuserLivraisonUseCase } from "./use-cases/livreur/RefuserLivraisonUseCase";
+export { ObtenirPropositionsLivreurUseCase } from "./use-cases/livreur/ObtenirPropositionsLivreurUseCase";
 export { AttribuerLivraisonUseCase } from "./use-cases/livreur/AttribuerLivraisonUseCase";
 export { TerminerLivraisonUseCase } from "./use-cases/livreur/TerminerLivraisonUseCase";
+export { ObtenirLivreurUseCase } from "./use-cases/livreur/ObtenirLivreurUseCase";

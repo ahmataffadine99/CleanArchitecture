@@ -14,7 +14,7 @@ const TRANSITIONS_AUTORISEES: Record<StatutCommande, StatutCommande[]> = {
   [StatutCommande.EN_ATTENTE]:     [StatutCommande.PAYEE],
   [StatutCommande.PAYEE]:          [StatutCommande.ACCEPTEE, StatutCommande.REFUSEE],
   [StatutCommande.ACCEPTEE]:       [StatutCommande.EN_PREPARATION],
-  [StatutCommande.EN_PREPARATION]: [StatutCommande.PRETE],
+  [StatutCommande.EN_PREPARATION]: [StatutCommande.PRETE, StatutCommande.EN_LIVRAISON],
   [StatutCommande.PRETE]:          [StatutCommande.EN_LIVRAISON],
   [StatutCommande.EN_LIVRAISON]:   [StatutCommande.LIVREE],
   [StatutCommande.REFUSEE]:        [],

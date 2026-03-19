@@ -69,4 +69,8 @@ export class Commande {
   getTempsPreparation(): number | null { return this.tempsPreparationEstime; }
   getCreeLe(): Date { return this.creeLe; }
   getAdresseLivraison(): string { return this.adresseLivraison; }
+
+  restaurerTempsPreparation(minutes: number): void {
+    this.tempsPreparationEstime = minutes;
+  }
 }

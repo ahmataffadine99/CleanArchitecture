@@ -34,8 +34,11 @@ class PasserCommandeUseCase {
             plat.diminuerStock(article.quantite);
             await this.depotPlats.sauvegarder(plat);
         }
-        const { prixPlats, fraisLivraison, fraisService } = this.calculPrix.calculerTotal(req.panier.getArticles(), distanceKm);
-        const commande = new domain_1.Commande((0, uuid_1.v4)(), req.clientId, restaurantId, [...req.panier.getArticles()], prixPlats, fraisLivraison, fraisService, req.adresseLivraison);
+        // Calculer la réduction basée sur les points de fidélité
+        const points = client.getPointsFidelite ? client.getPointsFidelite() : 0;
+        const tauxReduction = this.calculPrix.getTauxReduction(points);
+        const { prixPlats, fraisLivraison, fraisService, reduction } = this.calculPrix.calculerTotal(req.panier.getArticles(), distanceKm, tauxReduction);
+        const commande = new domain_1.Commande((0, uuid_1.v4)(), req.clientId, restaurantId, [...req.panier.getArticles()], prixPlats, fraisLivraison, fraisService, req.adresseLivraison, reduction);
         await this.depotCommandes.sauvegarder(commande);
         req.panier.vider();
         return commande;

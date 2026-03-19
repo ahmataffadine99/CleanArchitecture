@@ -3,14 +3,47 @@ import {
   ChangerStatutLivreurUseCase,
   AttribuerLivraisonUseCase,
   TerminerLivraisonUseCase,
+  ObtenirLivreurUseCase,
+  AccepterLivraisonUseCase,
+  RefuserLivraisonUseCase,
+  ObtenirPropositionsLivreurUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesLivreur(deps: {
   changerStatut: ChangerStatutLivreurUseCase;
   attribuerLivraison: AttribuerLivraisonUseCase;
   terminerLivraison: TerminerLivraisonUseCase;
+  obtenirLivreur: ObtenirLivreurUseCase;
+  accepterLivraison: AccepterLivraisonUseCase;
+  refuserLivraison: RefuserLivraisonUseCase;
+  obtenirPropositions: ObtenirPropositionsLivreurUseCase;
 }): Router {
   const router = Router();
+
+  // GET /livreurs/:id/propositions
+  router.get("/livreurs/:id/propositions", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const details = await deps.obtenirPropositions.executer(req.params.id);
+      res.json(details);
+    } catch (err) { next(err); }
+  });
+
+
+  // GET /livreurs/:id
+  router.get("/livreurs/:id", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const livreur = await deps.obtenirLivreur.executer(req.params.id);
+      res.json({
+        id: livreur.id,
+        nom: livreur.nom,
+        telephone: livreur.telephone,
+        statut: livreur.getStatut(),
+        portefeuille: livreur.getPortefeuille().enEuros(),
+        estExpert: livreur.estExpert,
+        commandesEnCoursIds: livreur.getCommandesEnCoursIds()
+      });
+    } catch (err) { next(err); }
+  });
 
   // PATCH /livreurs/:id/statut
   router.patch("/livreurs/:id/statut", async (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +81,28 @@ export function creerRoutesLivreur(deps: {
         gains: gains.enEuros(),
         portefeuille: livreur.getPortefeuille().enEuros(),
       });
+    } catch (err) { next(err); }
+  });
+
+  // POST /livreurs/:id/propositions/:commandeId/accepter
+  router.post("/livreurs/:id/propositions/:commandeId/accepter", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.accepterLivraison.executer({
+        livreurId: req.params.id,
+        commandeId: req.params.commandeId,
+      });
+      res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  // POST /livreurs/:id/propositions/:commandeId/refuser
+  router.post("/livreurs/:id/propositions/:commandeId/refuser", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.refuserLivraison.executer({
+        livreurId: req.params.id,
+        commandeId: req.params.commandeId,
+      });
+      res.status(204).send();
     } catch (err) { next(err); }
   });
 

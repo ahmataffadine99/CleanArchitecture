@@ -7,7 +7,7 @@ const AucunLivreurDisponibleError_1 = require("../errors/AucunLivreurDisponibleE
 class SelectionLivreurService {
     calculDistance = new CalculDistanceService_1.CalculDistanceService();
     trouverLePlusProche(livreurs, positionRestaurant, restaurantId) {
-        const dispos = livreurs.filter(l => l.estDisponible());
+        const dispos = livreurs.filter(l => l.estDisponible(restaurantId));
         if (dispos.length === 0) {
             throw new AucunLivreurDisponibleError_1.AucunLivreurDisponibleError(restaurantId);
         }

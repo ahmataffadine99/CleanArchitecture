@@ -1,3 +1,4 @@
+"use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -188,6 +189,7 @@ var DepotCommandesPrisma = class {
           prixPlatsCentimes: commande.getPrixPlats().enCentimes(),
           fraisLivCentimes: commande.getFraisLivraison().enCentimes(),
           fraisServiceCentimes: commande.getFraisService().enCentimes(),
+          reductionCentimes: commande.getReduction().enCentimes(),
           adresseLivraison: commande.getAdresseLivraison(),
           articles: {
             create: commande.getArticles().map((a) => ({
@@ -248,7 +250,8 @@ var DepotCommandesPrisma = class {
       import_domain5.Money.fromCentimes(row.prixPlatsCentimes),
       import_domain5.Money.fromCentimes(row.fraisLivCentimes),
       import_domain5.Money.fromCentimes(row.fraisServiceCentimes),
-      row.adresseLivraison
+      row.adresseLivraison,
+      import_domain5.Money.fromCentimes(row.reductionCentimes ?? 0)
     );
     const transitions = this.retrouverTransitions(row.statut);
     for (const t of transitions) {
@@ -417,19 +420,27 @@ var DepotClientsPrisma = class {
   async sauvegarder(client) {
     await this.prisma.client.upsert({
       where: { id: client.id },
-      update: { nom: client.nom, email: client.email, adresse: client.adresse },
+      update: {
+        nom: client.nom,
+        email: client.email,
+        adresse: client.adresse,
+        telephone: client.telephone,
+        pointsFidelite: client.getPointsFidelite()
+      },
       create: {
         id: client.id,
         nom: client.nom,
         email: client.email,
-        adresse: client.adresse
+        adresse: client.adresse,
+        telephone: client.telephone,
+        pointsFidelite: client.getPointsFidelite()
       }
     });
   }
   async trouverParId(id) {
     const row = await this.prisma.client.findUnique({ where: { id } });
     if (!row) throw new import_domain13.ClientIntrouvableError(id);
-    return new import_domain12.Client(row.id, row.nom, row.email, row.adresse);
+    return new import_domain12.Client(row.id, row.nom, row.email, row.adresse, row.telephone ?? void 0, row.pointsFidelite ?? 0);
   }
 };
 
@@ -446,7 +457,10 @@ var DepotLivreursPrisma = class {
         statut: livreur.getStatut(),
         portefeuilleCentimes: livreur.getPortefeuille().enCentimes(),
         latitude: livreur.position.latitude,
-        longitude: livreur.position.longitude
+        longitude: livreur.position.longitude,
+        estExpert: livreur.estExpert,
+        commandesEnCoursIds: livreur.getCommandesEnCoursIds(),
+        propositionsIds: livreur.getPropositionsIds()
       },
       create: {
         id: livreur.id,
@@ -455,7 +469,10 @@ var DepotLivreursPrisma = class {
         latitude: livreur.position.latitude,
         longitude: livreur.position.longitude,
         statut: livreur.getStatut(),
-        portefeuilleCentimes: 0
+        portefeuilleCentimes: livreur.getPortefeuille().enCentimes(),
+        estExpert: livreur.estExpert,
+        commandesEnCoursIds: livreur.getCommandesEnCoursIds(),
+        propositionsIds: livreur.getPropositionsIds()
       }
     });
   }
@@ -475,10 +492,24 @@ var DepotLivreursPrisma = class {
       row.id,
       row.nom,
       new import_domain14.Coordonnees(row.latitude, row.longitude),
-      row.telephone
+      row.telephone,
+      row.estExpert,
+      import_domain14.Money.fromCentimes(row.portefeuilleCentimes),
+      row.propositionsIds || []
     );
-    if (row.statut === import_domain14.StatutLivreur.DISPONIBLE) {
+    const statut = row.statut;
+    if (statut === import_domain14.StatutLivreur.DISPONIBLE) {
       livreur.seDeclarerDisponible();
+    } else if (statut === import_domain14.StatutLivreur.EN_LIVRAISON) {
+      livreur.seDeclarerDisponible();
+      for (const cmdId of row.commandesEnCoursIds || []) {
+        try {
+          livreur.prendreEnCharge(cmdId);
+        } catch (_) {
+        }
+      }
+    } else {
+      livreur.seDeclarerIndisponible();
     }
     return livreur;
   }

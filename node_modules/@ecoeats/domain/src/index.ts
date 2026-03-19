@@ -33,6 +33,7 @@ export { EmailDejaUtiliseError } from "./errors/EmailDejaUtiliseError";
 export { CalculDistanceService } from "./services/CalculDistanceService";
 export { CalculPrixService } from "./services/CalculPrixService";
 export { SelectionLivreurService } from "./services/SelectionLivreurService";
+export { CalculGainsLivreurService } from "./services/CalculGainsLivreurService";
 
 // Events
 export type { EvenementCommande, CommandeCreee, CommandePayee, CommandeAcceptee, CommandeRefusee, CommandePrete, CommandeLivree } from "./events/EvenementsCommande";
