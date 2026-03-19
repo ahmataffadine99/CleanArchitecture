@@ -48,7 +48,18 @@ export default function OrdersDashboard() {
       });
       if (resCmd.ok) {
         const data = await resCmd.json();
-        if (Array.isArray(data)) setCommandes(data);
+        if (Array.isArray(data)) {
+          // Calcul du numéro de commande quotidien
+          const dateCounts: Record<string, number> = {};
+          const sorted = [...data].sort((a, b) => new Date(a.creeLe).getTime() - new Date(b.creeLe).getTime());
+          const enriched = sorted.map(cmd => {
+            const dStr = new Date(cmd.creeLe).toDateString();
+            dateCounts[dStr] = (dateCounts[dStr] || 0) + 1;
+            return { ...cmd, numJour: dateCounts[dStr] };
+          }).reverse(); // Plus récentes en premier
+          
+          setCommandes(enriched);
+        }
       }
 
       const resPan = await fetch(`/api/restaurant/${restaurantId}/paniers-actifs`, {
@@ -195,14 +206,19 @@ export default function OrdersDashboard() {
                 <p className="text-slate-400 text-sm font-medium">Tout est à jour ! Aucune nouvelle demande.</p>
               </div>
             )}
-            {commandes.filter(c => ['EN_ATTENTE', 'PAYEE'].includes(c.statut)).map(cmd => (
+            {commandes.filter(c => ['EN_ATTENTE', 'PAYEE'].includes(c.statut)).map((cmd: any) => (
               <div key={cmd.id} className="border border-slate-100 rounded-3xl p-6 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all border-l-4 border-l-blue-500">
                 <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs font-mono text-slate-400 font-bold bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm">ID: {cmd.id.split('-')[0].toUpperCase()}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-slate-700 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                      #{cmd.numJour}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 font-bold bg-white px-2 py-1 rounded-full border border-slate-100">ID: {cmd.id.split('-')[0].toUpperCase()}</span>
+                  </div>
                   <span className="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-tighter">PAYÉE</span>
                 </div>
                 <ul className="mb-6 space-y-2.5">
-                  {cmd.articles.map((art, i) => (
+                  {cmd.articles.map((art: any, i: number) => (
                     <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center group">
                       <span className="flex items-center gap-3">
                         <span className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-xs font-black text-slate-800 border-2 border-slate-100 group-hover:border-blue-200 transition-colors">{art.quantite}x</span>
@@ -247,14 +263,19 @@ export default function OrdersDashboard() {
                 <p className="text-slate-400 text-sm font-medium">Les fourneaux attendent...</p>
               </div>
             )}
-            {commandes.filter(c => ['ACCEPTEE', 'EN_PREPARATION'].includes(c.statut)).map(cmd => (
+            {commandes.filter(c => ['ACCEPTEE', 'EN_PREPARATION'].includes(c.statut)).map((cmd: any) => (
               <div key={cmd.id} className="border border-amber-100 rounded-3xl p-6 bg-amber-50/20 hover:bg-white hover:shadow-xl hover:shadow-amber-200/50 transition-all border-l-4 border-l-amber-500">
                 <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs font-mono text-slate-400 font-bold bg-white px-3 py-1 rounded-full border border-slate-100">ID: {cmd.id.split('-')[0].toUpperCase()}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-amber-700 bg-white px-3 py-1 rounded-full border border-amber-200 shadow-sm">
+                      #{cmd.numJour}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 font-bold bg-white px-2 py-1 rounded-full border border-slate-100">ID: {cmd.id.split('-')[0].toUpperCase()}</span>
+                  </div>
                   <span className="text-xs font-black text-amber-600 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-tighter">EN COURS</span>
                 </div>
                 <ul className="mb-6 space-y-2.5">
-                  {cmd.articles.map((art, i) => (
+                  {cmd.articles.map((art: any, i: number) => (
                     <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center group">
                       <span className="flex items-center gap-3">
                         <span className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-xs font-black text-slate-800 border-2 border-amber-100 group-hover:border-amber-300 transition-colors">{art.quantite}x</span>

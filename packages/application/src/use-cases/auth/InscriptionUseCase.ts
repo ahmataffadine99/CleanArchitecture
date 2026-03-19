@@ -12,7 +12,8 @@ type Req = {
   email: string;
   motDePasse: string;
   role: RoleUtilisateur;
-  adresse?: string; // Utilisé pour le restaurant
+  adresse?: string; // Utilisé pour le restaurant et client
+  telephone?: string;
 };
 
 type Res = {
@@ -47,7 +48,7 @@ export class InscriptionUseCase {
     const profilId = uuid();
 
     if (req.role === "CLIENT") {
-      const client = new Client(profilId, req.nom, req.email, "À renseigner");
+      const client = new Client(profilId, req.nom, req.email, req.adresse || "À renseigner", req.telephone);
       await this.depotClients.sauvegarder(client);
     } else if (req.role === "RESTAURATEUR") {
       // Créer un restaurant par défaut pour le restaurateur

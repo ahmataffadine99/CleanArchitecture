@@ -58,7 +58,7 @@ const supprimerPlat     = new SupprimerPlatUseCase(depotPlats);
 const accepterCommande  = new AccepterCommandeUseCase(depotCommandes);
 const refuserCommande   = new RefuserCommandeUseCase(depotCommandes);
 const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes);
-const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes);
+const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes, depotClients);
 const modifierRestaurant = new ModifierRestaurantUseCase(depotRestaurants);
 const obtenirMonResto   = new ObtenirMonRestaurantUseCase(depotRestaurants);
 

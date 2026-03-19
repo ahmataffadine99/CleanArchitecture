@@ -45,20 +45,28 @@ export function creerRoutesRestaurant(deps: {
   router.get("/restaurant/:id/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commandes = await deps.listerCommandes.executer(req.params.id);
-      res.json(commandes.map((c: any) => ({
-        id: c.id,
-        restaurantId: c.restaurantId,
-        statut: c.getStatut(),
-        prixPlatsCentimes: c.getPrixPlats().enCentimes(),
-        creeLe: c.getCreeLe(),
-        articles: c.getArticles().map((a: any) => ({
-          id: a.menuItemId,
-          nom: a.nom,
-          quantite: a.quantite,
-          prixCentimes: a.prixSnapshot.enCentimes(),
-          restaurantId: a.restaurantId
-        }))
-      })));
+      res.json(commandes.map((c: any) => {
+        // Handle both Commande instances (if DepotClients wasn't injected) and plain objects
+        const isPlain = typeof c.getStatut !== 'function';
+        
+        return {
+          id: c.id,
+          restaurantId: c.restaurantId,
+          statut: isPlain ? c.statut : c.getStatut(),
+          prixPlatsCentimes: isPlain ? c.prixPlatsCentimes : c.getPrixPlats().enCentimes(),
+          creeLe: isPlain ? c.creeLe : c.getCreeLe(),
+          clientNom: c.clientNom,
+          clientTelephone: c.clientTelephone,
+          adresseLivraison: isPlain ? c.adresseLivraison : c.getAdresseLivraison(),
+          articles: (isPlain ? c.articles : c.getArticles()).map((a: any) => ({
+            id: a.menuItemId,
+            nom: a.nom,
+            quantite: a.quantite,
+            prixCentimes: typeof a.prixSnapshot.enCentimes === 'function' ? a.prixSnapshot.enCentimes() : a.prixSnapshot,
+            restaurantId: a.restaurantId
+          }))
+        };
+      }));
     } catch (err) { next(err); }
   });
 

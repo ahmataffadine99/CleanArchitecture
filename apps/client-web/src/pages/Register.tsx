@@ -8,6 +8,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [adresse, setAdresse] = useState('');
+  const [telephone, setTelephone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -32,7 +34,9 @@ const Register = () => {
           email, 
           motDePasse: password, 
           role: 'CLIENT',
-          nom: name 
+          nom: name,
+          adresse,
+          telephone
         }),
       });
 
@@ -63,7 +67,7 @@ const Register = () => {
         </div>
 
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-emerald-200/40 p-10 border border-emerald-50">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -81,67 +85,87 @@ const Register = () => {
                   type="text" required
                   autoComplete="name"
                   placeholder="Jean Dupont"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                  className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
-                  <Mail size={20} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 col-span-2 sm:col-span-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                <div className="relative group">
+                  <input 
+                    type="email" required
+                    autoComplete="email"
+                    placeholder="nom@exemple.com"
+                    className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
-                <input 
-                  type="email" required
-                  autoComplete="email"
-                  placeholder="nom@exemple.com"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+              </div>
+              <div className="space-y-2 col-span-2 sm:col-span-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Téléphone</label>
+                <div className="relative group">
+                  <input 
+                    type="tel" required
+                    placeholder="06 12 34 56 78"
+                    className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                    value={telephone}
+                    onChange={(e) => setTelephone(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe</label>
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse de livraison complète</label>
               <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
-                  <Lock size={20} />
-                </div>
                 <input 
-                  type="password" required
-                  autoComplete="new-password"
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="text" required
+                  placeholder="123 rue de la Paix, 75001 Paris"
+                  className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                  value={adresse}
+                  onChange={(e) => setAdresse(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Confirmer le mot de passe</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
-                  <Lock size={20} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 col-span-2 sm:col-span-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe</label>
+                <div className="relative group">
+                  <input 
+                    type="password" required
+                    autoComplete="new-password"
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
-                <input 
-                  type="password" required
-                  autoComplete="new-password"
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+              </div>
+
+              <div className="space-y-2 col-span-2 sm:col-span-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Confirmer mot de passe</label>
+                <div className="relative group">
+                  <input 
+                    type="password" required
+                    autoComplete="new-password"
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
             <button 
               type="submit" disabled={loading}
-              className="w-full bg-emerald-600 text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-emerald-200 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+              className="w-full bg-emerald-600 text-white font-black py-4 mt-2 rounded-[1.5rem] shadow-xl shadow-emerald-200 hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={24} />
@@ -154,8 +178,8 @@ const Register = () => {
             </button>
           </form>
 
-          <div className="mt-10 pt-8 border-t border-slate-50 text-center">
-            <p className="text-slate-500 font-medium tracking-tight">
+          <div className="mt-8 pt-6 border-t border-slate-50 text-center">
+            <p className="text-slate-500 font-medium tracking-tight text-sm">
               Déjà membre ?{' '}
               <Link to="/login" className="text-emerald-600 font-black hover:text-emerald-700 transition-colors underline decoration-emerald-100 underline-offset-4">
                 Se connecter

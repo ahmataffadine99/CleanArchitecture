@@ -10,8 +10,8 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: any) {
-    const { nom, email, motDePasse, role } = body;
-    const { compte } = await this.inscription.executer({ nom, email, motDePasse, role });
+    const { nom, email, motDePasse, role, adresse, telephone } = body;
+    const { compte } = await this.inscription.executer({ nom, email, motDePasse, role, adresse, telephone });
     
     return {
       id: compte.id,
