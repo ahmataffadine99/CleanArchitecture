@@ -110,7 +110,7 @@ export default function ClientHistory() {
           {commandes.map((cmd) => {
             const date = new Date(cmd.creeLe);
             const isRefus = ['REFUSEE', 'ABANDONNEE'].includes(cmd.statut);
-            const isEnPreparation = ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION'].includes(cmd.statut);
+            const isEnCours = ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'EN_LIVRAISON'].includes(cmd.statut);
             
             // Pour la Timeline, on force le statut ACCEPTEE à correspondre à EN_PREPARATION visuellement
             let currentStepIdx = STEPS.findIndex(s => s.id === cmd.statut);
@@ -127,7 +127,7 @@ export default function ClientHistory() {
                        {isRefus && (
                          <span className="bg-red-100 text-red-600 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg">Annulée</span>
                        )}
-                       {isEnPreparation && cmd.tempsPreparationEstime && (
+                       {isEnCours && cmd.tempsPreparationEstime && (
                          <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg flex items-center gap-2">
                            <Loader2 size={14} className="animate-spin" />
                            <span className="text-xs font-black">
