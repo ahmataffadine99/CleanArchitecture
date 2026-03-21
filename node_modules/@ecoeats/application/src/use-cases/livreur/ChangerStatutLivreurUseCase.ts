@@ -11,7 +11,7 @@ import { DepotRestaurants } from "../../ports/DepotRestaurants";
 import { ServiceCartographie } from "../../ports/ServiceCartographie";
 
 export class ChangerStatutLivreurUseCase {
-  private readonly RAYON_ACTION_KM = 5.0;
+  private readonly RAYON_ACTION_KM = 30.0;
 
   constructor(
     private readonly depotLivreurs: DepotLivreurs,

@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
-import { CheckCircle2, Loader2, MapPin, CreditCard, ChevronLeft, LogIn, Home, Briefcase } from 'lucide-react';
 import { useAddressStore } from '../store/addressStore';
-import type { Address } from '../store/addressStore';
+import { LogIn, MapPin, CheckCircle2, Loader2, ChevronLeft, Home, Briefcase, CreditCard } from 'lucide-react';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function Checkout() {
   const { items, total, clearCart } = useCartStore();
@@ -13,9 +13,12 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const [rue, setRue] = useState('');
+  const [complement, setComplement] = useState('');
   const [ville, setVille] = useState('');
   const [codePostal, setCodePostal] = useState('');
   const [telephone, setTelephone] = useState('');
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
@@ -26,6 +29,8 @@ export default function Checkout() {
       setVille(addr.ville);
       setCodePostal(addr.codePostal);
       setTelephone(addr.telephone);
+      setLatitude(addr.latitude || null);
+      setLongitude(addr.longitude || null);
       setSelectedAddressId(id);
     }
   };
@@ -39,20 +44,6 @@ export default function Checkout() {
   const [facture, setFacture] = useState<any>(null);
   const [points, setPoints] = useState<number>(0);
   const clientId = user?.profilId;
-
-  const getPosition = () => {
-    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir l'adresse de livraison précise")),
-        { enableHighAccuracy: true }
-      );
-    });
-  };
 
   const fetchPoints = async () => {
     if (!clientId || !token) return;
@@ -91,6 +82,12 @@ export default function Checkout() {
     setStep('processing');
     setError(null);
 
+    if (!latitude || !longitude) {
+       setError("Veuillez choisir une adresse valide ou la sélectionner depuis les suggestions pour obtenir la géolocalisation exacte.");
+       setStep('form');
+       return;
+    }
+
     try {
       // 1. Vider l'ancien panier serveur
       await fetch(`/api/panier/${clientId}`, { 
@@ -111,8 +108,7 @@ export default function Checkout() {
         if (!resAdd.ok) throw new Error("Erreur synchro : " + item.nom);
       }
 
-      // 3. Passer la commande avec géolocalisation
-      const position = await getPosition();
+      // 3. Passer la commande avec les coordonnées exactes (API Nominatim ou Adresses enregistrées)
       const resOrder = await fetch('/api/commandes', {
         method: 'POST',
         headers: { 
@@ -121,9 +117,9 @@ export default function Checkout() {
         },
         body: JSON.stringify({
           clientId,
-          adresseLivraison: `${rue}, ${codePostal} ${ville} - Tél: ${telephone}`,
-          latitude: position.latitude,
-          longitude: position.longitude
+          adresseLivraison: `${rue}${complement ? ', ' + complement : ''}, ${codePostal} ${ville} - Tél: ${telephone}`,
+          latitude: latitude,
+          longitude: longitude
         })
       });
 
@@ -275,7 +271,7 @@ export default function Checkout() {
                       ))}
                       <button 
                          type="button"
-                         onClick={() => { setSelectedAddressId(null); setRue(''); setVille(''); setCodePostal(''); setTelephone(''); }}
+                         onClick={() => { setSelectedAddressId(null); setRue(''); setVille(''); setCodePostal(''); setTelephone(''); setLatitude(null); setLongitude(null); }}
                          className={`px-4 py-3 rounded-xl font-bold text-xs transition-all border-2 ${!selectedAddressId ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-transparent text-slate-500'}`}
                       >
                          Nouvelle adresse
@@ -285,14 +281,40 @@ export default function Checkout() {
                 )}
 
                 <div className="space-y-5">
-                  <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Rue & Numéro</label>
-                    <input 
-                      type="text" required
-                      value={rue} onChange={(e) => setRue(e.target.value)}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300 text-sm"
-                      placeholder="Ex: 24 Quai de la Rapée"
-                    />
+                  <div className="space-y-4">
+                    <div className="bg-slate-50 rounded-xl p-1 border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
+                      <AddressAutocomplete 
+                        value={rue && ville ? `${rue}, ${codePostal} ${ville}` : ''}
+                        onChange={() => {}}
+                        onSelect={(fullAddress, lat, lon) => {
+                          const parts = fullAddress.split(',');
+                          let tempRue = parts[0]?.trim() || '';
+                          if (parts.length > 1 && !isNaN(parseInt(parts[0]))) {
+                             tempRue = parts[0].trim() + ' ' + parts[1].trim(); 
+                          }
+                          const cpAndVille = fullAddress.match(/(\d{5})\s+([^,]+)/);
+                          
+                          setRue(tempRue || fullAddress);
+                          setCodePostal(cpAndVille ? cpAndVille[1] : '');
+                          setVille(cpAndVille ? cpAndVille[2].trim() : (parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || ''));
+                          setLatitude(lat);
+                          setLongitude(lon);
+                          setSelectedAddressId(null); // On désélectionne car on tape une nouvelle adresse
+                        }}
+                        placeholder="Rechercher une adresse de livraison..."
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Complément (Bât, Étage...)</label>
+                      <input 
+                        type="text"
+                        value={complement} onChange={(e) => setComplement(e.target.value)}
+                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300 text-sm"
+                        placeholder="Ex: Bâtiment A, 4ème étage"
+                      />
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-5">
                     <div className="space-y-2">

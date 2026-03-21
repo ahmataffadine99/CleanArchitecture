@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, Loader2, Store, MapPin } from 'lucide-react';
+import { UserPlus, Mail, Lock, AlertCircle, Loader2, Store } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -9,24 +10,13 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [restaurantName, setRestaurantName] = useState('');
   const [address, setAddress] = useState('');
+  const [coords, setCoords] = useState({ latitude: 48.8566, longitude: 2.3522 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
-  const getPosition = () => {
-    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir l'emplacement du restaurant")),
-        { enableHighAccuracy: true }
-      );
-    });
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +30,6 @@ const Register = () => {
     }
 
     try {
-      const position = await getPosition();
-      
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,8 +39,8 @@ const Register = () => {
           role: 'RESTAURATEUR',
           nom: restaurantName,
           adresse: address,
-          latitude: position.latitude,
-          longitude: position.longitude
+          latitude: coords.latitude,
+          longitude: coords.longitude
         }),
       });
 
@@ -109,18 +97,15 @@ const Register = () => {
 
             <div className="space-y-2">
               <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                  <MapPin size={20} />
-                </div>
-                <input
-                  type="text" required
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
-                  placeholder="Ville, Rue..."
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </div>
+              <AddressAutocomplete 
+                value={address}
+                onChange={setAddress}
+                onSelect={(addr, lat, lon) => {
+                  setAddress(addr);
+                  setCoords({ latitude: lat, longitude: lon });
+                }}
+                placeholder="Ville, Rue..."
+              />
             </div>
 
             <div className="space-y-2">

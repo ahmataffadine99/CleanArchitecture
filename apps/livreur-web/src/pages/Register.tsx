@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Lock, Mail, User, Phone, Loader2, ArrowRight } from 'lucide-react';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -9,26 +10,17 @@ export default function Register() {
     email: '',
     telephone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    adresse: '',
+    latitude: 48.8566,
+    longitude: 2.3522
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
-  const getPosition = () => {
-    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir votre secteur de travail")),
-        { enableHighAccuracy: true }
-      );
-    });
-  };
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +33,7 @@ export default function Register() {
     setError(null);
 
     try {
-      const position = await getPosition();
+
       
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -52,8 +44,9 @@ export default function Register() {
           telephone: formData.telephone,
           motDePasse: formData.password,
           role: 'LIVREUR',
-          latitude: position.latitude,
-          longitude: position.longitude
+          adresse: formData.adresse,
+          latitude: formData.latitude,
+          longitude: formData.longitude
         })
       });
 
@@ -128,6 +121,18 @@ export default function Register() {
                     className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl pl-12 pr-6 py-4 outline-none transition-all font-bold text-slate-700"
                     placeholder="06 12 34 56 78"
                   />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse de résidence / Zone</label>
+                <div className="relative">
+                   <AddressAutocomplete 
+                      value={formData.adresse}
+                      onChange={val => setFormData({...formData, adresse: val})}
+                      onSelect={(addr, lat, lon) => setFormData({...formData, adresse: addr, latitude: lat, longitude: lon})}
+                      placeholder="Paris, Rue..."
+                   />
                 </div>
               </div>
             </div>

@@ -8,6 +8,7 @@ export class Livreur {
   private commandesEnCoursIds: string[] = [];
   private propositionsIds: string[] = [];
   public estExpert: boolean = false;
+  private currentRestaurantId?: string;
 
   constructor(
     public readonly id: string,
@@ -16,11 +17,13 @@ export class Livreur {
     public telephone: string,
     estExpert: boolean = false,
     portefeuille: Money = Money.zero(),
-    propositionsIds: string[] = []
+    propositionsIds: string[] = [],
+    currentRestaurantId?: string
   ) {
     this.estExpert = estExpert;
     this.portefeuille = portefeuille;
     this.propositionsIds = propositionsIds;
+    this.currentRestaurantId = currentRestaurantId;
   }
 
   seDeclarerDisponible(): void {
@@ -34,7 +37,7 @@ export class Livreur {
     this.statut = StatutLivreur.INDISPONIBLE;
   }
 
-  prendreEnCharge(commandeId: string): void {
+  prendreEnCharge(commandeId: string, restaurantId: string): void {
     if (this.statut === StatutLivreur.INDISPONIBLE) {
       throw new Error(`Le livreur ${this.nom} n'est pas disponible`);
     }
@@ -44,8 +47,13 @@ export class Livreur {
       throw new Error(`Le livreur ${this.nom} a déjà atteint sa limite de livraisons (${nbMax})`);
     }
 
+    if (this.commandesEnCoursIds.length > 0 && this.currentRestaurantId && this.currentRestaurantId !== restaurantId) {
+      throw new Error(`En tant qu'expert, vous ne pouvez cumuler des commandes que du même restaurant.`);
+    }
+
     this.statut = StatutLivreur.EN_LIVRAISON;
     this.commandesEnCoursIds.push(commandeId);
+    this.currentRestaurantId = restaurantId;
   }
 
   terminerLivraison(commandeId: string, gains: Money): void {
@@ -54,6 +62,7 @@ export class Livreur {
     
     if (this.commandesEnCoursIds.length === 0) {
       this.statut = StatutLivreur.DISPONIBLE;
+      this.currentRestaurantId = undefined;
     }
   }
 
@@ -62,14 +71,18 @@ export class Livreur {
     
     if (this.commandesEnCoursIds.length === 0) return true;
     
-    // Si déjà 1 commande, on n'en accepte une 2ème que si c'est un Expert 
-    // et (optionnel mais recommandé par la règle) si c'est le même restaurant.
-    // Note: L'entité ne stocke pas le RestoID des commandes en cours, 
-    // on va déléguer cette vérification précise au Service ou UseCase 
-    // mais on garde une garde-fou ici.
     const nbMax = this.estExpert ? 2 : 1;
-    return this.commandesEnCoursIds.length < nbMax;
+    if (this.commandesEnCoursIds.length >= nbMax) return false;
+
+    // Si déjà 1 commande, on n'en accepte une 2ème que si c'est le même restaurant
+    if (restaurantId && this.currentRestaurantId && this.currentRestaurantId !== restaurantId) {
+       return false;
+    }
+
+    return true;
   }
+
+  getCurrentRestaurantId(): string | undefined { return this.currentRestaurantId; }
 
   getStatut(): StatutLivreur { return this.statut; }
   getPortefeuille(): Money { return this.portefeuille; }
@@ -82,12 +95,12 @@ export class Livreur {
     }
   }
 
-  accepterProposition(commandeId: string): void {
+  accepterProposition(commandeId: string, restaurantId: string): void {
     if (!this.propositionsIds.includes(commandeId)) {
       throw new Error("Proposition non trouvée");
     }
     this.propositionsIds = this.propositionsIds.filter(id => id !== commandeId);
-    this.prendreEnCharge(commandeId);
+    this.prendreEnCharge(commandeId, restaurantId);
   }
 
   refuserProposition(commandeId: string): void {

@@ -12,7 +12,7 @@ import { ServiceCartographie } from "../../ports/ServiceCartographie";
 
 // Trouve les livreurs à proximité et leur envoie une proposition
 export class ProposerLivraisonUseCase {
-  private readonly RAYON_ACTION_KM = 5.0;
+  private readonly RAYON_ACTION_KM = 30.0;
 
   constructor(
     private readonly depotCommandes: DepotCommandes,
@@ -30,10 +30,10 @@ export class ProposerLivraisonUseCase {
     }
 
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
-    const livreursDisponibles = await this.depotLivreurs.listerDisponibles();
+    const livreursEligibles = await this.depotLivreurs.listerEligiblesPourRestaurant(commande.restaurantId);
 
     // Filtrer les livreurs par proximité du restaurant
-    const livreursProches = livreursDisponibles.filter(livreur => {
+    const livreursProches = livreursEligibles.filter(livreur => {
       const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
       return distance <= this.RAYON_ACTION_KM;
     });

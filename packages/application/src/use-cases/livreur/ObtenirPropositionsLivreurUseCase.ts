@@ -11,7 +11,8 @@ export type PropositionDetaillee = {
   clientAdresse: string;
   tempsPreparationEstime?: number;
   montantLivraison: number;
-  distanceKm: number;
+  distanceApprocheKm: number; // Distance Livreur -> Restaurant
+  distanceLivraisonKm: number; // Distance Restaurant -> Client
 };
 
 export class ObtenirPropositionsLivreurUseCase {
@@ -30,7 +31,9 @@ export class ObtenirPropositionsLivreurUseCase {
       try {
         const commande = await this.depotCommandes.trouverParId(commandeId);
         const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
-        const distance = this.cartographie.calculerDistanceKm(livreur.position, restaurant.position);
+        
+        const distanceApproche = this.cartographie.calculerDistanceKm(livreur.position, restaurant.position);
+        const distanceLivraison = this.cartographie.calculerDistanceKm(restaurant.position, commande.getPositionLivraison());
 
         details.push({
           commandeId: commande.id,
@@ -39,7 +42,8 @@ export class ObtenirPropositionsLivreurUseCase {
           clientAdresse: commande.getAdresseLivraison(),
           tempsPreparationEstime: commande.getTempsPreparation() || undefined,
           montantLivraison: commande.getFraisLivraison().enEuros(),
-          distanceKm: Number(distance.toFixed(1))
+          distanceApprocheKm: Number(distanceApproche.toFixed(1)),
+          distanceLivraisonKm: Number(distanceLivraison.toFixed(1))
         });
       } catch (err) {
         console.error(`Erreur lors de la récupération de la proposition ${commandeId}:`, err);

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, Loader2, Utensils, User } from 'lucide-react';
+import { UserPlus, AlertCircle, Loader2, Utensils, User } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [adresse, setAdresse] = useState('');
+  const [coords, setCoords] = useState({ latitude: 48.8566, longitude: 2.3522 });
   const [telephone, setTelephone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,6 +38,8 @@ const Register = () => {
           role: 'CLIENT',
           nom: name,
           adresse,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
           telephone
         }),
       });
@@ -121,16 +125,16 @@ const Register = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse de livraison complète</label>
-              <div className="relative group">
-                <input 
-                  type="text" required
-                  placeholder="123 rue de la Paix, 75001 Paris"
-                  className="w-full px-4 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
-                  value={adresse}
-                  onChange={(e) => setAdresse(e.target.value)}
-                />
-              </div>
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse de livraison</label>
+              <AddressAutocomplete 
+                value={adresse}
+                onChange={setAdresse}
+                onSelect={(addr, lat, lon) => {
+                  setAdresse(addr);
+                  setCoords({ latitude: lat, longitude: lon });
+                }}
+                placeholder="123 rue de la Paix, 75001 Paris"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">

@@ -3,6 +3,7 @@ import { MapPin, Plus, Home, Briefcase, Trash2, ArrowLeft, X, Save } from 'lucid
 import { useNavigate } from 'react-router-dom';
 import { useAddressStore } from '../store/addressStore';
 import type { Address } from '../store/addressStore';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function AddressManagement() {
   const navigate = useNavigate();
@@ -16,7 +17,10 @@ export default function AddressManagement() {
     ville: '',
     codePostal: '',
     telephone: '',
-    type: 'home'
+    type: 'home',
+    latitude: 0,
+    longitude: 0,
+    complement: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,11 +42,14 @@ export default function AddressManagement() {
         ville: addr.ville,
         codePostal: addr.codePostal,
         telephone: addr.telephone,
-        type: addr.type
+        type: addr.type,
+        latitude: addr.latitude || 0,
+        longitude: addr.longitude || 0,
+        complement: addr.complement || '',
       });
     } else {
       setEditingId(null);
-      setFormData({ label: '', rue: '', ville: '', codePostal: '', telephone: '', type: 'home' });
+      setFormData({ label: '', rue: '', ville: '', codePostal: '', telephone: '', type: 'home', latitude: 0, longitude: 0, complement: '' });
     }
     setIsModalOpen(true);
   };
@@ -50,7 +57,7 @@ export default function AddressManagement() {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingId(null);
-    setFormData({ label: '', rue: '', ville: '', codePostal: '', telephone: '', type: 'home' });
+    setFormData({ label: '', rue: '', ville: '', codePostal: '', telephone: '', type: 'home', latitude: 0, longitude: 0, complement: '' });
   };
 
   const getIcon = (type: string) => {
@@ -127,8 +134,8 @@ export default function AddressManagement() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeModal}></div>
-           <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in slide-in-from-bottom-8 duration-300">
-              <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+           <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl animate-in zoom-in slide-in-from-bottom-8 duration-300">
+              <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 rounded-t-[2.5rem]">
                  <h2 className="text-2xl font-black text-slate-800 tracking-tight">
                    {editingId ? 'Modifier l\'Adresse' : 'Nouvelle Adresse'}
                  </h2>
@@ -160,22 +167,52 @@ export default function AddressManagement() {
                     value={formData.label} onChange={e => setFormData({...formData, label: e.target.value})}
                     className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
                   />
-                  <input 
-                    type="text" required placeholder="Rue & Numéro" 
-                    value={formData.rue} onChange={e => setFormData({...formData, rue: e.target.value})}
-                    className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
-                  />
+                  
+                  <div className="bg-slate-50 rounded-xl p-1 border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
+                    <AddressAutocomplete 
+                      value={formData.rue ? `${formData.rue}, ${formData.codePostal} ${formData.ville}` : ''}
+                      onChange={() => {}} // L'utilisateur tape dans l'autocomplete
+                      onSelect={(fullAddress, lat, lon) => {
+                         // On tente d'extraire la rue, ville, CP depuis "27 Rue Cambronne, 75015 Paris" ou autre
+                         // Souvent Nominatim renvoie "Numéro Rue, Ville, etc..."
+                         const parts = fullAddress.split(',');
+                         let rue = parts[0]?.trim() || '';
+                         if (parts.length > 1 && !isNaN(parseInt(parts[0]))) {
+                            rue = parts[0].trim() + ' ' + parts[1].trim(); // Numéro + Rue
+                         }
+                         
+                         const cpAndVille = fullAddress.match(/(\d{5})\s+([^,]+)/);
+                         
+                         setFormData({
+                           ...formData,
+                           rue: rue || fullAddress,
+                           codePostal: cpAndVille ? cpAndVille[1] : '',
+                           ville: cpAndVille ? cpAndVille[2].trim() : (parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || ''),
+                           latitude: lat,
+                           longitude: lon
+                         });
+                      }}
+                      placeholder="Rechercher l'adresse exacte..."
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
-                    <input 
-                      type="text" required placeholder="Ville" 
-                      value={formData.ville} onChange={e => setFormData({...formData, ville: e.target.value})}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
-                    />
-                    <input 
-                      type="text" required placeholder="Code Postal" 
-                      value={formData.codePostal} onChange={e => setFormData({...formData, codePostal: e.target.value})}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
-                    />
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rue / Numéro</label>
+                      <input 
+                        type="text" required placeholder="Rue / Bâtiment" 
+                        value={formData.rue} onChange={e => setFormData({...formData, rue: e.target.value})}
+                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Complément (Étage...)</label>
+                      <input 
+                        type="text" placeholder="Bât. A, Apt 12..." 
+                        value={formData.complement} onChange={e => setFormData({...formData, complement: e.target.value})}
+                        className="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl px-5 py-3 outline-none transition-all font-bold text-slate-700 text-sm"
+                      />
+                    </div>
                   </div>
                   <input 
                     type="tel" required placeholder="Téléphone de contact" 

@@ -74,7 +74,7 @@ const obtenirPropositions = new ObtenirPropositionsLivreurUseCase(depotLivreurs,
 const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 const recupererCommande = new RecupererCommandeUseCase(depotCommandes, depotLivreurs);
-const obtenirCommande   = new ObtenirCommandeUseCase(depotCommandes);
+const obtenirCommande   = new ObtenirCommandeUseCase(depotCommandes, depotRestaurants);
 const listerHistoriqueLivreur = new ListerHistoriqueLivreurUseCase(depotCommandes, depotRestaurants);
 
 import cors from "cors";

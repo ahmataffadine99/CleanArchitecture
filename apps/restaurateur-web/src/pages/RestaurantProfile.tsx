@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Store, Camera, Save, MapPin, Globe, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Store, Camera, Save, Globe, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function RestaurantProfile() {
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,8 @@ export default function RestaurantProfile() {
   const [formData, setFormData] = useState({
     nom: '',
     adresse: '',
+    latitude: 0,
+    longitude: 0,
     imageUrl: '',
   });
 
@@ -31,6 +34,8 @@ export default function RestaurantProfile() {
         setFormData({
           nom: data.nom,
           adresse: data.adresse,
+          latitude: data.coordonnees?.latitude || 0,
+          longitude: data.coordonnees?.longitude || 0,
           imageUrl: data.imageUrl || '',
         });
       }
@@ -62,7 +67,7 @@ export default function RestaurantProfile() {
     try {
       const res = await fetch(`/api/restaurant/${restaurant.id}`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -111,24 +116,23 @@ export default function RestaurantProfile() {
       </div>
 
       {message && (
-        <div className={`mb-8 p-6 rounded-[2rem] flex items-center gap-4 animate-in slide-in-from-top duration-500 shadow-lg ${
-          message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-emerald-100/50' : 'bg-red-50 text-red-700 border border-red-100 shadow-red-100/50'
-        }`}>
+        <div className={`mb-8 p-6 rounded-[2rem] flex items-center gap-4 animate-in slide-in-from-top duration-500 shadow-lg ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-emerald-100/50' : 'bg-red-50 text-red-700 border border-red-100 shadow-red-100/50'
+          }`}>
           {message.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
           <span className="font-black tracking-tight">{message.text}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-10">
-        <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 border border-slate-100 p-10 lg:p-14 relative overflow-hidden">
+        <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 border border-slate-100 p-10 lg:p-14 relative">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-14 relative z-10">
             {/* Image Preview & Upload */}
             <div className="flex flex-col items-center gap-6">
               <div className="relative group">
                 <div className="w-56 h-56 rounded-[3rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100 group-hover:opacity-90 transition-all duration-500 ring-2 ring-slate-100">
-                  <img 
-                    src={formData.imageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop"} 
-                    alt="Preview" 
+                  <img
+                    src={formData.imageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop"}
+                    alt="Preview"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -153,8 +157,8 @@ export default function RestaurantProfile() {
                   <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
                     <Store size={22} />
                   </div>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     required
                     value={formData.nom}
                     onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
@@ -167,16 +171,12 @@ export default function RestaurantProfile() {
               <div className="space-y-3">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse Géographique</label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                    <MapPin size={22} />
-                  </div>
-                  <input 
-                    type="text" 
-                    required
+                  <AddressAutocomplete 
                     value={formData.adresse}
-                    onChange={(e) => setFormData({ ...formData, adresse: e.target.value })}
-                    className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-[1.5rem] outline-none transition-all font-black text-slate-700 text-xl placeholder:text-slate-300"
-                    placeholder="Ville, Rue, Code Postal"
+                    onChange={() => {}} // Ne pas mettre à jour l'adresse pendant la frappe pour éviter de réinitialiser le composant
+                    onSelect={(adresse, lat, lon) => setFormData({ ...formData, adresse, latitude: lat, longitude: lon })}
+                    placeholder="Tour Eiffel, Paris"
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -187,8 +187,8 @@ export default function RestaurantProfile() {
                   <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
                     <Globe size={22} />
                   </div>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                     className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-[1.5rem] outline-none transition-all font-black text-slate-700 text-xl placeholder:text-slate-300"
@@ -200,8 +200,8 @@ export default function RestaurantProfile() {
           </div>
 
           <div className="mt-16 flex justify-end">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={saving}
               className="px-12 py-6 bg-slate-900 text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-slate-300 hover:bg-black hover:shadow-slate-400 transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed group active:scale-95"
             >

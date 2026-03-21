@@ -147,6 +147,7 @@ async function main() {
       longitude: 2.3080, // Très proche du restaurant
       statut: "DISPONIBLE",
       portefeuilleCentimes: 0,
+      estExpert: true,
     },
   });
   console.log(" Livreur créé :", livreur.nom);

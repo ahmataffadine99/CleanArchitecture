@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { Loader2, Clock, ChefHat, Package, CheckCircle2, AlertCircle, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import DeliveryMap from '../components/DeliveryMap';
 
 type CommandeClient = {
   id: string;
@@ -13,6 +14,8 @@ type CommandeClient = {
   livreurNom?: string;
   tempsPreparationEstime?: number;
   articles: Array<{ nom: string; quantite: number }>;
+  clientPosition?: { latitude: number; longitude: number };
+  restaurantPosition?: { latitude: number; longitude: number };
 };
 
 function OrderCountdown({ creeLe, delaiMinutes }: { creeLe: string, delaiMinutes: number }) {
@@ -276,6 +279,17 @@ export default function ClientHistory() {
                         );
                       })}
                     </div>
+                  </div>
+                )}
+
+                {/* Map pour le suivi en direct */}
+                {(cmd.statut === 'EN_LIVRAISON' || cmd.statut === 'PRETE') && cmd.restaurantPosition && cmd.clientPosition && (
+                  <div className="mt-8 h-[300px] w-full rounded-2xl overflow-hidden relative border border-slate-100 shadow-inner">
+                    <DeliveryMap 
+                      restaurant={cmd.restaurantPosition}
+                      client={cmd.clientPosition}
+                      mode="LIVRAISON"
+                    />
                   </div>
                 )}
               </div>

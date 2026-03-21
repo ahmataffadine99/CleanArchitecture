@@ -16,7 +16,7 @@ export class AccepterLivraisonUseCase {
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
 
-    livreur.accepterProposition(req.commandeId);
+    livreur.accepterProposition(req.commandeId, commande.restaurantId);
     commande.assignerLivreur(livreur.id);
 
     await this.depotLivreurs.sauvegarder(livreur);

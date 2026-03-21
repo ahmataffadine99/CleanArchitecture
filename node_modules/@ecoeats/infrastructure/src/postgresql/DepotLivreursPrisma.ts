@@ -16,6 +16,7 @@ export class DepotLivreursPrisma implements DepotLivreurs {
         estExpert: livreur.estExpert,
         commandesEnCoursIds: livreur.getCommandesEnCoursIds(),
         propositionsIds: livreur.getPropositionsIds(),
+        currentRestaurantId: livreur.getCurrentRestaurantId(),
       },
       create: {
         id: livreur.id,
@@ -28,6 +29,7 @@ export class DepotLivreursPrisma implements DepotLivreurs {
         estExpert: livreur.estExpert,
         commandesEnCoursIds: livreur.getCommandesEnCoursIds(),
         propositionsIds: livreur.getPropositionsIds(),
+        currentRestaurantId: livreur.getCurrentRestaurantId(),
       },
     });
   }
@@ -43,6 +45,29 @@ export class DepotLivreursPrisma implements DepotLivreurs {
       where: { statut: StatutLivreur.DISPONIBLE },
     });
     return rows.map((r) => this.reconstruire(r as any));
+  }
+
+  async listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]> {
+    const rows = await this.prisma.livreur.findMany({
+      where: {
+        OR: [
+          // Disponible
+          { statut: StatutLivreur.DISPONIBLE },
+          // En livraison mais potentiellement éligible (expert + même resto)
+          {
+            statut: StatutLivreur.EN_LIVRAISON,
+            estExpert: true,
+            currentRestaurantId: restaurantId,
+          }
+        ]
+      }
+    });
+
+    // Note: Prisma filter for array length might be tricky,
+    // so we additionaly filter in JS to be safe
+    return rows
+      .map((r) => this.reconstruire(r as any))
+      .filter(l => l.estDisponible(restaurantId));
   }
 
   async retirerPropositionDeTous(commandeId: string): Promise<void> {
@@ -71,7 +96,8 @@ export class DepotLivreursPrisma implements DepotLivreurs {
       row.telephone,
       row.estExpert,
       Money.fromCentimes(row.portefeuilleCentimes),
-      row.propositionsIds || []
+      row.propositionsIds || [],
+      row.currentRestaurantId || undefined
     );
 
     // Restaurer le statut depuis la base
@@ -82,7 +108,7 @@ export class DepotLivreursPrisma implements DepotLivreurs {
       // Pour EN_LIVRAISON, on doit ré-attacher les commandes
       livreur.seDeclarerDisponible(); // On le met dispo d'abord pour pouvoir charger
       for (const cmdId of (row.commandesEnCoursIds || [])) {
-        try { livreur.prendreEnCharge(cmdId); } catch (_) {}
+        try { livreur.prendreEnCharge(cmdId, row.currentRestaurantId || ''); } catch (_) {}
       }
     } else {
       livreur.seDeclarerIndisponible();

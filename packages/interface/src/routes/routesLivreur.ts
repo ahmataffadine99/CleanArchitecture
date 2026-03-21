@@ -105,7 +105,10 @@ export function creerRoutesLivreur(deps: {
         commandeId: req.params.commandeId,
       });
       res.status(204).send();
-    } catch (err) { next(err); }
+    } catch (err: any) {
+      console.error("Erreur Acceptation:", err.message);
+      res.status(400).json({ error: err.message });
+    }
   });
 
   // POST /livreurs/:id/propositions/:commandeId/refuser

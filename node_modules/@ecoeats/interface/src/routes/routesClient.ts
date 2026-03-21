@@ -80,12 +80,12 @@ export function creerRoutesClient(deps: {
   // POST /commandes
   router.post("/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { clientId, adresseLivraison } = req.body;
+      const { clientId, adresseLivraison, latitude, longitude } = req.body;
       const panier = deps.ajouterAuPanier.getPanier(clientId);
       if (!panier || panier.estVide()) {
         return res.status(400).json({ message: "Le panier est vide." });
       }
-      const commande = await deps.passerCommande.executer({ clientId, panier, adresseLivraison });
+      const commande = await deps.passerCommande.executer({ clientId, panier, adresseLivraison, latitude, longitude });
       res.status(201).json({
         id: commande.id, statut: commande.getStatut(),
         total: commande.prixTotal().enEuros(),

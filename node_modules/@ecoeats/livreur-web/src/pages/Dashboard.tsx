@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight } from 'lucide-react';
+import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight, AlertCircle } from 'lucide-react';
+import DeliveryMap from '../components/DeliveryMap';
 
 export default function Dashboard() {
   const { token, user, logout } = useAuthStore();
@@ -10,6 +11,7 @@ export default function Dashboard() {
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = async () => {
     if (!user?.profilId || !token) return;
@@ -85,6 +87,10 @@ export default function Dashboard() {
       });
       if (res.ok) {
         fetchStatus();
+      } else {
+        const data = await res.json();
+        setError(data.error || "Une erreur est survenue");
+        setTimeout(() => setError(null), 5000);
       }
     } catch (err) { console.error(err); }
   };
@@ -98,6 +104,10 @@ export default function Dashboard() {
       });
       if (res.ok) {
         fetchStatus();
+      } else {
+        const data = await res.json();
+        setError(data.error || "Une erreur est survenue");
+        setTimeout(() => setError(null), 5000);
       }
     } catch (err) { console.error(err); }
   };
@@ -165,7 +175,15 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto p-6 space-y-8">
+      {/* Main Content */}
+      <main className="max-w-lg mx-auto px-6 py-8 space-y-8">
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+            <AlertCircle size={20} className="shrink-0" />
+            <p className="text-sm font-bold leading-tight">{error}</p>
+          </div>
+        )}
+
         {/* Portefeuille */}
         <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
           <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all duration-700"></div>
@@ -233,9 +251,12 @@ export default function Dashboard() {
                             </div>
                          </div>
                       </div>
-                      <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-black flex flex-col items-end">
-                         <span>+ {prop.montantLivraison.toFixed(2)} €</span>
-                         <span className="text-[10px] opacity-70">📍 {prop.distanceKm} km</span>
+                      <div className="bg-emerald-50 text-emerald-600 px-3 py-2 rounded-xl text-xs font-black flex flex-col items-end gap-1">
+                         <span className="text-sm">+ {prop.montantLivraison.toFixed(2)} €</span>
+                         <div className="flex flex-col items-end text-[9px] opacity-80 font-bold leading-tight uppercase tracking-tighter">
+                            <span>🔍 Approche: {prop.distanceApprocheKm} km</span>
+                            <span>📦 Livraison: {prop.distanceLivraisonKm} km</span>
+                         </div>
                       </div>
                    </div>
 
@@ -279,57 +300,73 @@ export default function Dashboard() {
           <div className="space-y-4">
              <h2 className="text-lg font-black text-slate-800 ml-2">En cours</h2>
              {commandesEnCours.map((cmd: any) => (
-               <div key={cmd.id} className={`bg-white p-6 rounded-[2rem] border-2 ${cmd.statut === 'PRETE' ? 'border-blue-500' : 'border-emerald-500'} shadow-xl flex items-center justify-between`}>
-                  <div className="flex items-center gap-4">
-                    <div className={`h-12 w-12 ${cmd.statut === 'PRETE' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'} rounded-2xl flex items-center justify-center`}>
-                      <Navigation size={24} />
+               <div key={cmd.id} className={`bg-white p-6 rounded-[2rem] border-2 ${cmd.statut === 'PRETE' ? 'border-blue-500' : 'border-emerald-500'} shadow-xl flex flex-col gap-6`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`h-12 w-12 ${cmd.statut === 'PRETE' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'} rounded-2xl flex items-center justify-center`}>
+                         <Navigation size={24} />
+                      </div>
+                      <div>
+                        <p className="font-black text-slate-800 text-sm"># {cmd.id.substring(0, 8)}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          {cmd.statut === 'PRETE' ? 'Prête au restaurant' : 'En livraison'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-black text-slate-800 text-sm"># {cmd.id.substring(0, 8)}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        {cmd.statut === 'PRETE' ? 'Prête au restaurant' : 'En livraison'}
-                      </p>
-                    </div>
+                    
+                    {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? (
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(`/api/commandes/${cmd.id}/recuperer`, {
+                              method: 'POST',
+                              headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                              },
+                              body: JSON.stringify({ livreurId: user?.profilId })
+                            });
+                            if (res.ok) fetchStatus();
+                          } catch (err) { console.error(err); }
+                        }}
+                        className="bg-blue-600 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-blue-700 transition-all shadow-lg"
+                      >
+                        RÉCUPÉRER
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(`/api/commandes/${cmd.id}/livree`, {
+                              method: 'POST',
+                              headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                              },
+                              body: JSON.stringify({ livreurId: user?.profilId, pourboire: 0 })
+                            });
+                            if (res.ok) fetchStatus();
+                          } catch (err) { console.error(err); }
+                        }}
+                        className="bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100"
+                      >
+                        TERMINER
+                      </button>
+                    )}
                   </div>
-                  
-                  {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? (
-                    <button 
-                      onClick={async () => {
-                        try {
-                          const res = await fetch(`/api/commandes/${cmd.id}/recuperer`, {
-                            method: 'POST',
-                            headers: { 
-                              'Content-Type': 'application/json',
-                              'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ livreurId: user?.profilId })
-                          });
-                          if (res.ok) fetchStatus();
-                        } catch (err) { console.error(err); }
-                      }}
-                      className="bg-blue-600 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-blue-700 transition-all shadow-lg"
-                    >
-                      RÉCUPÉRER
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={async () => {
-                        try {
-                          const res = await fetch(`/api/commandes/${cmd.id}/livree`, {
-                            method: 'POST',
-                            headers: { 
-                              'Content-Type': 'application/json',
-                              'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ livreurId: user?.profilId, pourboire: 0 })
-                          });
-                          if (res.ok) fetchStatus();
-                        } catch (err) { console.error(err); }
-                      }}
-                      className="bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100"
-                    >
-                      TERMINER
-                    </button>
+
+                  {/* Affichage de la carte interactive de l'itinéraire */}
+                  {cmd.restaurantPosition && cmd.clientPosition && (
+                    <div className="h-[300px] w-full rounded-2xl overflow-hidden relative border border-slate-100 mt-2 shadow-inner">
+                       <div className="absolute top-4 left-4 z-[400] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-xs font-black text-slate-800 shadow-lg border border-slate-100 flex items-center gap-2">
+                         {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? '📍 Aller chercher la commande' : '📍 Livrer au client'}
+                       </div>
+                       <DeliveryMap 
+                         restaurant={cmd.restaurantPosition}
+                         client={cmd.clientPosition}
+                         mode={cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? 'RECUPERATION' : 'LIVRAISON'}
+                       />
+                    </div>
                   )}
                </div>
              ))}

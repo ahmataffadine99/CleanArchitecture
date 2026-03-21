@@ -97,6 +97,7 @@ model Livreur {
   estExpert            Boolean  @default(false)
   commandesEnCoursIds  String[]
   propositionsIds      String[]
+  currentRestaurantId  String?
 }
 
 model CompteUtilisateur {

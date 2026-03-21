@@ -9,6 +9,9 @@ export interface Address {
   codePostal: string;
   telephone: string;
   type: 'home' | 'work' | 'other';
+  latitude?: number;
+  longitude?: number;
+  complement?: string;
 }
 
 interface AddressState {
@@ -22,7 +25,7 @@ export const useAddressStore = create<AddressState>()(
   persist(
     (set) => ({
       addresses: [
-        { id: 'default-1', label: 'Ma Maison', rue: '27 Rue Cambronne', ville: 'Paris', codePostal: '75015', telephone: '0612345678', type: 'home' }
+        { id: 'default-1', label: 'Ma Maison', rue: '27 Rue Cambronne', ville: 'Paris', codePostal: '75015', telephone: '0612345678', type: 'home', latitude: 48.8466, longitude: 2.3022 }
       ],
       addAddress: (address) => set((state) => ({
         addresses: [...state.addresses, { ...address, id: Math.random().toString(36).substr(2, 9) }]

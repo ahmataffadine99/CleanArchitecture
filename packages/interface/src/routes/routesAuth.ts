@@ -10,8 +10,8 @@ export function creerRoutesAuth(deps: {
   // POST /auth/register
   router.post("/register", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { nom, email, motDePasse, role, adresse } = req.body;
-      const resultat = await deps.inscription.executer({ nom, email, motDePasse, role, adresse });
+      const { nom, email, motDePasse, role, adresse, latitude, longitude, telephone } = req.body;
+      const resultat = await deps.inscription.executer({ nom, email, motDePasse, role, adresse, latitude, longitude, telephone });
       res.status(201).json(resultat);
     } catch (err) { next(err); }
   });
