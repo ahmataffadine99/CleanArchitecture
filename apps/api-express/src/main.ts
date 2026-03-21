@@ -15,7 +15,8 @@ import {
   DepotCommandesEnMemoire, DepotRestaurantsEnMemoire, DepotPlatsEnMemoire,
   DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire, DepotComptesEnMemoire,
   CartographieHaversine, PaiementSimule,
-  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma
+  DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma,
+  DepotAvisPrisma, DepotFavorisPrisma
 } from "@ecoeats/infrastructure";
 import {
   ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
@@ -26,6 +27,7 @@ import {
   TerminerLivraisonUseCase, ObtenirLivreurUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
   ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase,
   RecupererCommandeUseCase, ObtenirCommandeUseCase, ListerHistoriqueLivreurUseCase,
+  GererFavorisUseCase, LaisserAvisLivreurUseCase, ObtenirAvisLivreurUseCase,
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -43,6 +45,8 @@ const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(prismaClient!) 
 const depotClients     = utiliserPostgres ? new DepotClientsPrisma(prismaClient!)     : new DepotClientsEnMemoire();
 const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(prismaClient!)    : new DepotLivreursEnMemoire();
 const depotComptes     = utiliserPostgres ? new DepotComptesPrisma(prismaClient!)     : new DepotComptesEnMemoire();
+const depotAvis        = utiliserPostgres ? new DepotAvisPrisma(prismaClient!)        : null as any;
+const depotFavoris     = utiliserPostgres ? new DepotFavorisPrisma(prismaClient!)     : null as any;
 const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();
@@ -54,6 +58,8 @@ const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
 const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaurants, depotClients, depotPlats, cartographie);
 const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement, depotClients);
 const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes, depotRestaurants, depotLivreurs);
+const gererFavoris      = new GererFavorisUseCase(depotFavoris);
+const laisserAvis       = new LaisserAvisLivreurUseCase(depotAvis, depotCommandes);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
 const modifierPlat      = new ModifierPlatUseCase(depotPlats);
@@ -76,6 +82,7 @@ const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivr
 const recupererCommande = new RecupererCommandeUseCase(depotCommandes, depotLivreurs);
 const obtenirCommande   = new ObtenirCommandeUseCase(depotCommandes, depotRestaurants);
 const listerHistoriqueLivreur = new ListerHistoriqueLivreurUseCase(depotCommandes, depotRestaurants);
+const obtenirAvis       = new ObtenirAvisLivreurUseCase(depotAvis);
 
 import cors from "cors";
 
@@ -99,8 +106,8 @@ app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPost
 
 app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 
-// Routes publiques (et accès client autorisé via le middleware si besoin dans le controller - ici c'est ouvert pour simplification vu que le Front vérifie. Mais idéalement les commandes client demandent auth)
-app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient }));
+// Routes publiques
+app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient, gererFavoris, laisserAvis }));
 
 // Routes nécessitant une authentification
 app.use("/api", requireAuth, (req, res, next) => {
@@ -133,6 +140,7 @@ app.use("/api", requireAuth, (req, res, next) => {
   recupererCommande,
   obtenirCommande,
   listerHistorique: listerHistoriqueLivreur,
+  obtenirAvis,
 }));
 
 app.use(gestionnaireErreurs);

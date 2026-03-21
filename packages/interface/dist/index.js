@@ -3963,7 +3963,8 @@ function creerRoutesClient(deps) {
         allergenes: p.allergenes,
         stock: p.stockJournalier,
         imageUrl: p.imageUrl,
-        actif: p.actif
+        actif: p.actif,
+        categorie: p.categorie
       });
       const actifsSeulement = (p) => p.actif !== false;
       res.json({
@@ -4002,12 +4003,12 @@ function creerRoutesClient(deps) {
   });
   router.post("/commandes", async (req, res, next) => {
     try {
-      const { clientId, adresseLivraison } = req.body;
+      const { clientId, adresseLivraison, latitude, longitude } = req.body;
       const panier = deps.ajouterAuPanier.getPanier(clientId);
       if (!panier || panier.estVide()) {
         return res.status(400).json({ message: "Le panier est vide." });
       }
-      const commande = await deps.passerCommande.executer({ clientId, panier, adresseLivraison });
+      const commande = await deps.passerCommande.executer({ clientId, panier, adresseLivraison, latitude, longitude });
       res.status(201).json({
         id: commande.id,
         statut: commande.getStatut(),
@@ -4027,6 +4028,108 @@ function creerRoutesClient(deps) {
       const { clientId } = req.body;
       const { facture } = await deps.payerCommande.executer({ commandeId: req.params.id, clientId });
       res.json({ factureId: facture.id, total: facture.total.enEuros(), detail: facture.afficher() });
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/clients/:clientId/commandes", async (req, res, next) => {
+    try {
+      const commandes = await deps.listerCommandesClient.executer(req.params.clientId);
+      res.json(commandes.map((c) => {
+        const isPlain = typeof c.getStatut !== "function";
+        return {
+          id: c.id,
+          restaurantId: c.restaurantId,
+          restaurantNom: c.restaurantNom,
+          livreurNom: c.livreurNom,
+          statut: isPlain ? c.statut : c.getStatut(),
+          prixPlatsCentimes: isPlain ? c.prixPlatsCentimes ?? 0 : c.getPrixPlats().enCentimes(),
+          fraisLivCentimes: isPlain ? c.fraisLivCentimes ?? 0 : c.getFraisLivraison().enCentimes(),
+          fraisServiceCentimes: isPlain ? c.fraisServiceCentimes ?? 0 : c.getFraisService().enCentimes(),
+          totalCentimes: isPlain ? c.totalCentimes ?? c.prixTotal * 100 : c.prixTotal().enCentimes(),
+          creeLe: isPlain ? c.creeLe : c.getCreeLe(),
+          tempsPreparationEstime: isPlain ? c.tempsPreparationEstime : c.getTempsPreparation(),
+          adresseLivraison: isPlain ? c.adresseLivraison : c.getAdresseLivraison(),
+          articles: (isPlain ? c.articles : c.getArticles()).map((a) => ({
+            nom: a.nom,
+            quantite: a.quantite
+          }))
+        };
+      }));
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/clients/:clientId/points", async (req, res, next) => {
+    try {
+      const clientId = req.params.clientId;
+      const commandes = await deps.listerCommandesClient.executer(clientId);
+      const totalPoints = commandes.filter((c) => {
+        const s = typeof c.getStatut === "function" ? c.getStatut() : c.statut;
+        return ["PAYEE", "ACCEPTEE", "EN_PREPARATION", "PRETE", "EN_LIVRAISON", "LIVREE"].includes(s);
+      }).reduce((sum, c) => {
+        const isPlain = typeof c.prixTotal !== "function";
+        const totalCentimes = isPlain ? c.totalCentimes ?? c.prixTotal * 100 : c.prixTotal().enCentimes();
+        return sum + Math.floor(totalCentimes / 100);
+      }, 0);
+      res.json({ pointsFidelite: totalPoints });
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/favoris/restaurants/:clientId", async (req, res, next) => {
+    try {
+      const ids = await deps.gererFavoris.listerRestaurants(req.params.clientId);
+      res.json(ids);
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.post("/favoris/restaurants", async (req, res, next) => {
+    try {
+      await deps.gererFavoris.ajouterRestaurant(req.body.clientId, req.body.restaurantId);
+      res.status(201).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.delete("/favoris/restaurants/:clientId/:restaurantId", async (req, res, next) => {
+    try {
+      await deps.gererFavoris.retirerRestaurant(req.params.clientId, req.params.restaurantId);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/favoris/plats/:clientId", async (req, res, next) => {
+    try {
+      const ids = await deps.gererFavoris.listerPlats(req.params.clientId);
+      res.json(ids);
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.post("/favoris/plats", async (req, res, next) => {
+    try {
+      await deps.gererFavoris.ajouterPlat(req.body.clientId, req.body.platId);
+      res.status(201).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.delete("/favoris/plats/:clientId/:platId", async (req, res, next) => {
+    try {
+      await deps.gererFavoris.retirerPlat(req.params.clientId, req.params.platId);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.post("/commandes/:id/avis", async (req, res, next) => {
+    try {
+      const { note, commentaire } = req.body;
+      await deps.laisserAvis.executer({ commandeId: req.params.id, note, commentaire });
+      res.status(201).send();
     } catch (err) {
       next(err);
     }
@@ -4055,20 +4158,27 @@ function creerRoutesRestaurant(deps) {
   router.get("/restaurant/:id/commandes", async (req, res, next) => {
     try {
       const commandes = await deps.listerCommandes.executer(req.params.id);
-      res.json(commandes.map((c) => ({
-        id: c.id,
-        restaurantId: c.restaurantId,
-        statut: c.getStatut(),
-        prixPlatsCentimes: c.getPrixPlats().enCentimes(),
-        creeLe: c.getCreeLe(),
-        articles: c.getArticles().map((a) => ({
-          id: a.menuItemId,
-          nom: a.nom,
-          quantite: a.quantite,
-          prixCentimes: a.prixSnapshot.enCentimes(),
-          restaurantId: a.restaurantId
-        }))
-      })));
+      res.json(commandes.map((c) => {
+        const isPlain = typeof c.getStatut !== "function";
+        return {
+          id: c.id,
+          restaurantId: c.restaurantId,
+          statut: isPlain ? c.statut : c.getStatut(),
+          prixPlatsCentimes: isPlain ? c.prixPlatsCentimes : c.getPrixPlats().enCentimes(),
+          creeLe: isPlain ? c.creeLe : c.getCreeLe(),
+          clientNom: c.clientNom,
+          clientTelephone: c.clientTelephone,
+          adresseLivraison: isPlain ? c.adresseLivraison : c.getAdresseLivraison(),
+          livreurNom: c.livreurNom,
+          articles: (isPlain ? c.articles : c.getArticles()).map((a) => ({
+            id: a.menuItemId,
+            nom: a.nom,
+            quantite: a.quantite,
+            prixCentimes: typeof a.prixSnapshot.enCentimes === "function" ? a.prixSnapshot.enCentimes() : a.prixSnapshot,
+            restaurantId: a.restaurantId
+          }))
+        };
+      }));
     } catch (err) {
       next(err);
     }
@@ -4099,7 +4209,7 @@ function creerRoutesRestaurant(deps) {
   router.post("/restaurant/:id/plats", async (req, res, next) => {
     try {
       const plat = await deps.ajouterPlat.executer({ restaurantId: req.params.id, ...req.body });
-      res.status(201).json({ id: plat.id, nom: plat.nom, prix: plat.prix.enEuros(), imageUrl: plat.imageUrl });
+      res.status(201).json({ id: plat.id, nom: plat.nom, prix: plat.prix.enEuros(), imageUrl: plat.imageUrl, categorie: plat.categorie });
     } catch (err) {
       next(err);
     }
@@ -4154,6 +4264,46 @@ function creerRoutesRestaurant(deps) {
 var import_express3 = require("express");
 function creerRoutesLivreur(deps) {
   const router = (0, import_express3.Router)();
+  router.get("/livreurs/:id/propositions", async (req, res, next) => {
+    try {
+      const details = await deps.obtenirPropositions.executer(req.params.id);
+      res.json(details);
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/livreurs/:id/historique", async (req, res, next) => {
+    try {
+      const historique = await deps.listerHistorique.executer(req.params.id);
+      res.json(historique);
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/livreurs/:id/avis", async (req, res, next) => {
+    try {
+      const avis = await deps.obtenirAvis.executer(req.params.id);
+      res.json(avis);
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/livreurs/:id", async (req, res, next) => {
+    try {
+      const livreur = await deps.obtenirLivreur.executer(req.params.id);
+      res.json({
+        id: livreur.id,
+        nom: livreur.nom,
+        telephone: livreur.telephone,
+        statut: livreur.getStatut(),
+        portefeuille: livreur.getPortefeuille().enEuros(),
+        estExpert: livreur.estExpert,
+        commandesEnCoursIds: livreur.getCommandesEnCoursIds()
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
   router.patch("/livreurs/:id/statut", async (req, res, next) => {
     try {
       const livreur = await deps.changerStatut.executer({
@@ -4193,6 +4343,48 @@ function creerRoutesLivreur(deps) {
       next(err);
     }
   });
+  router.post("/livreurs/:id/propositions/:commandeId/accepter", async (req, res, next) => {
+    try {
+      await deps.accepterLivraison.executer({
+        livreurId: req.params.id,
+        commandeId: req.params.commandeId
+      });
+      res.status(204).send();
+    } catch (err) {
+      console.error("Erreur Acceptation:", err.message);
+      res.status(400).json({ error: err.message });
+    }
+  });
+  router.post("/livreurs/:id/propositions/:commandeId/refuser", async (req, res, next) => {
+    try {
+      await deps.refuserLivraison.executer({
+        livreurId: req.params.id,
+        commandeId: req.params.commandeId
+      });
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.post("/commandes/:id/recuperer", async (req, res, next) => {
+    try {
+      await deps.recupererCommande.executer({
+        commandeId: req.params.id,
+        livreurId: req.body.livreurId
+      });
+      res.json({ message: "Commande r\xE9cup\xE9r\xE9e !" });
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get("/commandes/:id", async (req, res, next) => {
+    try {
+      const commande = await deps.obtenirCommande.executer(req.params.id);
+      res.json(commande);
+    } catch (err) {
+      next(err);
+    }
+  });
   return router;
 }
 
@@ -4202,8 +4394,8 @@ function creerRoutesAuth(deps) {
   const router = (0, import_express4.Router)();
   router.post("/register", async (req, res, next) => {
     try {
-      const { nom, email, motDePasse, role, adresse } = req.body;
-      const resultat = await deps.inscription.executer({ nom, email, motDePasse, role, adresse });
+      const { nom, email, motDePasse, role, adresse, latitude, longitude, telephone } = req.body;
+      const resultat = await deps.inscription.executer({ nom, email, motDePasse, role, adresse, latitude, longitude, telephone });
       res.status(201).json(resultat);
     } catch (err) {
       next(err);

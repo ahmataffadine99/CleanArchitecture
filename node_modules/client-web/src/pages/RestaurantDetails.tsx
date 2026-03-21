@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, ShoppingBag, Info, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Heart } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
+import { useFavoriteStore } from '../store/favoriteStore';
 
 type MenuItem = {
   id: string;
@@ -11,16 +13,20 @@ type MenuItem = {
   allergenes: string[];
   stock: number;
   imageUrl?: string | null;
+  categorie?: string;
 };
 
 export default function RestaurantDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addItem, clearCart } = useCartStore();
+  const { addItem } = useCartStore();
   const [restaurant, setRestaurant] = useState<any>(null);
   const [menu, setMenu] = useState<{ disponibles: MenuItem[], rupture: MenuItem[] }>({ disponibles: [], rupture: [] });
   const [loading, setLoading] = useState(true);
   const [selectedPlat, setSelectedPlat] = useState<any>(null);
+  const { user, token } = useAuthStore();
+  const { restaurants: favRestos, toggleRestaurant, plats: favPlats, togglePlat } = useFavoriteStore();
+  const isFavoriteResto = favRestos.includes(id || '');
 
   useEffect(() => {
     if (!id) return;
@@ -86,11 +92,19 @@ export default function RestaurantDetails() {
           className="w-full h-full object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-        <div className="absolute bottom-6 left-6 text-white">
-          <h1 className="text-4xl font-extrabold mb-2">{restaurant.nom}</h1>
-          <p className="text-slate-300 flex items-center gap-2">
-            📍 {restaurant.adresse?.rue}, {restaurant.adresse?.ville}
-          </p>
+        <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-extrabold mb-2">{restaurant.nom}</h1>
+            <p className="text-slate-300 flex items-center gap-2">
+              📍 {restaurant.adresse?.rue}, {restaurant.adresse?.ville}
+            </p>
+          </div>
+          <button 
+            onClick={() => toggleRestaurant(id!, user?.profilId, token || undefined)}
+            className={`p-4 rounded-2xl backdrop-blur-md transition-all ${isFavoriteResto ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
+          >
+            <Heart size={24} fill={isFavoriteResto ? "currentColor" : "none"} />
+          </button>
         </div>
       </div>
 
@@ -102,39 +116,34 @@ export default function RestaurantDetails() {
           Aucun plat disponible pour le moment.
         </div>
       ) : (
-        <div className="grid gap-4">
-          {menu.disponibles.map((item, idx) => (
-            <div 
-              key={item.id} 
-              className="bg-white rounded-3xl p-5 flex flex-col sm:flex-row gap-5 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group cursor-pointer"
-              onClick={() => setSelectedPlat(item)}
-            >
-              <div className="flex-1">
-                <h3 className="font-bold text-slate-800 text-lg">{item.nom}</h3>
-                <p className="text-slate-500 text-sm mt-1 line-clamp-2">{item.description}</p>
-                <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2.5 py-1 rounded-md">
-                  {item.prix.toFixed(2)} €
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-end justify-between">
-                <div className="h-24 w-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 hidden sm:block border border-slate-50">
-                   <img 
-                    src={item.imageUrl || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`} 
-                    alt={item.nom}
-                    className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" 
-                  />
-                </div>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
-                  className="mt-4 sm:mt-0 flex items-center justify-center h-10 w-10 bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-full transition-colors"
-                  title="Ajouter au panier"
-                >
-                  <Plus size={20} className="stroke-[2.5]" />
-                </button>
+        <div className="space-y-10">
+          {/* Section Plats */}
+          {menu.disponibles.filter(p => !p.categorie || p.categorie === 'PLAT').length > 0 && (
+            <div>
+              <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-8 h-[2px] bg-slate-200"></span> PLATS PRINCIPAUX
+              </h3>
+              <div className="grid gap-4">
+                {menu.disponibles.filter(p => !p.categorie || p.categorie === 'PLAT').map((item) => (
+                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id)} />
+                ))}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Section Boissons */}
+          {menu.disponibles.filter(p => p.categorie === 'BOISSON').length > 0 && (
+            <div>
+              <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-8 h-[2px] bg-slate-200"></span> BOISSONS & RAFRAÎCHISSEMENTS
+              </h3>
+              <div className="grid gap-4">
+                {menu.disponibles.filter(p => p.categorie === 'BOISSON').map((item) => (
+                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id)} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -220,5 +229,53 @@ export default function RestaurantDetails() {
         </div>
       )}
     </main>
+  );
+}
+
+function MenuCard({ item, onSelect, onAdd, isFav, onToggleFav }: { 
+  item: MenuItem, 
+  onSelect: (item: MenuItem) => void, 
+  onAdd: (item: MenuItem) => void,
+  isFav: boolean,
+  onToggleFav: () => void
+}) {
+  return (
+    <div 
+      className="bg-white rounded-3xl p-5 flex flex-col sm:flex-row gap-5 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group cursor-pointer relative"
+      onClick={() => onSelect(item)}
+    >
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-bold text-slate-800 text-lg">{item.nom}</h3>
+          <button 
+            onClick={(e) => { e.stopPropagation(); onToggleFav(); }}
+            className={`transition-colors ${isFav ? 'text-red-500' : 'text-slate-300 hover:text-red-400'}`}
+          >
+            <Heart size={16} fill={isFav ? "currentColor" : "none"} />
+          </button>
+        </div>
+        <p className="text-slate-500 text-sm mt-1 line-clamp-2">{item.description}</p>
+        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2.5 py-1 rounded-md">
+          {item.prix.toFixed(2)} €
+        </div>
+      </div>
+      
+      <div className="flex flex-col items-end justify-between">
+        <div className="h-24 w-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 hidden sm:block border border-slate-50">
+           <img 
+            src={item.imageUrl || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`} 
+            alt={item.nom}
+            className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" 
+          />
+        </div>
+        <button 
+          onClick={(e) => { e.stopPropagation(); onAdd(item); }}
+          className="mt-4 sm:mt-0 flex items-center justify-center h-10 w-10 bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-full transition-colors"
+          title="Ajouter au panier"
+        >
+          <Plus size={20} className="stroke-[2.5]" />
+        </button>
+      </div>
+    </div>
   );
 }

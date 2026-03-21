@@ -6,6 +6,7 @@ export { Panier } from "./entities/Panier";
 export { Client } from "./entities/Client";
 export { Livreur } from "./entities/Livreur";
 export { Facture } from "./entities/Facture";
+export { Avis } from "./entities/Avis";
 export { CompteUtilisateur } from "./entities/CompteUtilisateur";
 export type { RoleUtilisateur } from "./entities/CompteUtilisateur";
 

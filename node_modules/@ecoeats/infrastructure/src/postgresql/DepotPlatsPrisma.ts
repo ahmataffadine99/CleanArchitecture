@@ -17,6 +17,7 @@ export class DepotPlatsPrisma implements DepotPlats {
         stockJournalier: plat.stockJournalier,
         imageUrl: plat.imageUrl,
         actif: plat.actif,
+        categorie: plat.categorie,
       },
       create: {
         id: plat.id,
@@ -28,6 +29,7 @@ export class DepotPlatsPrisma implements DepotPlats {
         restaurantId: plat.restaurantId,
         imageUrl: plat.imageUrl,
         actif: plat.actif,
+        categorie: plat.categorie,
       },
     });
   }
@@ -44,7 +46,8 @@ export class DepotPlatsPrisma implements DepotPlats {
       row.stockJournalier,
       row.restaurantId,
       row.imageUrl,
-      row.actif
+      row.actif,
+      row.categorie
     );
   }
 
@@ -61,7 +64,8 @@ export class DepotPlatsPrisma implements DepotPlats {
           r.stockJournalier,
           r.restaurantId,
           r.imageUrl,
-          r.actif
+          r.actif,
+          r.categorie
         )
     );
   }

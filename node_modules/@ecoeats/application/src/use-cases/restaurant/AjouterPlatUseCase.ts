@@ -12,6 +12,7 @@ type Req = {
   stockJournalier: number;
   imageUrl?: string;
   actif?: boolean;
+  categorie?: string;
 };
 
 export class AjouterPlatUseCase {
@@ -32,7 +33,8 @@ export class AjouterPlatUseCase {
       req.stockJournalier || 0,
       req.restaurantId,
       req.imageUrl,
-      req.actif ?? true
+      req.actif ?? true,
+      req.categorie ?? "PLAT"
     );
 
     await this.depotPlats.sauvegarder(plat);

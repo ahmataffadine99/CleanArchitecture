@@ -98,7 +98,7 @@ export function creerRoutesRestaurant(deps: {
   router.post("/restaurant/:id/plats", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const plat = await deps.ajouterPlat.executer({ restaurantId: req.params.id, ...req.body });
-      res.status(201).json({ id: plat.id, nom: plat.nom, prix: plat.prix.enEuros(), imageUrl: plat.imageUrl });
+      res.status(201).json({ id: plat.id, nom: plat.nom, prix: plat.prix.enEuros(), imageUrl: plat.imageUrl, categorie: plat.categorie });
     } catch (err) { next(err); }
   });
 

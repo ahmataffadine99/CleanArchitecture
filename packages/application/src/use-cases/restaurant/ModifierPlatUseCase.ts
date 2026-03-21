@@ -10,6 +10,7 @@ type Req = {
   stockJournalier?: number;
   imageUrl?: string | null;
   actif?: boolean;
+  categorie?: string;
 };
 
 export class ModifierPlatUseCase {
@@ -26,6 +27,7 @@ export class ModifierPlatUseCase {
       stockJournalier: req.stockJournalier,
       imageUrl: req.imageUrl,
       actif: req.actif,
+      categorie: req.categorie,
     });
 
     await this.depotPlats.sauvegarder(plat);

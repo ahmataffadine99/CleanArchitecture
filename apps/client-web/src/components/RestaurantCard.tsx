@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock } from 'lucide-react';
+import { MapPin, Star, Clock, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type RestaurantCardProps = {
@@ -8,9 +8,11 @@ type RestaurantCardProps = {
   image?: string;
   note?: number;
   tempsLivraison?: string;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 };
 
-export default function RestaurantCard({ id, nom, adresse, image, note = 4.8, tempsLivraison = "25-35 min" }: RestaurantCardProps) {
+export default function RestaurantCard({ id, nom, adresse, image, note = 4.8, tempsLivraison = "25-35 min", isFavorite, onToggleFavorite }: RestaurantCardProps) {
   // Image par défaut si aucune n'est fournie
   const bgImage = image || `https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`;
 
@@ -24,6 +26,14 @@ export default function RestaurantCard({ id, nom, adresse, image, note = 4.8, te
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-80" />
+        
+        {/* Favori */}
+        <button 
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(); }}
+          className={`absolute top-4 right-4 z-10 p-2.5 rounded-2xl backdrop-blur-md transition-all shadow-lg ${isFavorite ? 'bg-red-500 text-white' : 'bg-white/30 text-white hover:bg-white/50'}`}
+        >
+          <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+        </button>
         
         {/* Note flottante */}
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm">

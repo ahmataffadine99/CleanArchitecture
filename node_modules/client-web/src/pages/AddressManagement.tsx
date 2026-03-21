@@ -192,7 +192,7 @@ export default function AddressManagement() {
                            longitude: lon
                          });
                       }}
-                      placeholder="Rechercher l'adresse exacte..."
+                      placeholder="Ville, Rue..."
                     />
                   </div>
 

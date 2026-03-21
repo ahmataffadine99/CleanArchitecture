@@ -131,7 +131,7 @@ export default function Register() {
                       value={formData.adresse}
                       onChange={val => setFormData({...formData, adresse: val})}
                       onSelect={(addr, lat, lon) => setFormData({...formData, adresse: addr, latitude: lat, longitude: lon})}
-                      placeholder="Paris, Rue..."
+                      placeholder="Ville, Rue..."
                    />
                 </div>
               </div>

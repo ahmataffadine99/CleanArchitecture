@@ -42,8 +42,32 @@ model PlatMenu {
   restaurantId   String
   imageUrl       String?
   actif          Boolean    @default(true)
+  categorie      String     @default("PLAT") // "PLAT" ou "BOISSON"
   restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
 }
+
+model FavoriRestaurant {
+  clientId     String
+  restaurantId String
+  @@id([clientId, restaurantId])
+}
+
+model FavoriPlat {
+  clientId String
+  platId   String
+  @@id([clientId, platId])
+}
+
+model AvisLivreur {
+  id          String   @id @default(uuid())
+  commandeId  String   @unique
+  livreurId   String
+  clientId    String
+  note        Int      // 1 à 5
+  commentaire String?
+  creeLe      DateTime @default(now())
+}
+
 
 model Commande {
   id               String   @id

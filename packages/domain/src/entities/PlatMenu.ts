@@ -10,7 +10,8 @@ export class PlatMenu {
     public stockJournalier: number,
     public readonly restaurantId: string,
     public imageUrl: string | null = null,
-    public actif: boolean = true
+    public actif: boolean = true,
+    public categorie: string = "PLAT"
   ) {}
 
   estDisponible(): boolean {
@@ -32,6 +33,7 @@ export class PlatMenu {
     stockJournalier?: number;
     imageUrl?: string | null;
     actif?: boolean;
+    categorie?: string;
   }): void {
     if (infos.nom !== undefined) this.nom = infos.nom;
     if (infos.description !== undefined) this.description = infos.description;
@@ -40,5 +42,6 @@ export class PlatMenu {
     if (infos.stockJournalier !== undefined) this.stockJournalier = infos.stockJournalier;
     if (infos.imageUrl !== undefined) this.imageUrl = infos.imageUrl;
     if (infos.actif !== undefined) this.actif = infos.actif;
+    if (infos.categorie !== undefined) this.categorie = infos.categorie;
   }
 }

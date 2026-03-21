@@ -3,6 +3,8 @@ import { useAuthStore } from '../store/authStore';
 import { Loader2, Clock, ChefHat, Package, CheckCircle2, AlertCircle, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DeliveryMap from '../components/DeliveryMap';
+import RatingModal from '../components/RatingModal';
+import { Star } from 'lucide-react';
 
 type CommandeClient = {
   id: string;
@@ -86,6 +88,7 @@ export default function ClientHistory() {
   const [commandes, setCommandes] = useState<CommandeClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'tracking' | 'history'>('tracking');
+  const [showRatingModal, setShowRatingModal] = useState<CommandeClient | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -230,6 +233,18 @@ export default function ClientHistory() {
                   </div>
                 </div>
 
+                {cmd.statut === 'LIVREE' && (
+                  <div className="flex justify-end mb-6">
+                    <button 
+                      onClick={() => setShowRatingModal(cmd)}
+                      className="bg-amber-500 text-white px-6 py-2.5 rounded-2xl font-black hover:bg-amber-600 transition-all shadow-xl shadow-amber-100 flex items-center gap-2 group/btn"
+                    >
+                      <Star size={18} fill="currentColor" className="group-hover/btn:rotate-12 transition-transform" />
+                      NOTER LE LIVREUR
+                    </button>
+                  </div>
+                )}
+
                 {/* Détail de la commande */}
                 <div className="mb-8">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Articles commandés</p>
@@ -296,6 +311,19 @@ export default function ClientHistory() {
             );
           })}
         </div>
+      )}
+
+      {showRatingModal && (
+        <RatingModal 
+          commandeId={showRatingModal.id}
+          restaurantNom={showRatingModal.restaurantNom}
+          token={token!}
+          onClose={() => setShowRatingModal(null)}
+          onSuccess={() => {
+            setShowRatingModal(null);
+            alert("Merci pour votre avis !");
+          }}
+        />
       )}
     </main>
   );

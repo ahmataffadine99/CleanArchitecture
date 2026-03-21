@@ -14,6 +14,8 @@ export { DepotPlatsPrisma } from "./postgresql/DepotPlatsPrisma";
 export { DepotClientsPrisma } from "./postgresql/DepotClientsPrisma";
 export { DepotLivreursPrisma } from "./postgresql/DepotLivreursPrisma";
 export { DepotComptesPrisma } from "./postgresql/DepotComptesPrisma";
+export { DepotAvisPrisma } from "./postgresql/DepotAvisPrisma";
+export { DepotFavorisPrisma } from "./postgresql/DepotFavorisPrisma";
 
 // Services externes
 export { CartographieHaversine } from "./services/CartographieHaversine";

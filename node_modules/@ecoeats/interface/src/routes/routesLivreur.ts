@@ -10,6 +10,7 @@ import {
   RecupererCommandeUseCase,
   ObtenirCommandeUseCase,
   ListerHistoriqueLivreurUseCase,
+  ObtenirAvisLivreurUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesLivreur(deps: {
@@ -23,6 +24,7 @@ export function creerRoutesLivreur(deps: {
   recupererCommande: RecupererCommandeUseCase;
   obtenirCommande: ObtenirCommandeUseCase;
   listerHistorique: ListerHistoriqueLivreurUseCase;
+  obtenirAvis: ObtenirAvisLivreurUseCase;
 }): Router {
   const router = Router();
 
@@ -39,6 +41,14 @@ export function creerRoutesLivreur(deps: {
     try {
       const historique = await deps.listerHistorique.executer(req.params.id);
       res.json(historique);
+    } catch (err) { next(err); }
+  });
+
+  // GET /livreurs/:id/avis
+  router.get("/livreurs/:id/avis", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const avis = await deps.obtenirAvis.executer(req.params.id);
+      res.json(avis);
     } catch (err) { next(err); }
   });
 

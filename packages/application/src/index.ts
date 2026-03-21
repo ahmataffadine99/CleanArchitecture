@@ -8,6 +8,8 @@ export { DepotFactures } from "./ports/DepotFactures";
 export { ServiceCartographie } from "./ports/ServiceCartographie";
 export { ServicePaiement } from "./ports/ServicePaiement";
 export { DepotComptes } from "./ports/DepotComptes";
+export { DepotAvis } from "./ports/DepotAvis";
+export { DepotFavoris } from "./ports/DepotFavoris";
 
 // Use Cases Auth
 export { InscriptionUseCase } from "./use-cases/auth/InscriptionUseCase";
@@ -20,6 +22,8 @@ export { AjouterAuPanierUseCase } from "./use-cases/client/AjouterAuPanierUseCas
 export { PasserCommandeUseCase } from "./use-cases/client/PasserCommandeUseCase";
 export { PayerCommandeUseCase } from "./use-cases/client/PayerCommandeUseCase";
 export { ListerCommandesClientUseCase } from "./use-cases/client/ListerCommandesClientUseCase";
+export { GererFavorisUseCase } from "./use-cases/client/GererFavorisUseCase";
+export { LaisserAvisLivreurUseCase } from "./use-cases/client/LaisserAvisLivreurUseCase";
 
 // Use Cases Restaurateur
 export { AjouterPlatUseCase } from "./use-cases/restaurant/AjouterPlatUseCase";
@@ -42,6 +46,7 @@ export { AttribuerLivraisonUseCase } from "./use-cases/livreur/AttribuerLivraiso
 export { TerminerLivraisonUseCase } from "./use-cases/livreur/TerminerLivraisonUseCase";
 export { ObtenirLivreurUseCase } from "./use-cases/livreur/ObtenirLivreurUseCase";
 export { RecupererCommandeUseCase } from "./use-cases/livreur/RecupererCommandeUseCase";
+export { ObtenirAvisLivreurUseCase } from "./use-cases/livreur/ObtenirAvisLivreurUseCase";
 export * from "./use-cases/livreur/ListerHistoriqueLivreurUseCase";
 
 // Use Cases Commande

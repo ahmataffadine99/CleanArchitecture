@@ -10,15 +10,19 @@ interface AddressAutocompleteProps {
 }
 
 export default function AddressAutocomplete({ value, onChange, onSelect, placeholder = "Rechercher une adresse...", className = "" }: AddressAutocompleteProps) {
-  const [query, setQuery] = useState(value);
+  const [query, setQuery] = useState(value || '');
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const lastSelectedRef = useRef(value || '');
 
   // Sync state if controlled value changes externally
   useEffect(() => {
-    setQuery(value);
+    if (value !== query) {
+      setQuery(value || '');
+      lastSelectedRef.current = value || '';
+    }
   }, [value]);
 
   // Click outside to close dropdown
@@ -34,7 +38,8 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
 
   // Debounced search
   useEffect(() => {
-    if (!query || query === value) {
+    // Si la requête est vide ou identique à la dernière valeur sélectionnée, on ne cherche pas
+    if (!query || query.length < 3 || query === lastSelectedRef.current) {
       setResults([]);
       setIsLoading(false);
       return;
@@ -43,7 +48,6 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        // Limitation à la France + limit 5. Vous pouvez enlever countrycodes pour monde.
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1&countrycodes=fr`);
         const data = await res.json();
         setResults(data);
@@ -53,19 +57,20 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
       } finally {
         setIsLoading(false);
       }
-    }, 500); // 500ms debounce (Nominatim req rate limit < 1/sec)
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [query, value]);
+  }, [query]);
 
   const handleSelect = (item: any) => {
     const displayName = item.display_name;
     const lat = parseFloat(item.lat);
     const lon = parseFloat(item.lon);
     
+    lastSelectedRef.current = displayName;
     setQuery(displayName);
     setIsOpen(false);
-    onChange(displayName);
+    setResults([]);
     onSelect(displayName, lat, lon);
   };
 
@@ -79,8 +84,8 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
   return (
     <div className={`relative ${className}`} ref={wrapperRef}>
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {isLoading ? <Loader2 size={18} className="text-emerald-500 animate-spin" /> : <Search size={18} className="text-slate-400" />}
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+          {isLoading ? <Loader2 size={18} className="animate-spin text-emerald-500" /> : <Search size={18} />}
         </div>
         <input
           type="text"
@@ -88,25 +93,27 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
           onChange={handleInputChange}
           onFocus={() => { if (query.length > 2) setIsOpen(true) }}
           placeholder={placeholder}
-          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-medium text-slate-800"
+          className="w-full pl-12 pr-6 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
           autoComplete="off"
         />
       </div>
 
       {isOpen && results.length > 0 && (
-        <ul className="absolute z-[100] w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+        <ul className="absolute z-[100] w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto animate-in slide-in-from-top-2 duration-200">
           {results.map((item, index) => (
             <li 
               key={item.place_id || index}
               onClick={() => handleSelect(item)}
-              className="px-4 py-3 hover:bg-slate-50 cursor-pointer flex items-start gap-3 transition-colors border-b border-slate-50 last:border-0"
+              className="px-4 py-3 hover:bg-emerald-50 cursor-pointer flex items-start gap-3 transition-colors border-b border-slate-50 last:border-0"
             >
-              <MapPin size={18} className="text-slate-400 mt-0.5 shrink-0" />
+              <div className="mt-0.5 text-slate-400">
+                <MapPin size={16} />
+              </div>
               <div>
                 <p className="text-sm font-bold text-slate-800 line-clamp-1">
                   {item.address?.house_number} {item.address?.road || item.display_name.split(',')[0]}
                 </p>
-                <p className="text-xs font-medium text-slate-500 line-clamp-1 mt-0.5">
+                <p className="text-[10px] font-medium text-slate-400 line-clamp-1 mt-0.5">
                   {item.display_name}
                 </p>
               </div>

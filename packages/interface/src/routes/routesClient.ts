@@ -6,6 +6,8 @@ import {
   PasserCommandeUseCase,
   PayerCommandeUseCase,
   ListerCommandesClientUseCase,
+  GererFavorisUseCase,
+  LaisserAvisLivreurUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesClient(deps: {
@@ -15,6 +17,8 @@ export function creerRoutesClient(deps: {
   passerCommande: PasserCommandeUseCase;
   payerCommande: PayerCommandeUseCase;
   listerCommandesClient: ListerCommandesClientUseCase;
+  gererFavoris: GererFavorisUseCase;
+  laisserAvis: LaisserAvisLivreurUseCase;
 }): Router {
   const router = Router();
 
@@ -38,6 +42,7 @@ export function creerRoutesClient(deps: {
         prix: p.prix.enEuros(), allergenes: p.allergenes, stock: p.stockJournalier,
         imageUrl: p.imageUrl,
         actif: p.actif,
+        categorie: p.categorie,
       });
 
       const actifsSeulement = (p: any) => p.actif !== false;
@@ -153,6 +158,60 @@ export function creerRoutesClient(deps: {
           return sum + Math.floor(totalCentimes / 100);
         }, 0);
       res.json({ pointsFidelite: totalPoints });
+    } catch (err) { next(err); }
+  });
+
+  // --- FAVORIS ---
+  // Favoris Restaurants
+  router.get('/favoris/restaurants/:clientId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const ids = await deps.gererFavoris.listerRestaurants(req.params.clientId);
+      res.json(ids);
+    } catch (err) { next(err); }
+  });
+
+  router.post('/favoris/restaurants', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.gererFavoris.ajouterRestaurant(req.body.clientId, req.body.restaurantId);
+      res.status(201).send();
+    } catch (err) { next(err); }
+  });
+
+  router.delete('/favoris/restaurants/:clientId/:restaurantId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.gererFavoris.retirerRestaurant(req.params.clientId, req.params.restaurantId);
+      res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  // Favoris Plats
+  router.get('/favoris/plats/:clientId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const ids = await deps.gererFavoris.listerPlats(req.params.clientId);
+      res.json(ids);
+    } catch (err) { next(err); }
+  });
+
+  router.post('/favoris/plats', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.gererFavoris.ajouterPlat(req.body.clientId, req.body.platId);
+      res.status(201).send();
+    } catch (err) { next(err); }
+  });
+
+  router.delete('/favoris/plats/:clientId/:platId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.gererFavoris.retirerPlat(req.params.clientId, req.params.platId);
+      res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  // Avis
+  router.post("/commandes/:id/avis", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { note, commentaire } = req.body;
+      await deps.laisserAvis.executer({ commandeId: req.params.id, note, commentaire });
+      res.status(201).send();
     } catch (err) { next(err); }
   });
 

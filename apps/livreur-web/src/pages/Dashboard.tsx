@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight, AlertCircle } from 'lucide-react';
+import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight, AlertCircle, Star } from 'lucide-react';
 import DeliveryMap from '../components/DeliveryMap';
 
 export default function Dashboard() {
@@ -11,6 +11,8 @@ export default function Dashboard() {
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showAvisModal, setShowAvisModal] = useState(false);
+  const [avis, setAvis] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = async () => {
@@ -72,10 +74,25 @@ export default function Dashboard() {
       setLoadingHistorique(false);
     }
   };
+  
+  const fetchAvis = async () => {
+    if (!user?.profilId || !token) return;
+    try {
+      const res = await fetch(`/api/livreurs/${user.profilId}/avis`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) setAvis(await res.json());
+    } catch (err) { console.error(err); }
+  };
 
   const handleOpenHistory = () => {
     setShowHistoryModal(true);
     fetchHistorique();
+  };
+
+  const handleOpenAvis = () => {
+    setShowAvisModal(true);
+    fetchAvis();
   };
 
   const handleAccept = async (commandeId: string) => {
@@ -194,12 +211,21 @@ export default function Dashboard() {
           <div className="text-4xl font-black mb-6 relative z-10">
             {livreur?.portefeuille?.toFixed(2) || '0.00'} €
           </div>
-          <button 
-            onClick={handleOpenHistory}
-            className="w-full bg-white/10 hover:bg-white/20 border border-white/10 py-3 rounded-2xl text-sm font-bold transition-all backdrop-blur-md"
-          >
-            VOIR L'HISTORIQUE
-          </button>
+          <div className="flex gap-4 relative z-10">
+            <button 
+              onClick={handleOpenHistory}
+              className="flex-1 bg-white/10 hover:bg-white/20 border border-white/10 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all backdrop-blur-md"
+            >
+              HISTORIQUE
+            </button>
+            <button 
+              onClick={handleOpenAvis}
+              className="flex-1 bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/10 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all backdrop-blur-md flex items-center justify-center gap-2"
+            >
+              <Star size={12} fill="currentColor" />
+              MES NOTES
+            </button>
+          </div>
         </div>
 
         {/* État de Livraison */}
@@ -375,7 +401,7 @@ export default function Dashboard() {
       </main>
 
       {/* Logout */}
-      <footer className="max-w-lg mx-auto px-6 mt-12">
+      <footer className="max-w-lg mx-auto px-6 mt-12 pb-12">
         <button 
           onClick={logout}
           className="w-full py-4 text-slate-300 font-bold text-sm hover:text-red-500 transition-colors"
@@ -383,6 +409,7 @@ export default function Dashboard() {
           SE DÉCONNECTER
         </button>
       </footer>
+
       {/* Modal Historique du portefeuille */}
       {showHistoryModal && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -404,7 +431,7 @@ export default function Dashboard() {
                      <div className="w-8 h-8 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
                    </div>
                  ) : historique.length === 0 ? (
-                   <p className="text-center text-slate-400 font-medium py-4">Aucun historique disponible.</p>
+                   <p className="text-center text-slate-400 font-medium py-12">Aucun historique disponible.</p>
                  ) : historique.map((course) => (
                    <div key={course.id} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-emerald-200 transition-all cursor-pointer">
                       <div className="flex items-center gap-4">
@@ -433,6 +460,62 @@ export default function Dashboard() {
                       FERMER
                     </button>
                  </div>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* Modal Avis */}
+      {showAvisModal && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowAvisModal(false)}></div>
+           <div className="relative bg-slate-50 w-full max-w-lg sm:rounded-[2.5rem] rounded-t-[2.5rem] shadow-2xl overflow-hidden animate-in sm:zoom-in slide-in-from-bottom-full duration-300 flex flex-col max-h-[85vh]">
+              <div className="p-8 border-b border-slate-200 bg-white flex justify-between items-center sticky top-0 z-10">
+                 <div>
+                   <h2 className="text-2xl font-black text-slate-800 tracking-tight">Mes Avis</h2>
+                   <p className="text-sm font-medium text-slate-400 mt-1">Vos retours clients</p>
+                 </div>
+                 <button onClick={() => setShowAvisModal(false)} className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 transition-colors">
+                    <X size={24} />
+                 </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto space-y-4">
+                 {avis.length === 0 ? (
+                   <p className="text-center text-slate-400 font-medium py-12">Aucun avis pour le moment.</p>
+                 ) : (
+                   <div className="space-y-4 pb-8">
+                     <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 flex flex-col items-center gap-2 mb-6 text-center">
+                        <div className="flex gap-1">
+                          {[1,2,3,4,5].map(s => (
+                            <Star key={s} size={24} className={s <= Math.round(avis.reduce((a,b)=>a+b.note,0)/avis.length) ? 'text-amber-400 fill-amber-400' : 'text-amber-200'} />
+                          ))}
+                        </div>
+                        <p className="text-amber-800 font-black text-3xl mt-2">
+                          {(avis.reduce((a,b)=>a+b.note,0)/avis.length).toFixed(1)} / 5
+                        </p>
+                        <p className="text-amber-600 font-bold text-xs uppercase tracking-widest">{avis.length} avis reçus</p>
+                     </div>
+
+                     {avis.map((a) => (
+                       <div key={a.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+                          <div className="flex justify-between items-center">
+                             <div className="flex gap-1">
+                                {[1,2,3,4,5].map(s => (
+                                  <Star key={s} size={12} className={s <= a.note ? 'text-amber-400 fill-amber-400' : 'text-slate-200'} />
+                                ))}
+                             </div>
+                             <span className="text-[10px] font-bold text-slate-400">{new Date(a.date).toLocaleDateString()}</span>
+                          </div>
+                          {a.commentaire && (
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed italic border-l-4 border-amber-400 pl-4">
+                              "{a.commentaire}"
+                            </p>
+                          )}
+                       </div>
+                     ))}
+                   </div>
+                 )}
               </div>
            </div>
         </div>

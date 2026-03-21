@@ -1,0 +1,1 @@
+{"version":3,"file":"TransitionStatutInvalideError.d.ts","sourceRoot":"","sources":["TransitionStatutInvalideError.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAC9C,OAAO,EAAE,cAAc,EAAE,MAAM,iCAAiC,CAAC;AAEjE,qBAAa,6BAA8B,SAAQ,YAAY;gBACjD,MAAM,EAAE,cAAc,EAAE,IAAI,EAAE,cAAc;CAMzD"}

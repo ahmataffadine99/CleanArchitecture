@@ -4325,18 +4325,25 @@ __export(index_exports, {
   AttribuerLivraisonUseCase: () => AttribuerLivraisonUseCase,
   ChangerStatutLivreurUseCase: () => ChangerStatutLivreurUseCase,
   ConnexionUseCase: () => ConnexionUseCase,
+  GererFavorisUseCase: () => GererFavorisUseCase,
   InscriptionUseCase: () => InscriptionUseCase,
+  LaisserAvisLivreurUseCase: () => LaisserAvisLivreurUseCase,
   ListerCommandesClientUseCase: () => ListerCommandesClientUseCase,
   ListerCommandesRestaurantUseCase: () => ListerCommandesRestaurantUseCase,
+  ListerHistoriqueLivreurUseCase: () => ListerHistoriqueLivreurUseCase,
   ListerRestaurantsUseCase: () => ListerRestaurantsUseCase,
   MarquerCommandePreteUseCase: () => MarquerCommandePreteUseCase,
   ModifierPlatUseCase: () => ModifierPlatUseCase,
   ModifierRestaurantUseCase: () => ModifierRestaurantUseCase,
+  ObtenirAvisLivreurUseCase: () => ObtenirAvisLivreurUseCase,
+  ObtenirCommandeUseCase: () => ObtenirCommandeUseCase,
   ObtenirLivreurUseCase: () => ObtenirLivreurUseCase,
   ObtenirMonRestaurantUseCase: () => ObtenirMonRestaurantUseCase,
+  ObtenirPropositionsLivreurUseCase: () => ObtenirPropositionsLivreurUseCase,
   PasserCommandeUseCase: () => PasserCommandeUseCase,
   PayerCommandeUseCase: () => PayerCommandeUseCase,
   ProposerLivraisonUseCase: () => ProposerLivraisonUseCase,
+  RecupererCommandeUseCase: () => RecupererCommandeUseCase,
   RefuserCommandeUseCase: () => RefuserCommandeUseCase,
   RefuserLivraisonUseCase: () => RefuserLivraisonUseCase,
   SupprimerPlatUseCase: () => SupprimerPlatUseCase,
@@ -4422,8 +4429,7 @@ var InscriptionUseCase = class {
         req.nom,
         // Nom de l'enseigne
         req.adresse || "Adresse \xE0 pr\xE9ciser",
-        new import_domain.Coordonnees(48.8566, 2.3522),
-        // Paris par défaut
+        new import_domain.Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522),
         profilId
         // Le profilId sert d'identifiant stable pour le dashboard
       );
@@ -4432,8 +4438,7 @@ var InscriptionUseCase = class {
       const livreur = new import_domain.Livreur(
         profilId,
         req.nom,
-        new import_domain.Coordonnees(48.8566, 2.3522),
-        // Position par défaut (Paris)
+        new import_domain.Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522),
         req.telephone || "\xC0 renseigner",
         false,
         // Pas expert par défaut
@@ -4604,10 +4609,10 @@ var PasserCommandeUseCase = class {
     const client = await this.depotClients.trouverParId(req.clientId);
     const restaurantId = req.panier.getRestaurantId();
     const restaurant = await this.depotRestaurants.trouverParId(restaurantId);
-    const positionClient = { latitude: 48.8566, longitude: 2.3522 };
+    const positionLivraison = new import_domain6.Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522);
     const distanceKm = this.cartographie.calculerDistanceKm(
       restaurant.position,
-      positionClient
+      positionLivraison
     );
     for (const article of req.panier.getArticles()) {
       const plat = await this.depotPlats.trouverParId(article.menuItemId);
@@ -4630,6 +4635,7 @@ var PasserCommandeUseCase = class {
       fraisLivraison,
       fraisService,
       req.adresseLivraison,
+      positionLivraison,
       reduction
     );
     await this.depotCommandes.sauvegarder(commande);
@@ -4685,16 +4691,104 @@ var PayerCommandeUseCase = class {
 
 // src/use-cases/client/ListerCommandesClientUseCase.ts
 var ListerCommandesClientUseCase = class {
-  constructor(depotCommandes) {
+  constructor(depotCommandes, depotRestaurants, depotLivreurs) {
     this.depotCommandes = depotCommandes;
+    this.depotRestaurants = depotRestaurants;
+    this.depotLivreurs = depotLivreurs;
   }
   async executer(clientId) {
-    return this.depotCommandes.trouverParClient(clientId);
+    const commandes = await this.depotCommandes.trouverParClient(clientId);
+    return Promise.all(commandes.map(async (cmd) => {
+      let restaurantNom = "Restaurant";
+      let restaurantPosition = { latitude: 48.8566, longitude: 2.3522 };
+      try {
+        const r = await this.depotRestaurants.trouverParId(cmd.restaurantId);
+        restaurantNom = r.nom;
+        restaurantPosition = { latitude: r.position.latitude, longitude: r.position.longitude };
+      } catch (_) {
+      }
+      let livreurNom = void 0;
+      let livreurPosition = void 0;
+      if (cmd.getLivreurId()) {
+        try {
+          const l = await this.depotLivreurs.trouverParId(cmd.getLivreurId());
+          livreurNom = l.nom;
+        } catch (_) {
+        }
+      }
+      return {
+        ...cmd,
+        id: cmd.id,
+        statut: cmd.getStatut(),
+        prixTotal: cmd.prixTotal().enEuros(),
+        creeLe: cmd.getCreeLe(),
+        tempsPreparationEstime: cmd.getTempsPreparation(),
+        restaurantNom,
+        livreurNom,
+        adresseLivraison: cmd.getAdresseLivraison(),
+        clientPosition: {
+          latitude: cmd.getPositionLivraison().latitude,
+          longitude: cmd.getPositionLivraison().longitude
+        },
+        restaurantPosition,
+        livreurPosition
+      };
+    }));
+  }
+};
+
+// src/use-cases/client/GererFavorisUseCase.ts
+var GererFavorisUseCase = class {
+  constructor(depotFavoris) {
+    this.depotFavoris = depotFavoris;
+  }
+  async ajouterRestaurant(clientId, restaurantId) {
+    await this.depotFavoris.ajouterRestaurant(clientId, restaurantId);
+  }
+  async retirerRestaurant(clientId, restaurantId) {
+    await this.depotFavoris.retirerRestaurant(clientId, restaurantId);
+  }
+  async listerRestaurants(clientId) {
+    return this.depotFavoris.listerRestaurants(clientId);
+  }
+  async ajouterPlat(clientId, platId) {
+    await this.depotFavoris.ajouterPlat(clientId, platId);
+  }
+  async retirerPlat(clientId, platId) {
+    await this.depotFavoris.retirerPlat(clientId, platId);
+  }
+  async listerPlats(clientId) {
+    return this.depotFavoris.listerPlats(clientId);
+  }
+};
+
+// src/use-cases/client/LaisserAvisLivreurUseCase.ts
+var import_domain9 = require("@ecoeats/domain");
+var LaisserAvisLivreurUseCase = class {
+  constructor(depotAvis, depotCommandes) {
+    this.depotAvis = depotAvis;
+    this.depotCommandes = depotCommandes;
+  }
+  async executer(params) {
+    const commande = await this.depotCommandes.trouverParId(params.commandeId);
+    if (!commande) throw new Error("Commande introuvable");
+    const livreurId = commande.getLivreurId();
+    if (!livreurId) throw new Error("Cette commande n'a pas de livreur associ\xE9");
+    if (commande.getStatut() !== "LIVREE") throw new Error("Vous ne pouvez noter qu'une commande livr\xE9e");
+    const avis = new import_domain9.Avis(
+      v4_default(),
+      params.commandeId,
+      livreurId,
+      commande.clientId,
+      params.note,
+      params.commentaire || null
+    );
+    await this.depotAvis.sauvegarder(avis);
   }
 };
 
 // src/use-cases/restaurant/AjouterPlatUseCase.ts
-var import_domain9 = require("@ecoeats/domain");
+var import_domain10 = require("@ecoeats/domain");
 var AjouterPlatUseCase = class {
   constructor(depotPlats, depotRestaurants) {
     this.depotPlats = depotPlats;
@@ -4702,16 +4796,17 @@ var AjouterPlatUseCase = class {
   }
   async executer(req) {
     await this.depotRestaurants.trouverParId(req.restaurantId);
-    const plat = new import_domain9.PlatMenu(
+    const plat = new import_domain10.PlatMenu(
       v4_default(),
       req.nom,
       req.description,
-      req.prixEuros ? import_domain9.Money.fromEuros(req.prixEuros) : import_domain9.Money.zero(),
+      req.prixEuros ? import_domain10.Money.fromEuros(req.prixEuros) : import_domain10.Money.zero(),
       req.allergenes || [],
       req.stockJournalier || 0,
       req.restaurantId,
       req.imageUrl,
-      req.actif ?? true
+      req.actif ?? true,
+      req.categorie ?? "PLAT"
     );
     await this.depotPlats.sauvegarder(plat);
     return plat;
@@ -4719,7 +4814,7 @@ var AjouterPlatUseCase = class {
 };
 
 // src/use-cases/restaurant/ModifierPlatUseCase.ts
-var import_domain10 = require("@ecoeats/domain");
+var import_domain11 = require("@ecoeats/domain");
 var ModifierPlatUseCase = class {
   constructor(depotPlats) {
     this.depotPlats = depotPlats;
@@ -4729,11 +4824,12 @@ var ModifierPlatUseCase = class {
     plat.mettreAJour({
       nom: req.nom,
       description: req.description,
-      prix: req.prixEuros !== void 0 ? import_domain10.Money.fromEuros(req.prixEuros) : void 0,
+      prix: req.prixEuros !== void 0 ? import_domain11.Money.fromEuros(req.prixEuros) : void 0,
       allergenes: req.allergenes,
       stockJournalier: req.stockJournalier,
       imageUrl: req.imageUrl,
-      actif: req.actif
+      actif: req.actif,
+      categorie: req.categorie
     });
     await this.depotPlats.sauvegarder(plat);
   }
@@ -4752,26 +4848,32 @@ var SupprimerPlatUseCase = class {
 
 // src/use-cases/restaurant/AccepterCommandeUseCase.ts
 var AccepterCommandeUseCase = class {
-  constructor(depotCommandes) {
+  constructor(depotCommandes, proposerLivraison) {
     this.depotCommandes = depotCommandes;
+    this.proposerLivraison = proposerLivraison;
   }
   async executer(req) {
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
     commande.accepter(req.tempsPreparationMinutes);
     await this.depotCommandes.sauvegarder(commande);
+    try {
+      await this.proposerLivraison.executer({ commandeId: req.commandeId });
+    } catch (err) {
+      console.warn("Aucun livreur disponible pour le moment:", err);
+    }
     return commande;
   }
 };
 
 // src/use-cases/restaurant/RefuserCommandeUseCase.ts
-var import_domain11 = require("@ecoeats/domain");
+var import_domain12 = require("@ecoeats/domain");
 var RefuserCommandeUseCase = class {
   constructor(depotCommandes) {
     this.depotCommandes = depotCommandes;
   }
   async executer(commandeId) {
     const commande = await this.depotCommandes.trouverParId(commandeId);
-    commande.changerStatut(import_domain11.StatutCommande.REFUSEE);
+    commande.changerStatut(import_domain12.StatutCommande.REFUSEE);
     await this.depotCommandes.sauvegarder(commande);
     return commande;
   }
@@ -4798,9 +4900,10 @@ var MarquerCommandePreteUseCase = class {
 
 // src/use-cases/restaurant/ListerCommandesRestaurantUseCase.ts
 var ListerCommandesRestaurantUseCase = class {
-  constructor(depotCommandes, depotClients) {
+  constructor(depotCommandes, depotClients, depotLivreurs) {
     this.depotCommandes = depotCommandes;
     this.depotClients = depotClients;
+    this.depotLivreurs = depotLivreurs;
   }
   async executer(restaurantId) {
     let commandes = [];
@@ -4813,10 +4916,19 @@ var ListerCommandesRestaurantUseCase = class {
     return Promise.all(commandes.map(async (cmd) => {
       try {
         const client = await this.depotClients.trouverParId(cmd.clientId);
+        let livreurNom = void 0;
+        if (cmd.getLivreurId() && this.depotLivreurs) {
+          try {
+            const l = await this.depotLivreurs.trouverParId(cmd.getLivreurId());
+            livreurNom = l.nom;
+          } catch (_) {
+          }
+        }
         return {
           ...cmd,
           clientNom: client.nom,
           clientTelephone: client.telephone || "Non renseign\xE9",
+          livreurNom,
           statut: cmd.getStatut(),
           creeLe: cmd.getCreeLe(),
           prixPlatsCentimes: cmd.getPrixPlats().enCentimes(),
@@ -4842,7 +4954,7 @@ var ListerCommandesRestaurantUseCase = class {
 };
 
 // src/use-cases/restaurant/ModifierRestaurantUseCase.ts
-var import_domain12 = require("@ecoeats/domain");
+var import_domain13 = require("@ecoeats/domain");
 var ModifierRestaurantUseCase = class {
   constructor(depotRestaurants) {
     this.depotRestaurants = depotRestaurants;
@@ -4853,7 +4965,7 @@ var ModifierRestaurantUseCase = class {
     if (req.adresse !== void 0) restaurant.adresse = req.adresse;
     if (req.imageUrl !== void 0) restaurant.imageUrl = req.imageUrl;
     if (req.latitude !== void 0 && req.longitude !== void 0) {
-      restaurant.position = new import_domain12.Coordonnees(req.latitude, req.longitude);
+      restaurant.position = new import_domain13.Coordonnees(req.latitude, req.longitude);
     }
     await this.depotRestaurants.sauvegarder(restaurant);
   }
@@ -4871,13 +4983,25 @@ var ObtenirMonRestaurantUseCase = class {
 
 // src/use-cases/livreur/ChangerStatutLivreurUseCase.ts
 var ChangerStatutLivreurUseCase = class {
-  constructor(depotLivreurs) {
+  constructor(depotLivreurs, depotCommandes, depotRestaurants, cartographie) {
     this.depotLivreurs = depotLivreurs;
+    this.depotCommandes = depotCommandes;
+    this.depotRestaurants = depotRestaurants;
+    this.cartographie = cartographie;
   }
+  RAYON_ACTION_KM = 30;
   async executer(req) {
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
     if (req.statut === "DISPONIBLE") {
       livreur.seDeclarerDisponible();
+      const commandesSansLivreur = await this.depotCommandes.trouverCommandesSansLivreur();
+      for (const cmd of commandesSansLivreur) {
+        const restaurant = await this.depotRestaurants.trouverParId(cmd.restaurantId);
+        const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
+        if (distance <= this.RAYON_ACTION_KM) {
+          livreur.recevoirProposition(cmd.id);
+        }
+      }
     } else {
       livreur.seDeclarerIndisponible();
     }
@@ -4887,30 +5011,32 @@ var ChangerStatutLivreurUseCase = class {
 };
 
 // src/use-cases/livreur/ProposerLivraisonUseCase.ts
-var import_domain13 = require("@ecoeats/domain");
 var import_domain14 = require("@ecoeats/domain");
 var ProposerLivraisonUseCase = class {
-  constructor(depotCommandes, depotLivreurs, depotRestaurants) {
+  constructor(depotCommandes, depotLivreurs, depotRestaurants, cartographie) {
     this.depotCommandes = depotCommandes;
     this.depotLivreurs = depotLivreurs;
     this.depotRestaurants = depotRestaurants;
+    this.cartographie = cartographie;
   }
-  selectionLivreur = new import_domain14.SelectionLivreurService();
+  RAYON_ACTION_KM = 30;
   async executer(req) {
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
-    if (commande.getStatut() !== import_domain13.StatutCommande.PRETE) {
-      throw new Error(`La commande ${req.commandeId} n'est pas encore pr\xEAte.`);
+    const statut = commande.getStatut();
+    if (statut !== import_domain14.StatutCommande.PRETE && statut !== import_domain14.StatutCommande.EN_PREPARATION) {
+      throw new Error(`La commande ${req.commandeId} n'est pas encore pr\xEAte ou en pr\xE9paration.`);
     }
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
-    const livreurs = await this.depotLivreurs.listerDisponibles();
-    const livreurChoisi = this.selectionLivreur.trouverLePlusProche(
-      livreurs,
-      restaurant.position,
-      restaurant.id
-    );
-    livreurChoisi.recevoirProposition(commande.id);
-    await this.depotLivreurs.sauvegarder(livreurChoisi);
-    return livreurChoisi;
+    const livreursEligibles = await this.depotLivreurs.listerEligiblesPourRestaurant(commande.restaurantId);
+    const livreursProches = livreursEligibles.filter((livreur) => {
+      const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
+      return distance <= this.RAYON_ACTION_KM;
+    });
+    for (const livreur of livreursProches) {
+      livreur.recevoirProposition(commande.id);
+      await this.depotLivreurs.sauvegarder(livreur);
+    }
+    return livreursProches[0];
   }
 };
 
@@ -4923,10 +5049,11 @@ var AccepterLivraisonUseCase = class {
   async executer(req) {
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
-    livreur.accepterProposition(req.commandeId);
+    livreur.accepterProposition(req.commandeId, commande.restaurantId);
     commande.assignerLivreur(livreur.id);
     await this.depotLivreurs.sauvegarder(livreur);
     await this.depotCommandes.sauvegarder(commande);
+    await this.depotLivreurs.retirerPropositionDeTous(req.commandeId);
   }
 };
 
@@ -4939,6 +5066,41 @@ var RefuserLivraisonUseCase = class {
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
     livreur.refuserProposition(req.commandeId);
     await this.depotLivreurs.sauvegarder(livreur);
+  }
+};
+
+// src/use-cases/livreur/ObtenirPropositionsLivreurUseCase.ts
+var ObtenirPropositionsLivreurUseCase = class {
+  constructor(depotLivreurs, depotCommandes, depotRestaurants, cartographie) {
+    this.depotLivreurs = depotLivreurs;
+    this.depotCommandes = depotCommandes;
+    this.depotRestaurants = depotRestaurants;
+    this.cartographie = cartographie;
+  }
+  async executer(livreurId) {
+    const livreur = await this.depotLivreurs.trouverParId(livreurId);
+    const details = [];
+    for (const commandeId of livreur.getPropositionsIds()) {
+      try {
+        const commande = await this.depotCommandes.trouverParId(commandeId);
+        const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
+        const distanceApproche = this.cartographie.calculerDistanceKm(livreur.position, restaurant.position);
+        const distanceLivraison = this.cartographie.calculerDistanceKm(restaurant.position, commande.getPositionLivraison());
+        details.push({
+          commandeId: commande.id,
+          restaurantNom: restaurant.nom,
+          restaurantAdresse: restaurant.adresse,
+          clientAdresse: commande.getAdresseLivraison(),
+          tempsPreparationEstime: commande.getTempsPreparation() || void 0,
+          montantLivraison: commande.getFraisLivraison().enEuros(),
+          distanceApprocheKm: Number(distanceApproche.toFixed(1)),
+          distanceLivraisonKm: Number(distanceLivraison.toFixed(1))
+        });
+      } catch (err) {
+        console.error(`Erreur lors de la r\xE9cup\xE9ration de la proposition ${commandeId}:`, err);
+      }
+    }
+    return details;
   }
 };
 
@@ -4986,17 +5148,25 @@ var TerminerLivraisonUseCase = class {
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
-    const positionClient = { latitude: 48.8566, longitude: 2.3522 };
     const distanceKm = this.cartographie.calculerDistanceKm(
       restaurant.position,
-      positionClient
+      commande.getPositionLivraison()
     );
+    const distancePourGains = Math.min(distanceKm, 50);
     const gains = this.calculGains.calculerGains(
-      distanceKm,
+      distancePourGains,
       req.pourboire ? import_domain17.Money.fromEuros(req.pourboire) : import_domain17.Money.zero()
     );
     commande.marquerLivree();
     livreur.terminerLivraison(commande.id, gains);
+    try {
+      const historique = await this.depotCommandes.trouverParLivreur(livreur.id);
+      const nbLivrees = historique.filter((c) => c.getStatut() === "LIVREE").length;
+      if (nbLivrees >= 5) {
+        livreur.estExpert = true;
+      }
+    } catch (_) {
+    }
     await this.depotCommandes.sauvegarder(commande);
     await this.depotLivreurs.sauvegarder(livreur);
     return { livreur, gains };
@@ -5012,6 +5182,102 @@ var ObtenirLivreurUseCase = class {
     return this.depotLivreurs.trouverParId(livreurId);
   }
 };
+
+// src/use-cases/livreur/RecupererCommandeUseCase.ts
+var import_domain18 = require("@ecoeats/domain");
+var RecupererCommandeUseCase = class {
+  constructor(depotCommandes, depotLivreurs) {
+    this.depotCommandes = depotCommandes;
+    this.depotLivreurs = depotLivreurs;
+  }
+  async executer(req) {
+    const commande = await this.depotCommandes.trouverParId(req.commandeId);
+    if (!commande) throw new import_domain18.CommandeIntrouvableError(req.commandeId);
+    if (commande.getLivreurId() !== req.livreurId) {
+      throw new Error("Ce livreur n'est pas assign\xE9 \xE0 cette commande.");
+    }
+    commande.recuperer();
+    await this.depotCommandes.sauvegarder(commande);
+  }
+};
+
+// src/use-cases/livreur/ObtenirAvisLivreurUseCase.ts
+var ObtenirAvisLivreurUseCase = class {
+  constructor(depotAvis) {
+    this.depotAvis = depotAvis;
+  }
+  async executer(livreurId) {
+    return this.depotAvis.trouverParLivreur(livreurId);
+  }
+};
+
+// src/use-cases/livreur/ListerHistoriqueLivreurUseCase.ts
+var ListerHistoriqueLivreurUseCase = class {
+  constructor(depotCommandes, depotRestaurants) {
+    this.depotCommandes = depotCommandes;
+    this.depotRestaurants = depotRestaurants;
+  }
+  async executer(livreurId) {
+    const commandes = await this.depotCommandes.trouverParLivreur(livreurId);
+    const commandesTerminees = commandes.filter(
+      (cmd) => cmd.getStatut() === "LIVREE"
+    );
+    return Promise.all(commandesTerminees.map(async (cmd) => {
+      let restaurantNom = "Restaurant";
+      try {
+        const r = await this.depotRestaurants.trouverParId(cmd.restaurantId);
+        restaurantNom = r.nom;
+      } catch (_) {
+      }
+      return {
+        id: cmd.id,
+        statut: cmd.getStatut(),
+        creeLe: cmd.getCreeLe(),
+        gainsCentimes: cmd.getFraisLivraison().enCentimes(),
+        // Gains estimé: frais de livraison
+        restaurantNom
+      };
+    }));
+  }
+};
+
+// src/use-cases/commande/ObtenirCommandeUseCase.ts
+var import_domain19 = require("@ecoeats/domain");
+var ObtenirCommandeUseCase = class {
+  constructor(depotCommandes, depotRestaurants) {
+    this.depotCommandes = depotCommandes;
+    this.depotRestaurants = depotRestaurants;
+  }
+  async executer(commandeId) {
+    const commande = await this.depotCommandes.trouverParId(commandeId);
+    if (!commande) throw new import_domain19.CommandeIntrouvableError(commandeId);
+    let coordonneesRestaurant = { latitude: 48.8566, longitude: 2.3522 };
+    try {
+      const r = await this.depotRestaurants.trouverParId(commande.restaurantId);
+      coordonneesRestaurant = { latitude: r.position.latitude, longitude: r.position.longitude };
+    } catch (_) {
+    }
+    return {
+      id: commande.id,
+      restaurantId: commande.restaurantId,
+      clientId: commande.clientId,
+      statut: commande.getStatut(),
+      prixTotal: commande.prixTotal().enEuros(),
+      creeLe: commande.getCreeLe(),
+      articles: commande.getArticles().map((a) => ({
+        nom: a.nom,
+        quantite: a.quantite,
+        prix: a.prixSnapshot.enEuros()
+      })),
+      adresseLivraison: commande.getAdresseLivraison(),
+      clientPosition: {
+        latitude: commande.getPositionLivraison().latitude,
+        longitude: commande.getPositionLivraison().longitude
+      },
+      restaurantPosition: coordonneesRestaurant
+    };
+  }
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AccepterCommandeUseCase,
@@ -5021,18 +5287,25 @@ var ObtenirLivreurUseCase = class {
   AttribuerLivraisonUseCase,
   ChangerStatutLivreurUseCase,
   ConnexionUseCase,
+  GererFavorisUseCase,
   InscriptionUseCase,
+  LaisserAvisLivreurUseCase,
   ListerCommandesClientUseCase,
   ListerCommandesRestaurantUseCase,
+  ListerHistoriqueLivreurUseCase,
   ListerRestaurantsUseCase,
   MarquerCommandePreteUseCase,
   ModifierPlatUseCase,
   ModifierRestaurantUseCase,
+  ObtenirAvisLivreurUseCase,
+  ObtenirCommandeUseCase,
   ObtenirLivreurUseCase,
   ObtenirMonRestaurantUseCase,
+  ObtenirPropositionsLivreurUseCase,
   PasserCommandeUseCase,
   PayerCommandeUseCase,
   ProposerLivraisonUseCase,
+  RecupererCommandeUseCase,
   RefuserCommandeUseCase,
   RefuserLivraisonUseCase,
   SupprimerPlatUseCase,

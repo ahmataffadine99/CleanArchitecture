@@ -12,6 +12,7 @@ type Plat = {
   imageUrl?: string | null;
   actif?: boolean;
   restaurantId?: string;
+  categorie?: string;
 };
 
 export default function MenuManagement() {
@@ -31,6 +32,7 @@ export default function MenuManagement() {
     stock: '100',
     imageUrl: '',
     actif: true,
+    categorie: 'PLAT',
     imageSource: 'url' as 'url' | 'local'
   });
 
@@ -66,7 +68,8 @@ export default function MenuManagement() {
       allergenes: formData.allergenes.split(',').map(s => s.trim()).filter(s => s !== ''),
       stockJournalier: parseInt(formData.stock),
       imageUrl: formData.imageUrl || null,
-      actif: formData.actif
+      actif: formData.actif,
+      categorie: formData.categorie
     };
 
     try {
@@ -102,7 +105,7 @@ export default function MenuManagement() {
   const resetForm = () => {
     setFormData({ 
       nom: '', description: '', prix: '', allergenes: '', 
-      stock: '100', imageUrl: '', actif: true, imageSource: 'url' 
+      stock: '100', imageUrl: '', actif: true, categorie: 'PLAT', imageSource: 'url' 
     });
   };
 
@@ -116,6 +119,7 @@ export default function MenuManagement() {
       stock: plat.stock.toString(),
       imageUrl: plat.imageUrl || '',
       actif: plat.actif ?? true,
+      categorie: plat.categorie || 'PLAT',
       imageSource: plat.imageUrl?.startsWith('data:image') ? 'local' : 'url'
     });
     setShowModal(true);
@@ -192,6 +196,9 @@ export default function MenuManagement() {
                   
                   <div className="flex items-center gap-2 mb-6">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Stock: {plat.stock}</span>
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${plat.categorie === 'BOISSON' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'}`}>
+                      {plat.categorie === 'BOISSON' ? 'Boisson' : 'Plat'}
+                    </span>
                     {plat.allergenes.length > 0 && (
                       <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Allergènes</span>
                     )}
@@ -253,6 +260,26 @@ export default function MenuManagement() {
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Catégorie</label>
+                    <div className="flex gap-4">
+                      {['PLAT', 'BOISSON'].map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setFormData({...formData, categorie: cat})}
+                          className={`flex-1 py-4 rounded-2xl font-bold transition-all border-2 ${
+                            formData.categorie === cat 
+                              ? 'bg-slate-900 text-white border-slate-900 shadow-lg' 
+                              : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
+                          }`}
+                        >
+                          {cat === 'BOISSON' ? 'Boisson' : 'Plat'}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 

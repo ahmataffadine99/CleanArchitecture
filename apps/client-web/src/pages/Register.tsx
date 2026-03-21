@@ -133,7 +133,7 @@ const Register = () => {
                   setAdresse(addr);
                   setCoords({ latitude: lat, longitude: lon });
                 }}
-                placeholder="123 rue de la Paix, 75001 Paris"
+                placeholder="Ville, Rue..."
               />
             </div>
 

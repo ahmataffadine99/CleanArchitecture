@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import { Utensils } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
+import { useFavoriteStore } from '../store/favoriteStore';
 
 type RestaurantParams = {
   id: string;
@@ -12,6 +14,8 @@ export default function Home() {
   const [restaurants, setRestaurants] = useState<RestaurantParams[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, token } = useAuthStore();
+  const { restaurants: favIds, toggleRestaurant, loadFavorites } = useFavoriteStore();
 
   useEffect(() => {
     // Appel via le proxy Vite vers l'API Express
@@ -29,7 +33,11 @@ export default function Home() {
         setError("Impossible de charger les restaurants pour le moment.");
         setLoading(false);
       });
-  }, []);
+
+    if (user?.profilId && token) {
+      loadFavorites(user.profilId, token);
+    }
+  }, [user, token, loadFavorites]);
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -78,6 +86,8 @@ export default function Home() {
                 id={resto.id}
                 nom={resto.nom}
                 adresse={resto.adresse}
+                isFavorite={favIds.includes(resto.id)}
+                onToggleFavorite={() => toggleRestaurant(resto.id, user?.profilId, token || undefined)}
                 // Ajout d'images factices pour une belle UI
                 image={`https://images.unsplash.com/photo-${1550966871 + index}-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`}
               />
