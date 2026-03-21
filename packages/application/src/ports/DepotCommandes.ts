@@ -6,6 +6,7 @@ export interface DepotCommandes {
   trouverParId(id: string): Promise<Commande>;
   trouverParRestaurant(restaurantId: string): Promise<Commande[]>;
   trouverParClient(clientId: string): Promise<Commande[]>;
+  trouverParLivreur(livreurId: string): Promise<Commande[]>;
   trouverTout(): Promise<Commande[]>;
   trouverCommandesSansLivreur(): Promise<Commande[]>;
 }

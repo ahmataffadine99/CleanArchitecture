@@ -24,6 +24,12 @@ export class DepotCommandesEnMemoire implements DepotCommandes {
     return [...this.store.values()].filter(c => c.clientId === clientId);
   }
 
+  async trouverParLivreur(livreurId: string): Promise<Commande[]> {
+    return [...this.store.values()]
+      .filter(c => c.getLivreurId() === livreurId)
+      .sort((a, b) => b.getCreeLe().getTime() - a.getCreeLe().getTime());
+  }
+
   async trouverTout(): Promise<Commande[]> {
     return [...this.store.values()];
   }

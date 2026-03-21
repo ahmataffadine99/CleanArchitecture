@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Power, Wallet, Award, Bell, Navigation, Package, Clock } from 'lucide-react';
+import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight } from 'lucide-react';
 
 export default function Dashboard() {
   const { token, user, logout } = useAuthStore();
@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [commandesEnCours, setCommandesEnCours] = useState<any[]>([]);
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const fetchStatus = async () => {
     if (!user?.profilId || !token) return;
@@ -48,6 +49,31 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const [historique, setHistorique] = useState<any[]>([]);
+  const [loadingHistorique, setLoadingHistorique] = useState(false);
+
+  const fetchHistorique = async () => {
+    if (!user?.profilId || !token) return;
+    setLoadingHistorique(true);
+    try {
+      const res = await fetch(`/api/livreurs/${user.profilId}/historique`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setHistorique(await res.json());
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingHistorique(false);
+    }
+  };
+
+  const handleOpenHistory = () => {
+    setShowHistoryModal(true);
+    fetchHistorique();
   };
 
   const handleAccept = async (commandeId: string) => {
@@ -150,7 +176,10 @@ export default function Dashboard() {
           <div className="text-4xl font-black mb-6 relative z-10">
             {livreur?.portefeuille?.toFixed(2) || '0.00'} €
           </div>
-          <button className="w-full bg-white/10 hover:bg-white/20 border border-white/10 py-3 rounded-2xl text-sm font-bold transition-all backdrop-blur-md">
+          <button 
+            onClick={handleOpenHistory}
+            className="w-full bg-white/10 hover:bg-white/20 border border-white/10 py-3 rounded-2xl text-sm font-bold transition-all backdrop-blur-md"
+          >
             VOIR L'HISTORIQUE
           </button>
         </div>
@@ -317,6 +346,60 @@ export default function Dashboard() {
           SE DÉCONNECTER
         </button>
       </footer>
+      {/* Modal Historique du portefeuille */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowHistoryModal(false)}></div>
+           <div className="relative bg-slate-50 w-full max-w-lg sm:rounded-[2.5rem] rounded-t-[2.5rem] shadow-2xl overflow-hidden animate-in sm:zoom-in slide-in-from-bottom-full duration-300 flex flex-col max-h-[85vh]">
+              <div className="p-8 border-b border-slate-200 bg-white flex justify-between items-center sticky top-0 z-10">
+                 <div>
+                   <h2 className="text-2xl font-black text-slate-800 tracking-tight">Historique des gains</h2>
+                   <p className="text-sm font-medium text-slate-400 mt-1">Vos dernières courses (Simulation)</p>
+                 </div>
+                 <button onClick={() => setShowHistoryModal(false)} className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 transition-colors">
+                    <X size={24} />
+                 </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto space-y-4">
+                 {loadingHistorique ? (
+                   <div className="flex justify-center p-4">
+                     <div className="w-8 h-8 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+                   </div>
+                 ) : historique.length === 0 ? (
+                   <p className="text-center text-slate-400 font-medium py-4">Aucun historique disponible.</p>
+                 ) : historique.map((course) => (
+                   <div key={course.id} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-emerald-200 transition-all cursor-pointer">
+                      <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                            <Wallet size={20} />
+                         </div>
+                         <div>
+                            <p className="font-black text-slate-800">{course.restaurantNom || 'Livraison'}</p>
+                            <p className="text-xs font-bold text-slate-400 mt-0.5">
+                              {new Date(course.creeLe).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <span className="font-black text-emerald-600 text-lg">+{(course.gainsCentimes / 100).toFixed(2)} €</span>
+                         <ChevronRight size={16} className="text-slate-300" />
+                      </div>
+                   </div>
+                 ))}
+
+                 <div className="pt-6 pb-4">
+                    <button 
+                      onClick={() => setShowHistoryModal(false)}
+                      className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-black transition-all"
+                    >
+                      FERMER
+                    </button>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 }

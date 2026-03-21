@@ -25,7 +25,7 @@ import {
   ProposerLivraisonUseCase, AccepterLivraisonUseCase, RefuserLivraisonUseCase, ObtenirPropositionsLivreurUseCase,
   TerminerLivraisonUseCase, ObtenirLivreurUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
   ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase,
-  RecupererCommandeUseCase, ObtenirCommandeUseCase,
+  RecupererCommandeUseCase, ObtenirCommandeUseCase, ListerHistoriqueLivreurUseCase,
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -75,6 +75,7 @@ const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLi
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 const recupererCommande = new RecupererCommandeUseCase(depotCommandes, depotLivreurs);
 const obtenirCommande   = new ObtenirCommandeUseCase(depotCommandes);
+const listerHistoriqueLivreur = new ListerHistoriqueLivreurUseCase(depotCommandes, depotRestaurants);
 
 import cors from "cors";
 
@@ -131,6 +132,7 @@ app.use("/api", requireAuth, (req, res, next) => {
   obtenirPropositions,
   recupererCommande,
   obtenirCommande,
+  listerHistorique: listerHistoriqueLivreur,
 }));
 
 app.use(gestionnaireErreurs);

@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import CartSidebar from './components/CartSidebar';
 import ClientHistory from './pages/ClientHistory';
 import LoyaltyPage from './pages/LoyaltyPage';
+import AddressManagement from './pages/AddressManagement';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/history" element={<ClientHistory />} />
           <Route path="/tracking" element={<ClientHistory />} />
           <Route path="/loyalty" element={<LoyaltyPage />} />
+          <Route path="/addresses" element={<AddressManagement />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

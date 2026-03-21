@@ -9,6 +9,7 @@ import {
   ObtenirPropositionsLivreurUseCase,
   RecupererCommandeUseCase,
   ObtenirCommandeUseCase,
+  ListerHistoriqueLivreurUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesLivreur(deps: {
@@ -21,6 +22,7 @@ export function creerRoutesLivreur(deps: {
   obtenirPropositions: ObtenirPropositionsLivreurUseCase;
   recupererCommande: RecupererCommandeUseCase;
   obtenirCommande: ObtenirCommandeUseCase;
+  listerHistorique: ListerHistoriqueLivreurUseCase;
 }): Router {
   const router = Router();
 
@@ -32,6 +34,13 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
+  // GET /livreurs/:id/historique
+  router.get("/livreurs/:id/historique", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const historique = await deps.listerHistorique.executer(req.params.id);
+      res.json(historique);
+    } catch (err) { next(err); }
+  });
 
   // GET /livreurs/:id
   router.get("/livreurs/:id", async (req: Request, res: Response, next: NextFunction) => {

@@ -194,6 +194,70 @@ export default function LoyaltyPage() {
             })}
           </div>
 
+          {/* Mon Impact Éco */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-1 bg-emerald-500 w-12 rounded-full"></div>
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight">Mon Impact Éco 🌿</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card CO2 */}
+              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-6">
+                    <Zap size={28} />
+                  </div>
+                  <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">CO2 Économisé</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-800">{(points * 0.45).toFixed(1)}</span>
+                    <span className="text-slate-400 font-bold">kg</span>
+                  </div>
+                  <p className="text-xs font-medium text-slate-500 mt-4 leading-relaxed">
+                    Équivalent à <span className="text-emerald-600 font-bold">{(points * 2.5).toFixed(0)} km</span> en voiture thermique.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Emballages */}
+              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center mb-6">
+                    <ShoppingBag size={28} />
+                  </div>
+                  <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Déchets évités</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-800">{(points / 8.5).toFixed(0)}</span>
+                    <span className="text-slate-400 font-bold">unités</span>
+                  </div>
+                  <p className="text-xs font-medium text-slate-500 mt-4 leading-relaxed">
+                    Grâce à vos commandes sans <br/>couverts jetables.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Eco-Score */}
+              <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-emerald-900/10 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
+                <div className="relative z-10">
+                   <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4">Votre Eco-Score</p>
+                   <div className="flex items-center justify-center mb-6">
+                      <div className="relative w-24 h-24">
+                        <svg className="w-full h-full" viewBox="0 0 36 36">
+                          <path className="text-white/10" strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+                          <path className="text-emerald-500" strokeDasharray={`${Math.min(95, (points / 2.5))}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center font-black text-xl">A+</div>
+                      </div>
+                   </div>
+                   <p className="text-center text-xs font-bold text-slate-400">Excellent ! Vous faites partie du <br/><span className="text-white">TOP 5% des éco-mangeurs</span>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* CTA Commander */}
           <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl shadow-emerald-200">
             <div className="text-white">

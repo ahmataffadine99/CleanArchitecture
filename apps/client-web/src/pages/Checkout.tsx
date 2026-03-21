@@ -2,17 +2,33 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
-import { CheckCircle2, Loader2, MapPin, CreditCard, ChevronLeft, LogIn } from 'lucide-react';
+import { CheckCircle2, Loader2, MapPin, CreditCard, ChevronLeft, LogIn, Home, Briefcase } from 'lucide-react';
+import { useAddressStore } from '../store/addressStore';
+import type { Address } from '../store/addressStore';
 
 export default function Checkout() {
   const { items, total, clearCart } = useCartStore();
   const { token, user } = useAuthStore();
+  const { addresses } = useAddressStore();
   const navigate = useNavigate();
 
   const [rue, setRue] = useState('');
   const [ville, setVille] = useState('');
   const [codePostal, setCodePostal] = useState('');
   const [telephone, setTelephone] = useState('');
+  
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+
+  const applyAddress = (id: string) => {
+    const addr = addresses.find(a => a.id === id);
+    if (addr) {
+      setRue(addr.rue);
+      setVille(addr.ville);
+      setCodePostal(addr.codePostal);
+      setTelephone(addr.telephone);
+      setSelectedAddressId(id);
+    }
+  };
   
   const [numCarte, setNumCarte] = useState('');
   const [dateExp, setDateExp] = useState('');
@@ -241,6 +257,33 @@ export default function Checkout() {
                   <h2 className="text-xl font-black text-slate-800 tracking-tight">Destination</h2>
                 </div>
                 
+                {/* Sélecteur d'adresses enregistrées */}
+                {addresses.length > 0 && (
+                  <div className="mb-8 space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Utiliser une adresse enregistrée</p>
+                    <div className="flex flex-wrap gap-3">
+                      {addresses.map(addr => (
+                        <button 
+                          key={addr.id}
+                          type="button"
+                          onClick={() => applyAddress(addr.id)}
+                          className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-xs transition-all border-2 ${selectedAddressId === addr.id ? 'bg-emerald-50 border-emerald-500 text-emerald-600' : 'bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100'}`}
+                        >
+                          {addr.type === 'home' ? <Home size={14} /> : addr.type === 'work' ? <Briefcase size={14} /> : <MapPin size={14} />}
+                          {addr.label}
+                        </button>
+                      ))}
+                      <button 
+                         type="button"
+                         onClick={() => { setSelectedAddressId(null); setRue(''); setVille(''); setCodePostal(''); setTelephone(''); }}
+                         className={`px-4 py-3 rounded-xl font-bold text-xs transition-all border-2 ${!selectedAddressId ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-transparent text-slate-500'}`}
+                      >
+                         Nouvelle adresse
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Rue & Numéro</label>

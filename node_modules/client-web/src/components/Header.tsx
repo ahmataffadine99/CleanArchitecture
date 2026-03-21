@@ -30,7 +30,7 @@ export default function Header() {
 
   const menuItems = [
     { icon: History, label: "Mes commandes", action: () => { navigate('/history'); setIsDropdownOpen(false); } },
-    { icon: MapPin, label: "Suivi livraison", action: () => { navigate('/tracking'); setIsDropdownOpen(false); } },
+    { icon: MapPin, label: "Mes Adresses", action: () => { navigate('/addresses'); setIsDropdownOpen(false); } },
     { icon: Gift, label: "Mes points de fidélité", action: () => { navigate('/loyalty'); setIsDropdownOpen(false); }, badge: "Nouveau" }
   ];
 

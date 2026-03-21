@@ -40,6 +40,37 @@ function OrderCountdown({ creeLe, delaiMinutes }: { creeLe: string, delaiMinutes
   return <span>{timeLeft}</span>;
 }
 
+function DeliveryCountdown({ creeLe, preparationMinutes }: { creeLe: string, preparationMinutes: number }) {
+  const [timeLeft, setTimeLeft] = useState('');
+
+  useEffect(() => {
+    // On estime la livraison à 10 min après la fin de préparation
+    const deliveryTarget = new Date(creeLe).getTime() + (preparationMinutes + 10) * 60000;
+    
+    const update = () => {
+      const diff = deliveryTarget - Date.now();
+      const isLate = diff < 0;
+      const absDiff = Math.abs(diff);
+      
+      const mins = Math.floor(absDiff / 60000);
+      const secs = Math.floor((absDiff % 60000) / 1000);
+      const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      
+      if (isLate) {
+        setTimeLeft(`En retard de ${timeStr}`);
+      } else {
+        setTimeLeft(`~${timeStr} min`);
+      }
+    };
+
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, [creeLe, preparationMinutes]);
+
+  return <span>{timeLeft}</span>;
+}
+
 const STEPS = [
   { id: 'PAYEE', label: 'En attente de validation', icon: Clock },
   { id: 'EN_PREPARATION', label: 'En cuisine', icon: ChefHat },
@@ -179,7 +210,15 @@ export default function ClientHistory() {
                       <div className="mt-3 flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-100 w-fit">
                          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                          <span className="text-xs font-black">Livreur : {cmd.livreurNom}</span>
-                         <span className="text-[10px] opacity-70 ml-2">Arrivée estimée : ~12-15 min</span>
+                         {cmd.statut === 'LIVREE' ? (
+                           <span className="text-[10px] font-bold opacity-70 ml-2 text-emerald-800">
+                             Commande bien arrivée.
+                           </span>
+                         ) : (
+                           <span className="text-[10px] opacity-70 ml-2">
+                             Arrivée estimée : <DeliveryCountdown creeLe={cmd.creeLe} preparationMinutes={cmd.tempsPreparationEstime || 15} />
+                           </span>
+                         )}
                       </div>
                     )}
                   </div>
