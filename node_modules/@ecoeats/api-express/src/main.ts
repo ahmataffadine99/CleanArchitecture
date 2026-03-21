@@ -24,7 +24,8 @@ import {
   MarquerCommandePreteUseCase, ChangerStatutLivreurUseCase, AttribuerLivraisonUseCase,
   ProposerLivraisonUseCase, AccepterLivraisonUseCase, RefuserLivraisonUseCase, ObtenirPropositionsLivreurUseCase,
   TerminerLivraisonUseCase, ObtenirLivreurUseCase, InscriptionUseCase, ConnexionUseCase, ListerCommandesRestaurantUseCase,
-  ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase
+  ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase,
+  RecupererCommandeUseCase, ObtenirCommandeUseCase,
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -52,26 +53,28 @@ const voirMenu          = new VoirMenuRestaurantUseCase(depotPlats);
 const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
 const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaurants, depotClients, depotPlats, cartographie);
 const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement, depotClients);
-const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes);
+const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes, depotRestaurants, depotLivreurs);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
 const modifierPlat      = new ModifierPlatUseCase(depotPlats);
 const supprimerPlat     = new SupprimerPlatUseCase(depotPlats);
-const proposerLivraison = new ProposerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
+const proposerLivraison = new ProposerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
 const accepterCommande  = new AccepterCommandeUseCase(depotCommandes, proposerLivraison);
 const refuserCommande   = new RefuserCommandeUseCase(depotCommandes);
 const accepterLivraison = new AccepterLivraisonUseCase(depotCommandes, depotLivreurs);
 const refuserLivraison  = new RefuserLivraisonUseCase(depotLivreurs);
 const marquerPrete      = new MarquerCommandePreteUseCase(depotCommandes, proposerLivraison);
-const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes, depotClients);
+const listerCommandes   = new ListerCommandesRestaurantUseCase(depotCommandes, depotClients, depotLivreurs);
 const modifierRestaurant = new ModifierRestaurantUseCase(depotRestaurants);
 const obtenirMonResto   = new ObtenirMonRestaurantUseCase(depotRestaurants);
 
-const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs, depotCommandes);
+const changerStatut     = new ChangerStatutLivreurUseCase(depotLivreurs, depotCommandes, depotRestaurants, cartographie);
 const obtenirLivreur    = new ObtenirLivreurUseCase(depotLivreurs);
-const obtenirPropositions = new ObtenirPropositionsLivreurUseCase(depotLivreurs, depotCommandes, depotRestaurants);
+const obtenirPropositions = new ObtenirPropositionsLivreurUseCase(depotLivreurs, depotCommandes, depotRestaurants, cartographie);
 const attribuerLivraison = new AttribuerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants);
 const terminerLivraison = new TerminerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie);
+const recupererCommande = new RecupererCommandeUseCase(depotCommandes, depotLivreurs);
+const obtenirCommande   = new ObtenirCommandeUseCase(depotCommandes);
 
 import cors from "cors";
 
@@ -109,7 +112,11 @@ app.use("/api", requireAuth, (req, res, next) => {
 }, creerRoutesRestaurant({ ajouterPlat, modifierPlat, supprimerPlat, accepterCommande, refuserCommande, marquerPrete, listerCommandes, modifierRestaurant, obtenirMonResto, servicePanier: ajouterAuPanier }));
 
 app.use("/api", requireAuth, (req, res, next) => {
-  const isLivreurCommand = req.path.includes("/attribuer-livreur") || req.path.includes("/livree") || req.path.includes("/propositions");
+  const isLivreurCommand = req.path.includes("/attribuer-livreur") || 
+                           req.path.includes("/livree") || 
+                           req.path.includes("/propositions") || 
+                           req.path.includes("/recuperer") ||
+                           (req.method === 'GET' && req.path.startsWith("/commandes/"));
   if (req.path.startsWith("/livreurs") || isLivreurCommand) {
     return requireRole("LIVREUR")(req, res, next);
   }
@@ -122,6 +129,8 @@ app.use("/api", requireAuth, (req, res, next) => {
   accepterLivraison,
   refuserLivraison,
   obtenirPropositions,
+  recupererCommande,
+  obtenirCommande,
 }));
 
 app.use(gestionnaireErreurs);

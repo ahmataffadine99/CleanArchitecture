@@ -41,3 +41,5 @@ export { ObtenirPropositionsLivreurUseCase } from "./use-cases/livreur/ObtenirPr
 export { AttribuerLivraisonUseCase } from "./use-cases/livreur/AttribuerLivraisonUseCase";
 export { TerminerLivraisonUseCase } from "./use-cases/livreur/TerminerLivraisonUseCase";
 export { ObtenirLivreurUseCase } from "./use-cases/livreur/ObtenirLivreurUseCase";
+export { RecupererCommandeUseCase } from "./use-cases/livreur/RecupererCommandeUseCase";
+export { ObtenirCommandeUseCase } from "./use-cases/commande/ObtenirCommandeUseCase";

@@ -7,10 +7,17 @@ type Req = {
   statut: "DISPONIBLE" | "INDISPONIBLE";
 };
 
+import { DepotRestaurants } from "../../ports/DepotRestaurants";
+import { ServiceCartographie } from "../../ports/ServiceCartographie";
+
 export class ChangerStatutLivreurUseCase {
+  private readonly RAYON_ACTION_KM = 5.0;
+
   constructor(
     private readonly depotLivreurs: DepotLivreurs,
-    private readonly depotCommandes: DepotCommandes
+    private readonly depotCommandes: DepotCommandes,
+    private readonly depotRestaurants: DepotRestaurants,
+    private readonly cartographie: ServiceCartographie
   ) {}
 
   async executer(req: Req): Promise<Livreur> {
@@ -19,10 +26,15 @@ export class ChangerStatutLivreurUseCase {
     if (req.statut === "DISPONIBLE") {
       livreur.seDeclarerDisponible();
       
-      // Assigner les propositions en attente
+      // Assigner les propositions en attente (seulement celles à proximité)
       const commandesSansLivreur = await this.depotCommandes.trouverCommandesSansLivreur();
       for (const cmd of commandesSansLivreur) {
-        livreur.recevoirProposition(cmd.id);
+        const restaurant = await this.depotRestaurants.trouverParId(cmd.restaurantId);
+        const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
+        
+        if (distance <= this.RAYON_ACTION_KM) {
+          livreur.recevoirProposition(cmd.id);
+        }
       }
     } else {
       livreur.seDeclarerIndisponible();

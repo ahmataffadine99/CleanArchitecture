@@ -1,6 +1,7 @@
 import { Money } from "../value-objects/Money";
 import { StatutCommande, transitionAutorisee } from "../value-objects/StatutCommande";
 import { ArticlePanier } from "../value-objects/ArticlePanier";
+import { Coordonnees } from "../value-objects/Coordonnees";
 import { TransitionStatutInvalideError } from "../errors/TransitionStatutInvalideError";
 
 export class Commande {
@@ -18,9 +19,11 @@ export class Commande {
     private readonly fraisLivraison: Money,
     private readonly fraisService: Money,
     private readonly adresseLivraison: string,
-    private readonly reduction: Money = Money.zero()
+    private readonly positionLivraison: Coordonnees,
+    private readonly reduction: Money = Money.zero(),
+    creeLe?: Date
   ) {
-    this.creeLe = new Date();
+    this.creeLe = creeLe || new Date();
   }
 
   changerStatut(nouveauStatut: StatutCommande): void {
@@ -42,6 +45,13 @@ export class Commande {
 
   assignerLivreur(livreurId: string): void {
     this.livreurId = livreurId;
+    // On ne change plus le statut ici automatiquement pour permettre l'étape "Pickup" (En attente de collecte)
+  }
+
+  recuperer(): void {
+    if (this.statut !== StatutCommande.PRETE && this.statut !== StatutCommande.EN_PREPARATION) {
+       throw new Error(`La commande ne peut pas être récupérée car elle est en statut : ${this.statut}`);
+    }
     this.changerStatut(StatutCommande.EN_LIVRAISON);
   }
 
@@ -69,6 +79,7 @@ export class Commande {
   getTempsPreparation(): number | null { return this.tempsPreparationEstime; }
   getCreeLe(): Date { return this.creeLe; }
   getAdresseLivraison(): string { return this.adresseLivraison; }
+  getPositionLivraison(): Coordonnees { return this.positionLivraison; }
 
   restaurerTempsPreparation(minutes: number): void {
     this.tempsPreparationEstime = minutes;

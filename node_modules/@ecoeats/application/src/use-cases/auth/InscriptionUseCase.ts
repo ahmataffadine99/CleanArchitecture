@@ -15,6 +15,8 @@ type Req = {
   role: RoleUtilisateur;
   adresse?: string; // Utilisé pour le restaurant et client
   telephone?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 type Res = {
@@ -58,7 +60,7 @@ export class InscriptionUseCase {
         profilId,
         req.nom, // Nom de l'enseigne
         req.adresse || "Adresse à préciser",
-        new Coordonnees(48.8566, 2.3522), // Paris par défaut
+        new Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522),
         profilId // Le profilId sert d'identifiant stable pour le dashboard
       );
       await this.depotRestaurants.sauvegarder(restaurant);
@@ -66,7 +68,7 @@ export class InscriptionUseCase {
       const livreur = new Livreur(
         profilId,
         req.nom,
-        new Coordonnees(48.8566, 2.3522), // Position par défaut (Paris)
+        new Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522),
         req.telephone || "À renseigner",
         false, // Pas expert par défaut
         Money.zero() // Portefeuille vide au départ

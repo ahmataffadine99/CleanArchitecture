@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Clock, Navigation, Loader2, UtensilsCrossed } from 'lucide-react';
+import { Check, X, Clock, Loader2, UtensilsCrossed, ShoppingBag } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 type Commande = {
@@ -8,6 +8,7 @@ type Commande = {
   statut: string;
   prixPlatsCentimes: number;
   creeLe: string;
+  livreurNom?: string;
   articles: Array<{
     id: string;
     nom: string;
@@ -183,6 +184,7 @@ export default function OrdersDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Nouvelles demandes */}
         <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 h-fit">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">
@@ -240,10 +242,11 @@ export default function OrdersDashboard() {
           </div>
         </div>
 
+        {/* En cuisine */}
         <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 h-fit">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
-              <Navigation size={24} />
+              <UtensilsCrossed size={24} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800">En cuisine</h2>
@@ -287,6 +290,51 @@ export default function OrdersDashboard() {
                 <button onClick={() => handleAction(cmd.id, 'prete')} className="w-full bg-slate-900 hover:bg-black text-white font-black py-4.5 rounded-2xl text-sm transition-all shadow-lg shadow-slate-300 hover:shadow-slate-400 hover:-translate-y-0.5">
                   MARQUER COMME "PRÊTE"
                 </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* En attente de collecte */}
+        <div className="bg-white rounded-[2rem] p-8 border border-blue-100 shadow-xl shadow-slate-200/50 h-fit lg:col-span-2">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">
+              <ShoppingBag size={24} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">En attente de collecte</h2>
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-widest">Prêtes pour le retrait</p>
+            </div>
+            <span className="ml-auto bg-blue-600 text-white text-sm font-black px-4 py-1.5 rounded-2xl shadow-lg shadow-blue-200">
+              {commandes.filter(c => c.statut === 'PRETE').length}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {commandes.filter(c => c.statut === 'PRETE').length === 0 && (
+              <div className="col-span-full text-center py-10">
+                <p className="text-slate-400 text-sm font-medium italic">Aucune commande n'attend de coursier.</p>
+              </div>
+            )}
+            {commandes.filter(c => c.statut === 'PRETE').map((cmd: any) => (
+              <div key={cmd.id} className="border border-blue-100 rounded-3xl p-6 bg-blue-50/20 hover:bg-white transition-all border-l-4 border-l-blue-500 flex justify-between items-center">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm font-black text-blue-700 bg-white px-2.5 py-1 rounded-xl border border-blue-200 shadow-sm">
+                      #{cmd.numJour}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-slate-400">ID: {cmd.id.split('-')[0].toUpperCase()}</span>
+                  </div>
+                  <p className="text-sm font-black text-slate-800">
+                    {cmd.livreurNom ? `Livreur : ${cmd.livreurNom}` : "Recherche livreur..."}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium">En attente de retrait</p>
+                </div>
+                <div className="text-right">
+                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-500 shadow-sm animate-pulse">
+                      <ShoppingBag size={20} />
+                   </div>
+                </div>
               </div>
             ))}
           </div>

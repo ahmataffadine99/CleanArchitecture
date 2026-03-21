@@ -1,4 +1,4 @@
-import { Commande, StatutCommande } from "@ecoeats/domain";
+import { Commande, StatutCommande, Coordonnees } from "@ecoeats/domain";
 import { CalculPrixService } from "@ecoeats/domain";
 import { Panier } from "@ecoeats/domain";
 import { DepotCommandes } from "../../ports/DepotCommandes";
@@ -12,6 +12,8 @@ type Req = {
   clientId: string;
   panier: Panier;
   adresseLivraison: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 export class PasserCommandeUseCase {
@@ -34,12 +36,11 @@ export class PasserCommandeUseCase {
     const restaurantId = req.panier.getRestaurantId()!;
     const restaurant = await this.depotRestaurants.trouverParId(restaurantId);
 
-    // Simulation position client à partir de son adresse (coordonnées fixes pour la démo)
-    const positionClient = { latitude: 48.8566, longitude: 2.3522 }; // Paris centre par défaut
+    const positionLivraison = new Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522);
 
     const distanceKm = this.cartographie.calculerDistanceKm(
       restaurant.position,
-      positionClient as any
+      positionLivraison
     );
 
     // Vérifier que les stocks sont toujours OK et les baisser
@@ -68,6 +69,7 @@ export class PasserCommandeUseCase {
       fraisLivraison,
       fraisService,
       req.adresseLivraison,
+      positionLivraison,
       reduction
     );
 

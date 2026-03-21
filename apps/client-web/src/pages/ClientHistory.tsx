@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 type CommandeClient = {
   id: string;
   restaurantId: string;
+  restaurantNom: string;
   statut: string;
   totalCentimes: number;
   creeLe: string;
+  livreurNom?: string;
   tempsPreparationEstime?: number;
   articles: Array<{ nom: string; quantite: number }>;
 };
@@ -49,6 +51,7 @@ export default function ClientHistory() {
   const { user, token } = useAuthStore();
   const [commandes, setCommandes] = useState<CommandeClient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'tracking' | 'history'>('tracking');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,29 +88,56 @@ export default function ClientHistory() {
     );
   }
 
+  const filteredCommandes = commandes.filter(cmd => {
+    const isFinished = ['LIVREE', 'REFUSEE', 'ABANDONNEE'].includes(cmd.statut);
+    return activeTab === 'history' ? isFinished : !isFinished;
+  });
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
       <div className="mb-10 text-center sm:text-left">
         <h1 className="text-4xl font-black text-slate-900 tracking-tight">Mes commandes</h1>
-        <p className="text-slate-500 font-medium mt-2">Suivez l'état de préparation de vos festins en temps réel.</p>
+        <p className="text-slate-500 font-medium mt-2">Suivez vos festins en temps réel ou retrouvez vos anciens plaisirs.</p>
+      </div>
+
+      {/* TABS */}
+      <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[1.5rem] mb-10 w-fit mx-auto sm:mx-0 shadow-inner">
+        <button 
+          onClick={() => setActiveTab('tracking')}
+          className={`px-6 py-3 rounded-2xl text-sm font-black transition-all ${activeTab === 'tracking' ? 'bg-white text-emerald-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+        >
+          SUIVI EN COURS
+        </button>
+        <button 
+          onClick={() => setActiveTab('history')}
+          className={`px-6 py-3 rounded-2xl text-sm font-black transition-all ${activeTab === 'history' ? 'bg-white text-emerald-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+        >
+          HISTORIQUE
+        </button>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="animate-spin text-emerald-500 w-12 h-12" />
         </div>
-      ) : commandes.length === 0 ? (
+      ) : filteredCommandes.length === 0 ? (
         <div className="bg-white p-12 rounded-[2.5rem] border border-slate-100 border-dashed text-center shadow-sm">
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingBag size={32} className="text-slate-300" />
           </div>
-          <p className="text-xl font-black text-slate-800 mb-2">Vous n'avez pas encore commandé</p>
-          <p className="text-slate-500 mb-8">Découvrez nos restaurants engagés et régalez-vous !</p>
-          <button onClick={() => navigate('/')} className="bg-emerald-500 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all text-sm">EXPLORER LES RESTAURANTS</button>
+          <p className="text-xl font-black text-slate-800 mb-2">
+            {activeTab === 'tracking' ? "Aucune commande en cours" : "Pas encore d'historique"}
+          </p>
+          <p className="text-slate-500 mb-8">
+            {activeTab === 'tracking' ? "Toutes vos commandes sont terminées ou vous n'avez pas encore commandé." : "Vos futures commandes terminées apparaîtront ici."}
+          </p>
+          {activeTab === 'tracking' && (
+            <button onClick={() => navigate('/')} className="bg-emerald-500 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all text-sm">EXPLORER LES RESTAURANTS</button>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
-          {commandes.map((cmd) => {
+          {filteredCommandes.map((cmd) => {
             const date = new Date(cmd.creeLe);
             const isRefus = ['REFUSEE', 'ABANDONNEE'].includes(cmd.statut);
             const isEnCours = ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'EN_LIVRAISON'].includes(cmd.statut);
@@ -123,7 +153,8 @@ export default function ClientHistory() {
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-slate-100 pb-6 mb-6">
                   <div>
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                       <h3 className="text-xl font-black text-slate-800">Commande {cmd.id.split('-')[0].toUpperCase()}</h3>
+                       <h3 className="text-xl font-black text-slate-800">{cmd.restaurantNom}</h3>
+                       <span className="text-slate-400 font-bold">#{cmd.id.split('-')[0].toUpperCase()}</span>
                        {isRefus && (
                          <span className="bg-red-100 text-red-600 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg">Annulée</span>
                        )}
@@ -135,10 +166,22 @@ export default function ClientHistory() {
                            </span>
                          </div>
                        )}
+                       {cmd.statut === 'LIVREE' && (
+                         <span className="bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                           <CheckCircle2 size={10} /> Livrée
+                         </span>
+                       )}
                     </div>
                     <p className="text-sm text-slate-500 font-medium">
                       Passée le {date.toLocaleDateString()} à {date.toLocaleTimeString()}
                     </p>
+                    {cmd.livreurNom && (
+                      <div className="mt-3 flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-100 w-fit">
+                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                         <span className="text-xs font-black">Livreur : {cmd.livreurNom}</span>
+                         <span className="text-[10px] opacity-70 ml-2">Arrivée estimée : ~12-15 min</span>
+                      </div>
+                    )}
                   </div>
                   <div className="font-black text-2xl text-slate-800">
                     {(cmd.totalCentimes / 100).toFixed(2)} €
@@ -159,7 +202,7 @@ export default function ClientHistory() {
                 </div>
 
                 {/* Timeline de progression (Seulement si commande active) */}
-                {!isRefus && (
+                {isEnCours && (
                   <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-100">
                     <div className="relative flex justify-between">
                       {/* Ligne de fond */}

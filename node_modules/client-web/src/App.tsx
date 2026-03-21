@@ -21,6 +21,7 @@ function App() {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/history" element={<ClientHistory />} />
+          <Route path="/tracking" element={<ClientHistory />} />
           <Route path="/loyalty" element={<LoyaltyPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

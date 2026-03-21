@@ -14,6 +14,20 @@ const Register = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
+  const getPosition = () => {
+    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir l'emplacement du restaurant")),
+        { enableHighAccuracy: true }
+      );
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -26,6 +40,8 @@ const Register = () => {
     }
 
     try {
+      const position = await getPosition();
+      
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,7 +50,9 @@ const Register = () => {
           motDePasse: password, 
           role: 'RESTAURATEUR',
           nom: restaurantName,
-          adresse: address
+          adresse: address,
+          latitude: position.latitude,
+          longitude: position.longitude
         }),
       });
 

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Power, Wallet, Award, Bell, Navigation, Package, Clock, MapPin } from 'lucide-react';
+import { Power, Wallet, Award, Bell, Navigation, Package, Clock } from 'lucide-react';
 
 export default function Dashboard() {
   const { token, user, logout } = useAuthStore();
   const [livreur, setLivreur] = useState<any>(null);
   const [propositions, setPropositions] = useState<any[]>([]);
+  const [commandesEnCours, setCommandesEnCours] = useState<any[]>([]);
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +26,17 @@ export default function Dashboard() {
         const data = await resLivreur.json();
         setLivreur(data);
         setIsOnline(data.statut !== 'INDISPONIBLE');
+        
+        // Charger les détails des commandes en cours
+        if (data.commandesEnCoursIds?.length > 0) {
+          const details = await Promise.all(data.commandesEnCoursIds.map(async (id: string) => {
+             const r = await fetch(`/api/commandes/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+             return r.ok ? r.json() : null;
+          }));
+          setCommandesEnCours(details.filter(d => d !== null));
+        } else {
+          setCommandesEnCours([]);
+        }
       }
 
       if (resProps.ok) {
@@ -192,8 +204,9 @@ export default function Dashboard() {
                             </div>
                          </div>
                       </div>
-                      <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-black">
-                         + {prop.montantLivraison.toFixed(2)} €
+                      <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-black flex flex-col items-end">
+                         <span>+ {prop.montantLivraison.toFixed(2)} €</span>
+                         <span className="text-[10px] opacity-70">📍 {prop.distanceKm} km</span>
                       </div>
                    </div>
 
@@ -233,39 +246,62 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Commandes en cours */}
-        {livreur?.commandesEnCoursIds?.length > 0 && (
+        {commandesEnCours.length > 0 && (
           <div className="space-y-4">
              <h2 className="text-lg font-black text-slate-800 ml-2">En cours</h2>
-             {livreur.commandesEnCoursIds.map((id: string) => (
-               <div key={id} className="bg-white p-6 rounded-[2rem] border-2 border-emerald-500 shadow-xl shadow-emerald-100 flex items-center justify-between">
+             {commandesEnCours.map((cmd: any) => (
+               <div key={cmd.id} className={`bg-white p-6 rounded-[2rem] border-2 ${cmd.statut === 'PRETE' ? 'border-blue-500' : 'border-emerald-500'} shadow-xl flex items-center justify-between`}>
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                    <div className={`h-12 w-12 ${cmd.statut === 'PRETE' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'} rounded-2xl flex items-center justify-center`}>
                       <Navigation size={24} />
                     </div>
                     <div>
-                      <p className="font-black text-slate-800 text-sm"># {id.substring(0, 8)}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">En cours de livraison</p>
+                      <p className="font-black text-slate-800 text-sm"># {cmd.id.substring(0, 8)}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        {cmd.statut === 'PRETE' ? 'Prête au restaurant' : 'En livraison'}
+                      </p>
                     </div>
                   </div>
-                  <button 
-                    onClick={async () => {
-                      try {
-                        const res = await fetch(`/api/commandes/${id}/livree`, {
-                          method: 'POST',
-                          headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                          },
-                          body: JSON.stringify({ livreurId: user?.profilId, pourboire: 0 })
-                        });
-                        if (res.ok) fetchStatus();
-                      } catch (err) { console.error(err); }
-                    }}
-                    className="bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100"
-                  >
-                    TERMINER
-                  </button>
+                  
+                  {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? (
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`/api/commandes/${cmd.id}/recuperer`, {
+                            method: 'POST',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ livreurId: user?.profilId })
+                          });
+                          if (res.ok) fetchStatus();
+                        } catch (err) { console.error(err); }
+                      }}
+                      className="bg-blue-600 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-blue-700 transition-all shadow-lg"
+                    >
+                      RÉCUPÉRER
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`/api/commandes/${cmd.id}/livree`, {
+                            method: 'POST',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ livreurId: user?.profilId, pourboire: 0 })
+                          });
+                          if (res.ok) fetchStatus();
+                        } catch (err) { console.error(err); }
+                      }}
+                      className="bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100"
+                    >
+                      TERMINER
+                    </button>
+                  )}
                </div>
              ))}
           </div>

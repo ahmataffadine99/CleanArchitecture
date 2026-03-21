@@ -11,6 +11,7 @@ type Commande = {
     nom: string;
     quantite: number;
   }>;
+  livreurNom?: string;
 };
 
 export default function OrderHistory() {
@@ -50,7 +51,7 @@ export default function OrderHistory() {
 
   // Filtrer les commandes d'historique (Livrée, Refusée, Abandonnée, Prête)
   const pastOrders = commandes
-    .filter(c => ['LIVREE', 'REFUSEE', 'ABANDONNEE', 'PRETE'].includes(c.statut))
+    .filter(c => ['LIVREE', 'REFUSEE', 'ABANDONNEE', 'EN_LIVRAISON'].includes(c.statut))
     .filter(c => 
       c.id.toLowerCase().includes(search.toLowerCase()) || 
       (c as any).numJour.toString().includes(search)

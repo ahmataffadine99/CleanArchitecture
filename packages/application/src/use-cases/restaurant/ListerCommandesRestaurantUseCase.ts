@@ -1,11 +1,13 @@
 import { Commande } from "@ecoeats/domain";
 import { DepotCommandes } from "../../ports/DepotCommandes";
 import { DepotClients } from "../../ports/DepotClients";
+import { DepotLivreurs } from "../../ports/DepotLivreurs";
 
 export class ListerCommandesRestaurantUseCase {
   constructor(
     private readonly depotCommandes: DepotCommandes,
-    private readonly depotClients?: DepotClients
+    private readonly depotClients?: DepotClients,
+    private readonly depotLivreurs?: DepotLivreurs
   ) {}
 
   async executer(restaurantId: string): Promise<any[]> {
@@ -22,10 +24,20 @@ export class ListerCommandesRestaurantUseCase {
     return Promise.all(commandes.map(async cmd => {
       try {
         const client = await this.depotClients!.trouverParId(cmd.clientId);
+        
+        let livreurNom = undefined;
+        if (cmd.getLivreurId() && this.depotLivreurs) {
+          try {
+            const l = await this.depotLivreurs.trouverParId(cmd.getLivreurId()!);
+            livreurNom = l.nom;
+          } catch (_) {}
+        }
+
         return {
           ...cmd,
           clientNom: client.nom,
           clientTelephone: (client as any).telephone || 'Non renseigné',
+          livreurNom,
           statut: cmd.getStatut(),
           creeLe: cmd.getCreeLe(),
           prixPlatsCentimes: cmd.getPrixPlats().enCentimes(),

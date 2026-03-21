@@ -111,22 +111,28 @@ export function creerRoutesClient(deps: {
   router.get("/clients/:clientId/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commandes = await deps.listerCommandesClient.executer(req.params.clientId);
-      res.json(commandes.map((c: any) => ({
-        id: c.id,
-        restaurantId: c.restaurantId,
-        statut: c.getStatut(),
-        prixPlatsCentimes: c.getPrixPlats().enCentimes(),
-        fraisLivCentimes: c.getFraisLivraison().enCentimes(),
-        fraisServiceCentimes: c.getFraisService().enCentimes(),
-        totalCentimes: c.prixTotal().enCentimes(),
-        creeLe: c.getCreeLe(),
-        tempsPreparationEstime: c.getTempsPreparation(),
-        adresseLivraison: c.getAdresseLivraison(),
-        articles: c.getArticles().map((a: any) => ({
-          nom: a.nom,
-          quantite: a.quantite
-        }))
-      })));
+      res.json(commandes.map((c: any) => {
+        const isPlain = typeof c.getStatut !== 'function';
+        
+        return {
+          id: c.id,
+          restaurantId: c.restaurantId,
+          restaurantNom: c.restaurantNom,
+          livreurNom: c.livreurNom,
+          statut: isPlain ? c.statut : c.getStatut(),
+          prixPlatsCentimes: isPlain ? (c.prixPlatsCentimes ?? 0) : c.getPrixPlats().enCentimes(),
+          fraisLivCentimes: isPlain ? (c.fraisLivCentimes ?? 0) : c.getFraisLivraison().enCentimes(),
+          fraisServiceCentimes: isPlain ? (c.fraisServiceCentimes ?? 0) : c.getFraisService().enCentimes(),
+          totalCentimes: isPlain ? (c.totalCentimes ?? (c.prixTotal * 100)) : c.prixTotal().enCentimes(),
+          creeLe: isPlain ? c.creeLe : c.getCreeLe(),
+          tempsPreparationEstime: isPlain ? c.tempsPreparationEstime : c.getTempsPreparation(),
+          adresseLivraison: isPlain ? c.adresseLivraison : c.getAdresseLivraison(),
+          articles: (isPlain ? c.articles : c.getArticles()).map((a: any) => ({
+            nom: a.nom,
+            quantite: a.quantite
+          }))
+        };
+      }));
     } catch (err) { next(err); }
   });
 
@@ -137,10 +143,14 @@ export function creerRoutesClient(deps: {
       const commandes = await deps.listerCommandesClient.executer(clientId);
       // Calculer le total de points depuis les commandes payées/terminées
       const totalPoints = commandes
-        .filter((c: any) => ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'LIVREE'].includes(typeof c.getStatut === 'function' ? c.getStatut() : c.statut))
+        .filter((c: any) => {
+          const s = typeof c.getStatut === 'function' ? c.getStatut() : c.statut;
+          return ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'EN_LIVRAISON', 'LIVREE'].includes(s);
+        })
         .reduce((sum: number, c: any) => {
-          const total = typeof c.prixTotal === 'function' ? c.prixTotal().enCentimes() : (c.totalCentimes ?? 0);
-          return sum + Math.floor(total / 100);
+          const isPlain = typeof c.prixTotal !== 'function';
+          const totalCentimes = isPlain ? (c.totalCentimes ?? (c.prixTotal * 100)) : c.prixTotal().enCentimes();
+          return sum + Math.floor(totalCentimes / 100);
         }, 0);
       res.json({ pointsFidelite: totalPoints });
     } catch (err) { next(err); }

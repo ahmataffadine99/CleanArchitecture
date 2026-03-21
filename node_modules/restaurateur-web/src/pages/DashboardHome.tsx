@@ -7,6 +7,8 @@ type Commande = {
   statut: string;
   prixPlatsCentimes: number;
   creeLe: string;
+  clientNom?: string;
+  livreurNom?: string;
   articles: Array<{
     nom: string;
     quantite: number;
@@ -129,31 +131,82 @@ export default function DashboardHome() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-800 mb-6">Évolution des ventes (CA) - 7 derniers jours</h2>
-          <div className="h-64 flex items-end justify-between gap-2 sm:gap-4 pb-6">
-            {salesTrend.data.map((day, i) => (
-              <div key={i} className="flex-1 h-full flex flex-col items-center relative">
-                <div className="w-full bg-slate-100 rounded-t-xl relative group flex-1 h-full">
-                  <div 
-                    className="absolute bottom-0 w-full bg-emerald-500 rounded-t-xl group-hover:bg-emerald-400 transition-colors" 
-                    style={{ height: `${(day.sales / salesTrend.maxSale) * 100}%`, minHeight: '4px' }}
-                  >
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-lg pointer-events-none whitespace-nowrap z-10">
-                      {day.sales.toFixed(2)} €
-                    </span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Section En Cuisine */}
+          <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-800">En cuisine (Plats en préparation)</h2>
+              <span className="bg-orange-50 text-orange-600 text-xs font-black px-3 py-1 rounded-full">
+                {commandesDuJour.filter(c => c.statut === 'EN_PREPARATION').length} ACTIVES
+              </span>
+            </div>
+            <div className="space-y-4">
+              {commandesDuJour.filter(c => c.statut === 'EN_PREPARATION').length === 0 && (
+                <p className="text-slate-400 text-sm py-4 italic">Les fourneaux attendent...</p>
+              )}
+              {commandesDuJour.filter(c => c.statut === 'EN_PREPARATION').map(cmd => (
+                <div key={cmd.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-orange-200 transition-colors">
+                  <div>
+                    <h4 className="font-bold text-slate-800">Commande #{cmd.id.slice(0, 5)}</h4>
+                    <p className="text-xs text-slate-400">Client: {cmd.clientNom || 'Inconnu'}</p>
+                    <div className="flex gap-2 mt-1">
+                      {cmd.articles.map((a, i) => (
+                        <span key={i} className="text-[10px] bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-500">
+                          {a.quantite}x {a.nom}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-slate-800">{(cmd.prixPlatsCentimes / 100).toFixed(2)} €</p>
+                    <p className="text-[10px] font-bold text-orange-500 uppercase">Préparation en cours</p>
                   </div>
                 </div>
-                <span className="absolute -bottom-6 text-[10px] sm:text-xs font-bold text-slate-400 whitespace-nowrap">{day.label}</span>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Section En attente de collecte (NOUVEAU) */}
+          <div className="bg-white rounded-3xl border border-blue-100 p-8 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-800">En attente de collecte</h2>
+              <span className="bg-blue-50 text-blue-600 text-xs font-black px-3 py-1 rounded-full">
+                {commandesDuJour.filter(c => c.statut === 'PRETE').length} PRÊTES
+              </span>
+            </div>
+            <div className="space-y-4">
+              {commandesDuJour.filter(c => c.statut === 'PRETE').length === 0 && (
+                <p className="text-slate-400 text-sm py-4 italic">Aucune commande n'attend de coursier.</p>
+              )}
+              {commandesDuJour.filter(c => c.statut === 'PRETE').map(cmd => (
+                <div key={cmd.id} className="flex items-center justify-between p-4 bg-blue-50/30 rounded-2xl border border-blue-100">
+                  <div className="flex gap-4 items-center">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-500 shadow-sm">
+                      <ShoppingBag size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800">Commande #{cmd.id.slice(0, 5)}</h4>
+                      <p className="text-xs text-blue-600 font-bold">
+                        {cmd.livreurNom ? `Livreur : ${cmd.livreurNom}` : "Recherche de livreur..."}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] bg-blue-500 text-white px-2 py-1 rounded-lg font-black animate-pulse">
+                      PRÊTE
+                    </span>
+                    <p className="text-[10px] text-slate-400 mt-1 font-medium italic">En attente de retrait</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-800 mb-6">Articles populaires jour</h2>
-          <div className="space-y-6">
+        <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm flex flex-col">
+          <h2 className="text-xl font-bold text-slate-800 mb-6">Articles populaires</h2>
+          <div className="space-y-6 flex-1">
             {topItems.length === 0 && (
               <p className="text-slate-400 text-sm">Pas encore de plats vendus aujourd'hui.</p>
             )}
@@ -172,6 +225,36 @@ export default function DashboardHome() {
               </div>
             ))}
           </div>
+          
+          <div className="mt-8 pt-8 border-t border-slate-50">
+             <div className="bg-emerald-50 p-4 rounded-2xl">
+                <p className="text-emerald-700 text-xs font-bold mb-1 italic">Note de performance</p>
+                <p className="text-emerald-900 text-[10px] leading-relaxed">
+                  Votre CA de ce jour (<b>{chiffreAffairesJour.toFixed(2)}€</b>) est calculé sur les commandes payées depuis minuit.
+                </p>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-800 mb-6">Évolution des ventes (CA) - 7 derniers jours</h2>
+        <div className="h-64 flex items-end justify-between gap-2 sm:gap-4 pb-6">
+          {salesTrend.data.map((day, i) => (
+            <div key={i} className="flex-1 h-full flex flex-col items-center relative">
+              <div className="w-full bg-slate-100 rounded-t-xl relative group flex-1 h-full">
+                <div 
+                  className="absolute bottom-0 w-full bg-emerald-500 rounded-t-xl group-hover:bg-emerald-400 transition-colors" 
+                  style={{ height: `${(day.sales / salesTrend.maxSale) * 100}%`, minHeight: '4px' }}
+                >
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-lg pointer-events-none whitespace-nowrap z-10">
+                    {day.sales.toFixed(2)} €
+                  </span>
+                </div>
+              </div>
+              <span className="absolute -bottom-6 text-[10px] sm:text-xs font-bold text-slate-400 whitespace-nowrap">{day.label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

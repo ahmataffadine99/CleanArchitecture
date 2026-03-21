@@ -1,4 +1,4 @@
-import { Commande } from "@ecoeats/domain";
+import { Commande, Coordonnees } from "@ecoeats/domain";
 import { CommandeIntrouvableError } from "@ecoeats/domain";
 import { DepotCommandes } from "@ecoeats/application";
 

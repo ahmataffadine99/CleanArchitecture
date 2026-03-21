@@ -58,6 +58,7 @@ export function creerRoutesRestaurant(deps: {
           clientNom: c.clientNom,
           clientTelephone: c.clientTelephone,
           adresseLivraison: isPlain ? c.adresseLivraison : c.getAdresseLivraison(),
+          livreurNom: c.livreurNom,
           articles: (isPlain ? c.articles : c.getArticles()).map((a: any) => ({
             id: a.menuItemId,
             nom: a.nom,

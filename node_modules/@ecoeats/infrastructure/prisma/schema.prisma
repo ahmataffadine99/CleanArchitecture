@@ -57,6 +57,8 @@ model Commande {
   adresseLivraison String
   livreurId        String?
   tempsPreparation Int?
+  latitudeLivraison Float?
+  longitudeLivraison Float?
   creeLe           DateTime @default(now())
   client           Client     @relation(fields: [clientId], references: [id])
   restaurant       Restaurant @relation(fields: [restaurantId], references: [id])

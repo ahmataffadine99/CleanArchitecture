@@ -24,6 +24,20 @@ export default function Checkout() {
   const [points, setPoints] = useState<number>(0);
   const clientId = user?.profilId;
 
+  const getPosition = () => {
+    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir l'adresse de livraison précise")),
+        { enableHighAccuracy: true }
+      );
+    });
+  };
+
   const fetchPoints = async () => {
     if (!clientId || !token) return;
     try {
@@ -81,7 +95,8 @@ export default function Checkout() {
         if (!resAdd.ok) throw new Error("Erreur synchro : " + item.nom);
       }
 
-      // 3. Passer la commande
+      // 3. Passer la commande avec géolocalisation
+      const position = await getPosition();
       const resOrder = await fetch('/api/commandes', {
         method: 'POST',
         headers: { 
@@ -90,7 +105,9 @@ export default function Checkout() {
         },
         body: JSON.stringify({
           clientId,
-          adresseLivraison: `${rue}, ${codePostal} ${ville} - Tél: ${telephone}`
+          adresseLivraison: `${rue}, ${codePostal} ${ville} - Tél: ${telephone}`,
+          latitude: position.latitude,
+          longitude: position.longitude
         })
       });
 

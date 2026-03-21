@@ -28,18 +28,13 @@ export default function Login() {
         throw new Error(data.message || 'Identifiants invalides');
       }
 
-      const { token, utilisateur } = await res.json();
+      const { token, user } = await res.json();
       
-      if (utilisateur.role !== 'LIVREUR') {
+      if (user.role !== 'LIVREUR') {
         throw new Error('Cet accès est réservé aux livreurs.');
       }
 
-      setAuth(token, {
-        id: utilisateur.id,
-        email: utilisateur.email,
-        role: utilisateur.role,
-        profilId: utilisateur.profilId
-      });
+      setAuth(token, user);
       
       navigate('/');
     } catch (err: any) {

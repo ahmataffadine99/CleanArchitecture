@@ -8,14 +8,17 @@ type Req = {
   commandeId: string;
 };
 
-// Trouve le livreur le plus proche et lui envoie une proposition
+import { ServiceCartographie } from "../../ports/ServiceCartographie";
+
+// Trouve les livreurs à proximité et leur envoie une proposition
 export class ProposerLivraisonUseCase {
-  private readonly selectionLivreur = new SelectionLivreurService();
+  private readonly RAYON_ACTION_KM = 5.0;
 
   constructor(
     private readonly depotCommandes: DepotCommandes,
     private readonly depotLivreurs: DepotLivreurs,
-    private readonly depotRestaurants: DepotRestaurants
+    private readonly depotRestaurants: DepotRestaurants,
+    private readonly cartographie: ServiceCartographie
   ) {}
 
   async executer(req: Req): Promise<Livreur> {
@@ -27,13 +30,19 @@ export class ProposerLivraisonUseCase {
     }
 
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
-    const livreurs = await this.depotLivreurs.listerDisponibles();
+    const livreursDisponibles = await this.depotLivreurs.listerDisponibles();
 
-    for (const livreur of livreurs) {
+    // Filtrer les livreurs par proximité du restaurant
+    const livreursProches = livreursDisponibles.filter(livreur => {
+      const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
+      return distance <= this.RAYON_ACTION_KM;
+    });
+
+    for (const livreur of livreursProches) {
       livreur.recevoirProposition(commande.id);
       await this.depotLivreurs.sauvegarder(livreur);
     }
 
-    return livreurs[0]; // On retourne le premier par défaut si besoin, ou on change le retour
+    return livreursProches[0]; // Retourne le premier notifié (ou undefined si aucun)
   }
 }

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Commande, ArticlePanier, Money, StatutCommande } from "@ecoeats/domain";
+import { Commande, ArticlePanier, Money, StatutCommande, Coordonnees } from "@ecoeats/domain";
 import { CommandeIntrouvableError } from "@ecoeats/domain";
 import { DepotCommandes } from "@ecoeats/application";
 
@@ -20,6 +20,8 @@ export class DepotCommandesPrisma implements DepotCommandes {
           statut: commande.getStatut(),
           livreurId: commande.getLivreurId(),
           tempsPreparation: commande.getTempsPreparation(),
+          latitudeLivraison: commande.getPositionLivraison().latitude,
+          longitudeLivraison: commande.getPositionLivraison().longitude,
         },
       });
     } else {
@@ -35,6 +37,8 @@ export class DepotCommandesPrisma implements DepotCommandes {
           fraisServiceCentimes: commande.getFraisService().enCentimes(),
           reductionCentimes: commande.getReduction().enCentimes(),
           adresseLivraison: commande.getAdresseLivraison(),
+          latitudeLivraison: commande.getPositionLivraison().latitude,
+          longitudeLivraison: commande.getPositionLivraison().longitude,
           articles: {
             create: commande.getArticles().map((a) => ({
               menuItemId: a.menuItemId,
@@ -113,7 +117,9 @@ export class DepotCommandesPrisma implements DepotCommandes {
       Money.fromCentimes(row.fraisLivCentimes),
       Money.fromCentimes(row.fraisServiceCentimes),
       row.adresseLivraison,
-      Money.fromCentimes(row.reductionCentimes ?? 0)
+      new Coordonnees(row.latitudeLivraison || 48.8566, row.longitudeLivraison || 2.3522),
+      Money.fromCentimes(row.reductionCentimes ?? 0),
+      row.creeLe
     );
 
     // Restaurer le statut via la machine à états (ceci ne restaure pas le temps de préparation)
@@ -125,6 +131,11 @@ export class DepotCommandesPrisma implements DepotCommandes {
     // Restaurer le temps de préparation s'il est présent
     if (row.tempsPreparation !== null && row.tempsPreparation !== undefined) {
       commande.restaurerTempsPreparation(row.tempsPreparation);
+    }
+
+    // Restaurer le livreur assigné
+    if (row.livreurId) {
+      commande.assignerLivreur(row.livreurId);
     }
 
     return commande;

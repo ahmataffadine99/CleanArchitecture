@@ -16,6 +16,20 @@ export default function Register() {
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
+  const getPosition = () => {
+    return new Promise<{ latitude: number, longitude: number }>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+        () => reject(new Error("Veuillez autoriser la géolocalisation pour définir votre secteur de travail")),
+        { enableHighAccuracy: true }
+      );
+    });
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -27,6 +41,8 @@ export default function Register() {
     setError(null);
 
     try {
+      const position = await getPosition();
+      
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,7 +51,9 @@ export default function Register() {
           email: formData.email,
           telephone: formData.telephone,
           motDePasse: formData.password,
-          role: 'LIVREUR'
+          role: 'LIVREUR',
+          latitude: position.latitude,
+          longitude: position.longitude
         })
       });
 

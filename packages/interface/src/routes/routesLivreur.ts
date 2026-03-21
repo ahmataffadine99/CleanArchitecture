@@ -7,6 +7,8 @@ import {
   AccepterLivraisonUseCase,
   RefuserLivraisonUseCase,
   ObtenirPropositionsLivreurUseCase,
+  RecupererCommandeUseCase,
+  ObtenirCommandeUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesLivreur(deps: {
@@ -17,6 +19,8 @@ export function creerRoutesLivreur(deps: {
   accepterLivraison: AccepterLivraisonUseCase;
   refuserLivraison: RefuserLivraisonUseCase;
   obtenirPropositions: ObtenirPropositionsLivreurUseCase;
+  recupererCommande: RecupererCommandeUseCase;
+  obtenirCommande: ObtenirCommandeUseCase;
 }): Router {
   const router = Router();
 
@@ -103,6 +107,25 @@ export function creerRoutesLivreur(deps: {
         commandeId: req.params.commandeId,
       });
       res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  // POST /commandes/:id/recuperer
+  router.post("/commandes/:id/recuperer", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deps.recupererCommande.executer({
+        commandeId: req.params.id,
+        livreurId: req.body.livreurId,
+      });
+      res.json({ message: "Commande récupérée !" });
+    } catch (err) { next(err); }
+  });
+
+  // GET /commandes/:id
+  router.get("/commandes/:id", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const commande = await deps.obtenirCommande.executer(req.params.id);
+      res.json(commande);
     } catch (err) { next(err); }
   });
 
