@@ -7,6 +7,7 @@ export class Restaurant {
     public adresse: string,
     public position: Coordonnees,
     public readonly proprietaireId: string,
+    public categories: string[] = [],
     public imageUrl: string | null = null
   ) {}
 }

@@ -26,6 +26,9 @@ export { ListerCommandesClientUseCase } from "./use-cases/client/ListerCommandes
 export { GererFavorisUseCase } from "./use-cases/client/GererFavorisUseCase";
 export { LaisserAvisLivreurUseCase } from "./use-cases/client/LaisserAvisLivreurUseCase";
 export { ObtenirFavorisDetailsUseCase } from "./use-cases/client/ObtenirFavorisDetailsUseCase";
+export { MettreAJourProfilClientUseCase } from "./use-cases/client/MettreAJourProfilClientUseCase";
+export { ObtenirProfilClientUseCase } from "./use-cases/client/ObtenirProfilClientUseCase";
+export { MarquerTicketCommeLuUseCase } from "./use-cases/admin/MarquerTicketCommeLuUseCase";
 
 // Use Cases Restaurateur
 export { AjouterPlatUseCase } from "./use-cases/restaurant/AjouterPlatUseCase";

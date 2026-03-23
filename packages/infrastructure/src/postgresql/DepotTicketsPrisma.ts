@@ -11,12 +11,14 @@ export class DepotTicketsPrisma implements DepotTickets {
       update: {
         titre: ticket.titre,
         statut: ticket.statut,
+        estLu: ticket.estLu,
       },
       create: {
         id: ticket.id,
         auteurId: ticket.auteurId,
         titre: ticket.titre,
         statut: ticket.statut,
+        estLu: ticket.estLu,
         creeLe: ticket.creeLe,
       },
     });
@@ -50,7 +52,8 @@ export class DepotTicketsPrisma implements DepotTickets {
             m.estAdmin,
             m.envoyeLe
           )
-      )
+      ),
+      row.estLu
     );
   }
 
@@ -97,6 +100,7 @@ export class DepotTicketsPrisma implements DepotTickets {
               m.envoyeLe
             )
         ),
+        row.estLu,
         nom,
         role
       ));
@@ -129,9 +133,17 @@ export class DepotTicketsPrisma implements DepotTickets {
                 m.estAdmin,
                 m.envoyeLe
               )
-          )
+          ),
+          row.estLu
         )
     );
+  }
+
+  async marquerCommeLu(id: string): Promise<void> {
+    await (this.prisma as any).ticketSupport.update({
+      where: { id },
+      data: { estLu: true },
+    });
   }
 
   async sauvegarderMessage(message: MessageTicket): Promise<void> {

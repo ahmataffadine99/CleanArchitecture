@@ -6,6 +6,7 @@ export { DepotClientsEnMemoire } from "./in-memory/DepotClientsEnMemoire";
 export { DepotLivreursEnMemoire } from "./in-memory/DepotLivreursEnMemoire";
 export { DepotFacturesEnMemoire } from "./in-memory/DepotFacturesEnMemoire";
 export { DepotComptesEnMemoire } from "./in-memory/DepotComptesEnMemoire";
+export { DepotTicketsEnMemoire } from "./in-memory/DepotTicketsEnMemoire";
 
 // Adaptateurs PostgreSQL - Prisma (production)
 export { DepotCommandesPrisma } from "./postgresql/DepotCommandesPrisma";

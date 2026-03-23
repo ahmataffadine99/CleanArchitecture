@@ -9,6 +9,8 @@ import {
   GererFavorisUseCase,
   LaisserAvisLivreurUseCase,
   ObtenirFavorisDetailsUseCase,
+  MettreAJourProfilClientUseCase,
+  ObtenirProfilClientUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesClient(deps: {
@@ -21,16 +23,28 @@ export function creerRoutesClient(deps: {
   gererFavoris: GererFavorisUseCase;
   laisserAvis: LaisserAvisLivreurUseCase;
   obtenirFavorisDetails: ObtenirFavorisDetailsUseCase;
+  mettreAJourProfil: MettreAJourProfilClientUseCase;
+  obtenirProfil: ObtenirProfilClientUseCase;
 }): Router {
   const router = Router();
 
   // GET /restaurants
   router.get("/restaurants", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const restaurants = await deps.listerRestaurants.executer();
+      const { lat, lon, rayon, cat } = req.query;
+      const filtres = {
+        latitude: lat ? parseFloat(lat as string) : undefined,
+        longitude: lon ? parseFloat(lon as string) : undefined,
+        rayonKm: rayon ? parseFloat(rayon as string) : undefined,
+        categorie: cat as string | undefined,
+      };
+      
+      const restaurants = await deps.listerRestaurants.executer(filtres);
       res.json(restaurants.map(r => ({
         id: r.id, nom: r.nom, adresse: r.adresse,
         position: { lat: r.position.latitude, lon: r.position.longitude },
+        categories: r.categories,
+        imageUrl: r.imageUrl
       })));
     } catch (err) { next(err); }
   });
@@ -231,6 +245,22 @@ export function creerRoutesClient(deps: {
       const { note, commentaire } = req.body;
       await deps.laisserAvis.executer({ commandeId: req.params.id, note, commentaire });
       res.status(201).send();
+    } catch (err) { next(err); }
+  });
+
+  // Profil
+  router.put("/profil", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { clientId, nom, email, telephone } = req.body;
+      await deps.mettreAJourProfil.executer({ clientId, nom, email, telephone });
+      res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  router.get("/profil/:clientId", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const profil = await deps.obtenirProfil.executer(req.params.clientId);
+      res.json(profil);
     } catch (err) { next(err); }
   });
 

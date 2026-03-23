@@ -16,6 +16,7 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
         latitude: restaurant.position.latitude,
         longitude: restaurant.position.longitude,
         imageUrl: restaurant.imageUrl,
+        categories: restaurant.categories,
       },
       create: {
         id: restaurant.id,
@@ -25,6 +26,7 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
         longitude: restaurant.position.longitude,
         proprietaireId: restaurant.proprietaireId,
         imageUrl: restaurant.imageUrl,
+        categories: restaurant.categories,
       },
     });
   }
@@ -38,6 +40,7 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
       row.adresse,
       new Coordonnees(row.latitude, row.longitude),
       row.proprietaireId,
+      row.categories,
       row.imageUrl
     );
   }
@@ -59,7 +62,38 @@ export class DepotRestaurantsPrisma implements DepotRestaurants {
       row.adresse,
       new Coordonnees(row.latitude, row.longitude),
       row.proprietaireId,
+      row.categories,
       row.imageUrl
     );
+  }
+
+  async rechercher(filtres: { latitude?: number; longitude?: number; rayonKm?: number; categorie?: string }): Promise<Restaurant[]> {
+    const where: any = {};
+    
+    if (filtres.categorie && filtres.categorie !== 'all') {
+      where.categories = { has: filtres.categorie };
+    }
+
+    let rows = await this.prisma.restaurant.findMany({ where });
+
+    if (filtres.latitude !== undefined && filtres.longitude !== undefined && filtres.rayonKm !== undefined) {
+        rows = rows.filter(r => {
+            const dist = this.calculerDistance(filtres.latitude!, filtres.longitude!, r.latitude, r.longitude);
+            return dist <= filtres.rayonKm!;
+        });
+    }
+
+    return rows.map(r => this.mapToEntity(r));
+  }
+
+  private calculerDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 }

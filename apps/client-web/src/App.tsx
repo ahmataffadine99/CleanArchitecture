@@ -11,6 +11,7 @@ import LoyaltyPage from './pages/LoyaltyPage';
 import AddressManagement from './pages/AddressManagement';
 import FavoritesPage from './pages/FavoritesPage';
 import SupportPage from './pages/SupportPage';
+import ProfileInfo from './pages/ProfileInfo';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/loyalty" element={<LoyaltyPage />} />
           <Route path="/addresses" element={<AddressManagement />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/profile" element={<ProfileInfo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

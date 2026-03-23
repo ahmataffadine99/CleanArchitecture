@@ -27,9 +27,20 @@ export class DepotClientsPrisma implements DepotClients {
     });
   }
 
-  async trouverParId(id: string): Promise<Client> {
+  async trouverParId(id: string): Promise<Client | null> {
     const row = await this.prisma.client.findUnique({ where: { id } });
-    if (!row) throw new ClientIntrouvableError(id);
+    if (!row) return null;
     return new Client(row.id, row.nom, row.email, row.adresse, row.telephone ?? undefined, (row as any).pointsFidelite ?? 0);
+  }
+
+  async mettreAJour(id: string, data: { nom?: string; email?: string; telephone?: string }): Promise<void> {
+    await this.prisma.client.update({
+      where: { id },
+      data: {
+        ...(data.nom && { nom: data.nom }),
+        ...(data.email && { email: data.email }),
+        ...(data.telephone && { telephone: data.telephone }),
+      }
+    });
   }
 }

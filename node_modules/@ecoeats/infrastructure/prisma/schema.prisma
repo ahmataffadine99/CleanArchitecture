@@ -28,6 +28,7 @@ model Restaurant {
   longitude     Float
   proprietaireId String
   imageUrl      String?
+  categories    String[]
   plats         PlatMenu[]
   commandes     Commande[]
 }
@@ -139,6 +140,7 @@ model TicketSupport {
   auteurId  String
   titre     String
   statut    String          @default("OUVERT") // "OUVERT", "CLOS"
+  estLu     Boolean         @default(false)
   creeLe    DateTime        @default(now())
   messages  MessageTicket[]
 }

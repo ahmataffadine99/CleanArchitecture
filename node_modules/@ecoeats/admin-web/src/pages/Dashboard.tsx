@@ -15,6 +15,7 @@ interface Stats {
     nouveauxComptes: number;
     restaurantsSemaine: number;
     enAttente: number;
+    ticketsOuverts: number;
   };
   commandesRecentes: any[];
 }
@@ -54,6 +55,24 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
     fetchStats();
   }, []);
 
+  const onTicketRead = () => {
+    // Re-fetch stats to update the badge
+    const fetchStats = async () => {
+        try {
+          const token = localStorage.getItem('admin_token');
+          const res = await fetch('/api/admin/stats', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            setStats(await res.json());
+          }
+        } catch (err) { 
+          console.error(err);
+        }
+      };
+      fetchStats();
+  };
+
   // ... (loading logic)
 
   const renderContent = () => {
@@ -91,7 +110,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
       case 'users': return <UsersView searchTerm={searchTerm} />;
       case 'restaurants': return <RestaurantsView onManage={(r) => setSelectedRestaurant(r)} searchTerm={searchTerm} />;
       case 'orders': return <OrdersView searchTerm={searchTerm} />;
-      case 'support': return <SupportView searchTerm={searchTerm} />;
+      case 'support': return <SupportView searchTerm={searchTerm} onTicketRead={onTicketRead} />;
       default: return <StatsView stats={stats} searchTerm={searchTerm} />;
     }
   };
@@ -176,8 +195,16 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
                 className="bg-white border border-slate-200 pl-12 pr-6 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 text-sm w-64 transition-all"
               />
             </div>
-            <button className="p-3 bg-white border border-slate-200 text-slate-400 hover:text-emerald-500 rounded-2xl transition-all shadow-sm">
+            <button 
+              onClick={() => setActiveTab('support')}
+              className="relative p-3 bg-white border border-slate-200 text-slate-400 hover:text-emerald-500 rounded-2xl transition-all shadow-sm group"
+            >
               <Bell size={20} />
+              {stats?.tendances.ticketsOuverts ? stats.tendances.ticketsOuverts > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow-lg ring-2 ring-white animate-bounce">
+                  {stats.tendances.ticketsOuverts}
+                </span>
+              ) : null}
             </button>
           </div>
         </header>
@@ -630,7 +657,7 @@ function OrdersView({ searchTerm }: { searchTerm: string }) {
   );
 }
 
-function SupportView({ searchTerm }: { searchTerm: string }) {
+function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicketRead: () => void }) {
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
@@ -715,12 +742,30 @@ function SupportView({ searchTerm }: { searchTerm: string }) {
           {filteredTickets.map((t) => (
             <button 
               key={t.id}
-              onClick={() => setSelectedTicket(t)}
+              onClick={async () => {
+                setSelectedTicket(t);
+                if (!t.estLu) {
+                  try {
+                    const token = localStorage.getItem('admin_token');
+                    await fetch(`/api/admin/tickets/${t.id}/lire`, {
+                      method: 'POST',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    t.estLu = true; // Local update
+                    onTicketRead();
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }
+              }}
               className={`w-full p-6 text-left hover:bg-slate-50 transition-all ${selectedTicket?.id === t.id ? 'bg-emerald-50/50 border-r-4 border-emerald-500' : ''}`}
             >
-              <div className="flex justify-between items-start mb-1">
-                <span className="font-bold text-slate-800 truncate pr-2">{t.titre}</span>
-                <span className={`text-[10px] font-black px-2 py-1 rounded-full ${t.statut === 'OUVERT' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+              <div className="flex justify-between items-start mb-1 gap-2">
+                <div className="flex items-center gap-2 truncate">
+                  {!t.estLu && <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-lg shadow-rose-500/20 flex-shrink-0" />}
+                  <span className="font-bold text-slate-800 truncate pr-2">{t.titre}</span>
+                </div>
+                <span className={`text-[10px] font-black px-2 py-1 rounded-full flex-shrink-0 ${t.statut === 'OUVERT' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                   {t.statut}
                 </span>
               </div>

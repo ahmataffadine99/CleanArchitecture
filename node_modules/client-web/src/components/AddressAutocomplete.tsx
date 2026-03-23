@@ -7,9 +7,15 @@ interface AddressAutocompleteProps {
   onSelect: (address: string, lat: number, lon: number) => void;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
 }
 
-export default function AddressAutocomplete({ value, onChange, onSelect, placeholder = "Rechercher une adresse...", className = "" }: AddressAutocompleteProps) {
+export default function AddressAutocomplete({ 
+  value, onChange, onSelect, 
+  placeholder = "Rechercher une adresse...", 
+  className = "",
+  inputClassName = ""
+}: AddressAutocompleteProps) {
   const [query, setQuery] = useState(value || '');
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +99,7 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
           onChange={handleInputChange}
           onFocus={() => { if (query.length > 2) setIsOpen(true) }}
           placeholder={placeholder}
-          className="w-full pl-12 pr-6 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300"
+          className={`w-full pl-12 pr-6 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700 placeholder:text-slate-300 ${inputClassName}`}
           autoComplete="off"
         />
       </div>

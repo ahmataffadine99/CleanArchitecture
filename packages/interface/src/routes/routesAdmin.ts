@@ -8,6 +8,7 @@ import {
   ListerTicketsUseCase,
   EnvoyerMessageTicketUseCase,
   CloturerTicketUseCase,
+  MarquerTicketCommeLuUseCase,
   ObtenirStatsRestaurantUseCase
 } from "@ecoeats/application";
 
@@ -20,6 +21,7 @@ export function routerAdmin(
   listerTickets: ListerTicketsUseCase,
   envoyerMessageTicket: EnvoyerMessageTicketUseCase,
   cloturerTicket: CloturerTicketUseCase,
+  marquerTicketCommeLu: MarquerTicketCommeLuUseCase,
   obtenirStatsRestaurant: ObtenirStatsRestaurantUseCase
 ) {
   const router = Router();
@@ -104,6 +106,17 @@ export function routerAdmin(
     try {
       const { id } = req.params;
       await cloturerTicket.executer(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // POST /api/admin/tickets/:id/lire
+  router.post("/tickets/:id/lire", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await marquerTicketCommeLu.executer(id);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

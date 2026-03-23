@@ -5,5 +5,6 @@ export interface DepotTickets {
   trouverTicketParId(id: string): Promise<TicketSupport | null>;
   listerTickets(): Promise<TicketSupport[]>;
   listerTicketsParAuteur(auteurId: string): Promise<TicketSupport[]>;
+  marquerCommeLu(id: string): Promise<void>;
   sauvegarderMessage(message: MessageTicket): Promise<void>;
 }

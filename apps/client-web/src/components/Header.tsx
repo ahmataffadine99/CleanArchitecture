@@ -29,6 +29,7 @@ export default function Header() {
   };
 
   const menuItems = [
+    { icon: User, label: "Mes informations", action: () => { navigate('/profile'); setIsDropdownOpen(false); } },
     { icon: History, label: "Mes commandes", action: () => { navigate('/history'); setIsDropdownOpen(false); } },
     { icon: Heart, label: "Mes favoris", action: () => { navigate('/favorites'); setIsDropdownOpen(false); } },
     { icon: MapPin, label: "Mes Adresses", action: () => { navigate('/addresses'); setIsDropdownOpen(false); } },

@@ -19,6 +19,7 @@ export class TicketSupport {
     public readonly statut: StatutTicket,
     public readonly creeLe: Date,
     public readonly messages: MessageTicket[] = [],
+    public readonly estLu: boolean = false,
     public readonly auteurNom?: string,
     public readonly auteurRole?: string
   ) {}

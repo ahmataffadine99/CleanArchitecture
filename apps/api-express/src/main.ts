@@ -16,7 +16,7 @@ import {
   DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire, DepotComptesEnMemoire,
   CartographieHaversine, PaiementSimule,
   DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma,
-  DepotAvisPrisma, DepotFavorisPrisma, DepotTicketsPrisma
+  DepotAvisPrisma, DepotFavorisPrisma, DepotTicketsPrisma, DepotTicketsEnMemoire
 } from "@ecoeats/infrastructure";
 import {
   ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
@@ -29,6 +29,8 @@ import {
   RecupererCommandeUseCase, ObtenirCommandeUseCase, ListerHistoriqueLivreurUseCase,
   GererFavorisUseCase, LaisserAvisLivreurUseCase, ObtenirAvisLivreurUseCase,
   ObtenirFavorisDetailsUseCase, ObtenirStatsGlobalesUseCase,
+  MettreAJourProfilClientUseCase,
+  ObtenirProfilClientUseCase,
   ObtenirTousLesComptesUseCase,
   ChangerStatutCompteUseCase,
   ListerToutesLesCommandesUseCase,
@@ -36,6 +38,7 @@ import {
   EnvoyerMessageTicketUseCase,
   ListerTicketsUseCase,
   CloturerTicketUseCase,
+  MarquerTicketCommeLuUseCase,
   ObtenirStatsRestaurantUseCase
 } from "@ecoeats/application";
 
@@ -56,7 +59,7 @@ const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(prismaClient
 const depotComptes     = utiliserPostgres ? new DepotComptesPrisma(prismaClient!)     : new DepotComptesEnMemoire();
 const depotAvis        = utiliserPostgres ? new DepotAvisPrisma(prismaClient!)        : null as any;
 const depotFavoris     = utiliserPostgres ? new DepotFavorisPrisma(prismaClient!)     : null as any;
-const depotTickets     = utiliserPostgres ? new DepotTicketsPrisma(prismaClient!)     : null as any;
+const depotTickets     = utiliserPostgres ? new DepotTicketsPrisma(prismaClient!)     : new DepotTicketsEnMemoire();
 const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();
@@ -71,7 +74,9 @@ const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes, d
 const gererFavoris      = new GererFavorisUseCase(depotFavoris);
 const obtenirFavorisDet = new ObtenirFavorisDetailsUseCase(depotFavoris, depotRestaurants, depotPlats);
 const laisserAvis       = new LaisserAvisLivreurUseCase(depotAvis, depotCommandes);
-const obtenirStats      = new ObtenirStatsGlobalesUseCase(depotCommandes, depotComptes, depotRestaurants);
+const mettreAJourProfil = new MettreAJourProfilClientUseCase(depotClients, depotComptes);
+const obtenirProfilClient = new ObtenirProfilClientUseCase(depotClients);
+const obtenirStats      = new ObtenirStatsGlobalesUseCase(depotCommandes, depotComptes, depotRestaurants, depotTickets);
 const obtenirTousComptes = new ObtenirTousLesComptesUseCase(depotComptes);
 const changerStatutCompte = new ChangerStatutCompteUseCase(depotComptes);
 const listerToutesLesCommandes = new ListerToutesLesCommandesUseCase(depotCommandes, depotClients, depotRestaurants);
@@ -79,6 +84,7 @@ const creerTicket = new CreerTicketUseCase(depotTickets);
 const envoyerMessageTicket = new EnvoyerMessageTicketUseCase(depotTickets);
 const listerTickets = new ListerTicketsUseCase(depotTickets);
 const cloturerTicket = new CloturerTicketUseCase(depotTickets);
+const marquerCommeLu = new MarquerTicketCommeLuUseCase(depotTickets);
 const obtenirStatsRestaurant = new ObtenirStatsRestaurantUseCase(depotCommandes, depotRestaurants);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
@@ -136,6 +142,7 @@ app.use("/api/admin", requireAuth, requireRole("ADMIN"), routerAdmin(
   listerTickets,
   envoyerMessageTicket,
   cloturerTicket,
+  marquerCommeLu,
   obtenirStatsRestaurant
 ));
 
@@ -147,7 +154,19 @@ app.use("/api/support", requireAuth, routerSupport(
 ));
 
 // Routes publiques
-app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient, gererFavoris, laisserAvis, obtenirFavorisDetails: obtenirFavorisDet }));
+app.use("/api", creerRoutesClient({ 
+  listerRestaurants, 
+  voirMenu, 
+  ajouterAuPanier, 
+  passerCommande, 
+  payerCommande, 
+  listerCommandesClient, 
+  gererFavoris, 
+  laisserAvis, 
+  obtenirFavorisDetails: obtenirFavorisDet,
+  mettreAJourProfil,
+  obtenirProfil: obtenirProfilClient
+}));
 
 // Routes nécessitant une authentification
 app.use("/api", requireAuth, (req, res, next) => {
