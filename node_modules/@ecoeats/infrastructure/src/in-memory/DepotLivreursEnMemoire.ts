@@ -18,6 +18,11 @@ export class DepotLivreursEnMemoire implements DepotLivreurs {
     return [...this.store.values()].filter(l => l.getStatut() === "DISPONIBLE");
   }
 
+  async listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]> {
+    // Dans la version en mémoire, on retourne tous les disponibles (pas de filtrage par secteur)
+    return this.listerDisponibles();
+  }
+
   async retirerPropositionDeTous(commandeId: string): Promise<void> {
     for (const livreur of this.store.values()) {
       livreur.refuserProposition(commandeId);

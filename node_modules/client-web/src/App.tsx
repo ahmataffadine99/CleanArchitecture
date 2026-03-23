@@ -9,6 +9,9 @@ import CartSidebar from './components/CartSidebar';
 import ClientHistory from './pages/ClientHistory';
 import LoyaltyPage from './pages/LoyaltyPage';
 import AddressManagement from './pages/AddressManagement';
+import FavoritesPage from './pages/FavoritesPage';
+import SupportPage from './pages/SupportPage';
+import { Link } from 'react-router-dom';
 
 function App() {
   return (
@@ -22,9 +25,11 @@ function App() {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/history" element={<ClientHistory />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/tracking" element={<ClientHistory />} />
           <Route path="/loyalty" element={<LoyaltyPage />} />
           <Route path="/addresses" element={<AddressManagement />} />
+          <Route path="/support" element={<SupportPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
@@ -36,7 +41,7 @@ function App() {
           <p>&copy; {new Date().getFullYear()} EcoEATS. Tous droits réservés.</p>
           <div className="flex gap-4 justify-center mt-4 sm:mt-0">
             <a href="#" className="hover:text-emerald-500 transition-colors">Mentions légales</a>
-            <a href="#" className="hover:text-emerald-500 transition-colors">Contact</a>
+            <Link to="/support" className="hover:text-emerald-500 transition-colors">Contact Support</Link>
           </div>
         </div>
       </footer>

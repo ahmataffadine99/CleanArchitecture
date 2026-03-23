@@ -5,7 +5,7 @@ import { creerRoutesRestaurant } from "@ecoeats/interface";
 import { creerRoutesLivreur } from "@ecoeats/interface";
 import { creerRoutesAuth } from "@ecoeats/interface";
 import { gestionnaireErreurs } from "@ecoeats/interface";
-import { creerAuthMiddleware, requireRole } from "@ecoeats/interface";
+import { creerAuthMiddleware, requireRole, routerAdmin, routerSupport } from "@ecoeats/interface";
 
 // =====================================================================
 // COMPOSITION ROOT — c'est ici qu'on choisit les adaptateurs à injecter
@@ -16,7 +16,7 @@ import {
   DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire, DepotComptesEnMemoire,
   CartographieHaversine, PaiementSimule,
   DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma,
-  DepotAvisPrisma, DepotFavorisPrisma
+  DepotAvisPrisma, DepotFavorisPrisma, DepotTicketsPrisma
 } from "@ecoeats/infrastructure";
 import {
   ListerRestaurantsUseCase, VoirMenuRestaurantUseCase, AjouterAuPanierUseCase,
@@ -28,6 +28,15 @@ import {
   ModifierRestaurantUseCase, ObtenirMonRestaurantUseCase, ListerCommandesClientUseCase,
   RecupererCommandeUseCase, ObtenirCommandeUseCase, ListerHistoriqueLivreurUseCase,
   GererFavorisUseCase, LaisserAvisLivreurUseCase, ObtenirAvisLivreurUseCase,
+  ObtenirFavorisDetailsUseCase, ObtenirStatsGlobalesUseCase,
+  ObtenirTousLesComptesUseCase,
+  ChangerStatutCompteUseCase,
+  ListerToutesLesCommandesUseCase,
+  CreerTicketUseCase,
+  EnvoyerMessageTicketUseCase,
+  ListerTicketsUseCase,
+  CloturerTicketUseCase,
+  ObtenirStatsRestaurantUseCase
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -47,6 +56,7 @@ const depotLivreurs    = utiliserPostgres ? new DepotLivreursPrisma(prismaClient
 const depotComptes     = utiliserPostgres ? new DepotComptesPrisma(prismaClient!)     : new DepotComptesEnMemoire();
 const depotAvis        = utiliserPostgres ? new DepotAvisPrisma(prismaClient!)        : null as any;
 const depotFavoris     = utiliserPostgres ? new DepotFavorisPrisma(prismaClient!)     : null as any;
+const depotTickets     = utiliserPostgres ? new DepotTicketsPrisma(prismaClient!)     : null as any;
 const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();
@@ -59,7 +69,17 @@ const passerCommande    = new PasserCommandeUseCase(depotCommandes, depotRestaur
 const payerCommande     = new PayerCommandeUseCase(depotCommandes, depotFactures, paiement, depotClients);
 const listerCommandesClient = new ListerCommandesClientUseCase(depotCommandes, depotRestaurants, depotLivreurs);
 const gererFavoris      = new GererFavorisUseCase(depotFavoris);
+const obtenirFavorisDet = new ObtenirFavorisDetailsUseCase(depotFavoris, depotRestaurants, depotPlats);
 const laisserAvis       = new LaisserAvisLivreurUseCase(depotAvis, depotCommandes);
+const obtenirStats      = new ObtenirStatsGlobalesUseCase(depotCommandes, depotComptes, depotRestaurants);
+const obtenirTousComptes = new ObtenirTousLesComptesUseCase(depotComptes);
+const changerStatutCompte = new ChangerStatutCompteUseCase(depotComptes);
+const listerToutesLesCommandes = new ListerToutesLesCommandesUseCase(depotCommandes, depotClients, depotRestaurants);
+const creerTicket = new CreerTicketUseCase(depotTickets);
+const envoyerMessageTicket = new EnvoyerMessageTicketUseCase(depotTickets);
+const listerTickets = new ListerTicketsUseCase(depotTickets);
+const cloturerTicket = new CloturerTicketUseCase(depotTickets);
+const obtenirStatsRestaurant = new ObtenirStatsRestaurantUseCase(depotCommandes, depotRestaurants);
 
 const ajouterPlat       = new AjouterPlatUseCase(depotPlats, depotRestaurants);
 const modifierPlat      = new ModifierPlatUseCase(depotPlats);
@@ -106,8 +126,28 @@ app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPost
 
 app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 
+// Routes ADMIN
+app.use("/api/admin", requireAuth, requireRole("ADMIN"), routerAdmin(
+  obtenirStats,
+  obtenirTousComptes,
+  changerStatutCompte,
+  listerRestaurants,
+  listerToutesLesCommandes,
+  listerTickets,
+  envoyerMessageTicket,
+  cloturerTicket,
+  obtenirStatsRestaurant
+));
+
+// Routes SUPPORT (Client, Resto, Livreur)
+app.use("/api/support", requireAuth, routerSupport(
+  creerTicket,
+  envoyerMessageTicket,
+  listerTickets
+));
+
 // Routes publiques
-app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient, gererFavoris, laisserAvis }));
+app.use("/api", creerRoutesClient({ listerRestaurants, voirMenu, ajouterAuPanier, passerCommande, payerCommande, listerCommandesClient, gererFavoris, laisserAvis, obtenirFavorisDetails: obtenirFavorisDet }));
 
 // Routes nécessitant une authentification
 app.use("/api", requireAuth, (req, res, next) => {

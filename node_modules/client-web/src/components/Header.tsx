@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { UtensilsCrossed, ShoppingBag, User, LogOut, ChevronDown, History, Gift, MapPin } from 'lucide-react';
+import { UtensilsCrossed, ShoppingBag, User, LogOut, ChevronDown, History, Gift, MapPin, Heart } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { Link, useNavigate } from 'react-router-dom';
@@ -30,6 +30,7 @@ export default function Header() {
 
   const menuItems = [
     { icon: History, label: "Mes commandes", action: () => { navigate('/history'); setIsDropdownOpen(false); } },
+    { icon: Heart, label: "Mes favoris", action: () => { navigate('/favorites'); setIsDropdownOpen(false); } },
     { icon: MapPin, label: "Mes Adresses", action: () => { navigate('/addresses'); setIsDropdownOpen(false); } },
     { icon: Gift, label: "Mes points de fidélité", action: () => { navigate('/loyalty'); setIsDropdownOpen(false); }, badge: "Nouveau" }
   ];

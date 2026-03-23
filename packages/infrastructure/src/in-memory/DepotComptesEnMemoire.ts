@@ -18,4 +18,8 @@ export class DepotComptesEnMemoire implements DepotComptes {
     }
     return null;
   }
+
+  async trouverTout(): Promise<CompteUtilisateur[]> {
+    return Array.from(this.store.values());
+  }
 }

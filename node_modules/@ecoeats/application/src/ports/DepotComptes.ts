@@ -4,4 +4,5 @@ export interface DepotComptes {
   sauvegarder(compte: CompteUtilisateur): Promise<void>;
   trouverParEmail(email: string): Promise<CompteUtilisateur | null>;
   trouverParId(id: string): Promise<CompteUtilisateur | null>;
+  trouverTout(): Promise<CompteUtilisateur[]>;
 }

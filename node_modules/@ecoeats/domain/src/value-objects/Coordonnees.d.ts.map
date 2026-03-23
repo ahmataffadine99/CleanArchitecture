@@ -1,1 +1,0 @@
-{"version":3,"file":"Coordonnees.d.ts","sourceRoot":"","sources":["Coordonnees.ts"],"names":[],"mappings":"AACA,qBAAa,WAAW;IAEpB,QAAQ,CAAC,QAAQ,EAAE,MAAM;IACzB,QAAQ,CAAC,SAAS,EAAE,MAAM;gBADjB,QAAQ,EAAE,MAAM,EAChB,SAAS,EAAE,MAAM;IAU5B,OAAO,CAAC,KAAK,EAAE,WAAW,GAAG,OAAO;IAIpC,QAAQ,IAAI,MAAM;CAGnB"}

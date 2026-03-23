@@ -4337,6 +4337,7 @@ __export(index_exports, {
   ModifierRestaurantUseCase: () => ModifierRestaurantUseCase,
   ObtenirAvisLivreurUseCase: () => ObtenirAvisLivreurUseCase,
   ObtenirCommandeUseCase: () => ObtenirCommandeUseCase,
+  ObtenirFavorisDetailsUseCase: () => ObtenirFavorisDetailsUseCase,
   ObtenirLivreurUseCase: () => ObtenirLivreurUseCase,
   ObtenirMonRestaurantUseCase: () => ObtenirMonRestaurantUseCase,
   ObtenirPropositionsLivreurUseCase: () => ObtenirPropositionsLivreurUseCase,
@@ -4784,6 +4785,29 @@ var LaisserAvisLivreurUseCase = class {
       params.commentaire || null
     );
     await this.depotAvis.sauvegarder(avis);
+  }
+};
+
+// src/use-cases/client/ObtenirFavorisDetailsUseCase.ts
+var ObtenirFavorisDetailsUseCase = class {
+  constructor(depotFavoris, depotRestaurants, depotPlats) {
+    this.depotFavoris = depotFavoris;
+    this.depotRestaurants = depotRestaurants;
+    this.depotPlats = depotPlats;
+  }
+  async executer(clientId) {
+    const [idRestos, idPlats] = await Promise.all([
+      this.depotFavoris.listerRestaurants(clientId),
+      this.depotFavoris.listerPlats(clientId)
+    ]);
+    const [restos, plats] = await Promise.all([
+      Promise.all(idRestos.map((id) => this.depotRestaurants.trouverParId(id).catch(() => null))),
+      Promise.all(idPlats.map((id) => this.depotPlats.trouverParId(id).catch(() => null)))
+    ]);
+    return {
+      restaurants: restos.filter((r) => r !== null),
+      plats: plats.filter((p) => p !== null)
+    };
   }
 };
 
@@ -5299,6 +5323,7 @@ var ObtenirCommandeUseCase = class {
   ModifierRestaurantUseCase,
   ObtenirAvisLivreurUseCase,
   ObtenirCommandeUseCase,
+  ObtenirFavorisDetailsUseCase,
   ObtenirLivreurUseCase,
   ObtenirMonRestaurantUseCase,
   ObtenirPropositionsLivreurUseCase,

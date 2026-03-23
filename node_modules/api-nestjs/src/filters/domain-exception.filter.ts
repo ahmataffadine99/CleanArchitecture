@@ -20,7 +20,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    
+
     // Si c'est une ErreurMetier de notre couche Domain, on la mappe proprement
     if (exception instanceof ErreurMetier) {
       const status = this.statusMapping[exception.code] || HttpStatus.INTERNAL_SERVER_ERROR;
@@ -36,10 +36,10 @@ export class DomainExceptionFilter implements ExceptionFilter {
     }
 
     // Fallback inattendu
-    console.error('[NestJS Error Handler] Une erreur inattendue est survenue :', exception);
+    console.error('[NestJS Error Handler] Compte suspendu. contactez support :', exception);
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       code: 'ERREUR_INTERNE',
-      message: "Une erreur inattendue s'est produite.",
+      message: "Compte suspendu. contactez support.",
     });
   }
 }

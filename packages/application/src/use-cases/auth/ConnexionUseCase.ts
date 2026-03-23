@@ -1,4 +1,4 @@
-import { IdentifiantsInvalidesError } from "@ecoeats/domain";
+import { IdentifiantsInvalidesError, CompteSuspenduError } from "@ecoeats/domain";
 import { DepotComptes } from "../../ports/DepotComptes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -32,6 +32,11 @@ export class ConnexionUseCase {
     // Vérifier le mot de passe contre le hash
     const motDePasseValide = await bcrypt.compare(req.motDePasse, compte.motDePasseHache);
     if (!motDePasseValide) throw new IdentifiantsInvalidesError();
+
+    // Vérifier si le compte est actif
+    if (!compte.estActif) {
+      throw new CompteSuspenduError();
+    }
 
     // Générer le token JWT avec les infos utiles
     const token = jwt.sign(

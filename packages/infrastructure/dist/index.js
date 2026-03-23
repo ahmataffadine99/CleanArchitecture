@@ -139,6 +139,9 @@ var DepotLivreursEnMemoire = class {
   async listerDisponibles() {
     return [...this.store.values()].filter((l) => l.getStatut() === "DISPONIBLE");
   }
+  async listerEligiblesPourRestaurant(restaurantId) {
+    return this.listerDisponibles();
+  }
   async retirerPropositionDeTous(commandeId) {
     for (const livreur of this.store.values()) {
       livreur.refuserProposition(commandeId);

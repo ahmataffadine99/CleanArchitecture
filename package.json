@@ -8,7 +8,8 @@
     "apps/api-nestjs",
     "apps/client-web",
     "apps/restaurateur-web",
-    "apps/livreur-web"
+    "apps/livreur-web",
+    "apps/admin-web"
   ],
   "scripts": {
     "build": "npm run build --workspaces",

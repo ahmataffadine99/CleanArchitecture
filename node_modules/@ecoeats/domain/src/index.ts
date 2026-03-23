@@ -9,6 +9,8 @@ export { Facture } from "./entities/Facture";
 export { Avis } from "./entities/Avis";
 export { CompteUtilisateur } from "./entities/CompteUtilisateur";
 export type { RoleUtilisateur } from "./entities/CompteUtilisateur";
+export { TicketSupport, MessageTicket } from "./entities/TicketSupport";
+export type { StatutTicket } from "./entities/TicketSupport";
 
 // Value Objects
 export { Money } from "./value-objects/Money";
@@ -28,6 +30,7 @@ export { RestaurantIntrouvableError } from "./errors/RestaurantIntrouvableError"
 export { ClientIntrouvableError } from "./errors/ClientIntrouvableError";
 export { PlatIntrouvableError } from "./errors/PlatIntrouvableError";
 export { IdentifiantsInvalidesError } from "./errors/IdentifiantsInvalidesError";
+export { CompteSuspenduError } from "./errors/CompteSuspenduError";
 export { EmailDejaUtiliseError } from "./errors/EmailDejaUtiliseError";
 
 // Services domain

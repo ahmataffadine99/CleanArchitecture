@@ -125,7 +125,7 @@ export default function RestaurantDetails() {
               </h3>
               <div className="grid gap-4">
                 {menu.disponibles.filter(p => !p.categorie || p.categorie === 'PLAT').map((item) => (
-                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id)} />
+                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
                 ))}
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function RestaurantDetails() {
               </h3>
               <div className="grid gap-4">
                 {menu.disponibles.filter(p => p.categorie === 'BOISSON').map((item) => (
-                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id)} />
+                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
                 ))}
               </div>
             </div>

@@ -10,6 +10,7 @@ export { ServicePaiement } from "./ports/ServicePaiement";
 export { DepotComptes } from "./ports/DepotComptes";
 export { DepotAvis } from "./ports/DepotAvis";
 export { DepotFavoris } from "./ports/DepotFavoris";
+export { DepotTickets } from "./ports/DepotTickets";
 
 // Use Cases Auth
 export { InscriptionUseCase } from "./use-cases/auth/InscriptionUseCase";
@@ -24,6 +25,7 @@ export { PayerCommandeUseCase } from "./use-cases/client/PayerCommandeUseCase";
 export { ListerCommandesClientUseCase } from "./use-cases/client/ListerCommandesClientUseCase";
 export { GererFavorisUseCase } from "./use-cases/client/GererFavorisUseCase";
 export { LaisserAvisLivreurUseCase } from "./use-cases/client/LaisserAvisLivreurUseCase";
+export { ObtenirFavorisDetailsUseCase } from "./use-cases/client/ObtenirFavorisDetailsUseCase";
 
 // Use Cases Restaurateur
 export { AjouterPlatUseCase } from "./use-cases/restaurant/AjouterPlatUseCase";
@@ -51,3 +53,14 @@ export * from "./use-cases/livreur/ListerHistoriqueLivreurUseCase";
 
 // Use Cases Commande
 export * from "./use-cases/commande/ObtenirCommandeUseCase";
+export { ObtenirStatsGlobalesUseCase } from "./use-cases/admin/ObtenirStatsGlobalesUseCase";
+export { ObtenirTousLesComptesUseCase } from "./use-cases/admin/ObtenirTousLesComptesUseCase";
+export { ChangerStatutCompteUseCase } from "./use-cases/admin/ChangerStatutCompteUseCase";
+export { ListerToutesLesCommandesUseCase } from "./use-cases/admin/ListerToutesLesCommandesUseCase";
+export { ObtenirStatsRestaurantUseCase } from "./use-cases/admin/ObtenirStatsRestaurantUseCase";
+
+// Use Cases Support
+export { CreerTicketUseCase } from "./use-cases/support/CreerTicketUseCase";
+export { EnvoyerMessageTicketUseCase } from "./use-cases/support/EnvoyerMessageTicketUseCase";
+export { ListerTicketsUseCase } from "./use-cases/support/ListerTicketsUseCase";
+export { CloturerTicketUseCase } from "./use-cases/support/CloturerTicketUseCase";

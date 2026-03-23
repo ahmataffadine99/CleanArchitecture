@@ -13,14 +13,16 @@ export class DepotComptesPrisma implements DepotComptes {
         motDePasseHache: compte.motDePasseHache,
         role: compte.role,
         profilId: compte.profilId,
-      },
+        estActif: (compte as any).estActif,
+      } as any,
       create: {
         id: compte.id,
         email: compte.email,
         motDePasseHache: compte.motDePasseHache,
         role: compte.role,
         profilId: compte.profilId,
-      },
+        estActif: (compte as any).estActif,
+      } as any,
     });
   }
 
@@ -32,7 +34,9 @@ export class DepotComptesPrisma implements DepotComptes {
       row.email,
       row.motDePasseHache,
       row.role as RoleUtilisateur,
-      row.profilId
+      row.profilId,
+      row.estActif ?? true,
+      row.creeLe
     );
   }
 
@@ -44,7 +48,22 @@ export class DepotComptesPrisma implements DepotComptes {
       row.email,
       row.motDePasseHache,
       row.role as RoleUtilisateur,
-      row.profilId
+      row.profilId,
+      row.estActif ?? true,
+      row.creeLe
     );
+  }
+
+  async trouverTout(): Promise<CompteUtilisateur[]> {
+    const rows = await this.prisma.compteUtilisateur.findMany();
+    return rows.map(row => new CompteUtilisateur(
+      row.id,
+      row.email,
+      row.motDePasseHache,
+      row.role as RoleUtilisateur,
+      row.profilId,
+      row.estActif,
+      row.creeLe
+    ));
   }
 }

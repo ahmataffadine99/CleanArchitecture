@@ -128,7 +128,27 @@ model CompteUtilisateur {
   id              String   @id
   email           String   @unique
   motDePasseHache String
-  role            String   // "CLIENT", "RESTAURATEUR", "LIVREUR"
+  role            String   // "CLIENT", "RESTAURATEUR", "LIVREUR", "ADMIN"
   profilId        String   // ID du profil associé
+  estActif        Boolean  @default(true)
   creeLe          DateTime @default(now())
+}
+
+model TicketSupport {
+  id        String          @id @default(uuid())
+  auteurId  String
+  titre     String
+  statut    String          @default("OUVERT") // "OUVERT", "CLOS"
+  creeLe    DateTime        @default(now())
+  messages  MessageTicket[]
+}
+
+model MessageTicket {
+  id         String        @id @default(uuid())
+  ticketId   String
+  auteurId   String
+  contenu    String
+  estAdmin   Boolean       @default(false)
+  envoyeLe   DateTime      @default(now())
+  ticket     TicketSupport @relation(fields: [ticketId], references: [id])
 }

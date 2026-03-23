@@ -8,6 +8,7 @@ import {
   ListerCommandesClientUseCase,
   GererFavorisUseCase,
   LaisserAvisLivreurUseCase,
+  ObtenirFavorisDetailsUseCase,
 } from "@ecoeats/application";
 
 export function creerRoutesClient(deps: {
@@ -19,6 +20,7 @@ export function creerRoutesClient(deps: {
   listerCommandesClient: ListerCommandesClientUseCase;
   gererFavoris: GererFavorisUseCase;
   laisserAvis: LaisserAvisLivreurUseCase;
+  obtenirFavorisDetails: ObtenirFavorisDetailsUseCase;
 }): Router {
   const router = Router();
 
@@ -203,6 +205,23 @@ export function creerRoutesClient(deps: {
     try {
       await deps.gererFavoris.retirerPlat(req.params.clientId, req.params.platId);
       res.status(204).send();
+    } catch (err) { next(err); }
+  });
+
+  router.get('/favoris/details/:clientId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { restaurants, plats } = await deps.obtenirFavorisDetails.executer(req.params.clientId);
+      res.json({
+        restaurants: restaurants.map(r => ({
+          id: r.id, nom: r.nom, adresse: r.adresse,
+          position: { lat: r.position.latitude, lon: r.position.longitude },
+          imageUrl: r.imageUrl
+        })),
+        plats: plats.map(p => ({
+          id: p.id, nom: p.nom, description: p.description,
+          prix: p.prix.enEuros(), imageUrl: p.imageUrl, restaurantId: p.restaurantId
+        }))
+      });
     } catch (err) { next(err); }
   });
 

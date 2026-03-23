@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight, AlertCircle, Star } from 'lucide-react';
+import { Power, Wallet, Award, Bell, Navigation, Package, Clock, X, ChevronRight, AlertCircle, Star, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import DeliveryMap from '../components/DeliveryMap';
 
 export default function Dashboard() {
@@ -12,6 +12,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showAvisModal, setShowAvisModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [supportTickets, setSupportTickets] = useState<any[]>([]);
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+  const [newTicket, setNewTicket] = useState({ titre: '', message: '' });
+  const [reply, setReply] = useState('');
+  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const [avis, setAvis] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -159,6 +165,59 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [isOnline]);
 
+  const fetchSupportTickets = async () => {
+    if (!user?.profilId || !token) return;
+    try {
+      const res = await fetch(`/api/support/tickets/${user.profilId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) setSupportTickets(await res.json());
+    } catch (err) { console.error(err); }
+  };
+
+  const handleCreateTicket = async () => {
+    if (!newTicket.titre || !newTicket.message || !token) return;
+    try {
+      const res = await fetch('/api/support/tickets', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ 
+          auteurId: user.profilId, 
+          titre: newTicket.titre, 
+          messageInitial: newTicket.message 
+        })
+      });
+      if (res.ok) {
+        setNewTicket({ titre: '', message: '' });
+        setIsCreatingTicket(false);
+        fetchSupportTickets();
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handleSendReply = async () => {
+    if (!reply.trim() || !selectedTicket || !token) return;
+    try {
+      const res = await fetch(`/api/support/tickets/${selectedTicket.id}/message`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ contenu: reply, auteurId: user.profilId })
+      });
+      if (res.ok) {
+        setReply('');
+        fetchSupportTickets();
+        const data = await res.json();
+        setSelectedTicket({ ...selectedTicket, messages: [...selectedTicket.messages, data] });
+      }
+    } catch (err) { console.error(err); }
+  };
+
   if (loading) return <div className="p-8 text-center text-slate-500 font-bold">Chargement...</div>;
 
   return (
@@ -226,6 +285,13 @@ export default function Dashboard() {
               MES NOTES
             </button>
           </div>
+          <button 
+            onClick={() => { setShowSupportModal(true); fetchSupportTickets(); }}
+            className="w-full mt-4 bg-white/5 hover:bg-white/10 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+          >
+            <MessageSquare size={14} />
+            BESOIN D'AIDE ? (SUPPORT)
+          </button>
         </div>
 
         {/* État de Livraison */}
@@ -518,6 +584,122 @@ export default function Dashboard() {
                  )}
               </div>
            </div>
+        </div>
+      )}
+
+      {/* Modal Support */}
+      {showSupportModal && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => { setShowSupportModal(false); setSelectedTicket(null); setIsCreatingTicket(false); }}></div>
+          <div className="relative bg-slate-50 w-full max-w-lg sm:rounded-[2.5rem] rounded-t-[2.5rem] shadow-2xl overflow-hidden animate-in sm:zoom-in slide-in-from-bottom-full duration-300 flex flex-col max-h-[85vh]">
+            <div className="p-8 border-b border-slate-200 bg-white flex justify-between items-center sticky top-0 z-10">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Support EcoEATS</h2>
+                <p className="text-sm font-medium text-slate-400 mt-1">Nous sommes là pour vous aider</p>
+              </div>
+              <button onClick={() => { setShowSupportModal(false); setSelectedTicket(null); setIsCreatingTicket(false); }} className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {selectedTicket ? (
+                <div className="flex flex-col h-full">
+                  <button onClick={() => setSelectedTicket(null)} className="mb-4 text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                    ← Retour à la liste
+                  </button>
+                  <div className="flex-1 space-y-4 mb-4">
+                    {selectedTicket.messages.map((m: any) => (
+                      <div key={m.id} className={`flex ${m.estAdmin ? 'justify-start' : 'justify-end'}`}>
+                        <div className={`max-w-[85%] p-4 rounded-2xl text-sm font-medium ${m.estAdmin ? 'bg-indigo-50 text-indigo-700 rounded-tl-none' : 'bg-slate-900 text-white rounded-tr-none'}`}>
+                          {m.contenu}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {selectedTicket.statut === 'OUVERT' && (
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={reply}
+                        onChange={e => setReply(e.target.value)}
+                        placeholder="Répondre..."
+                        className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none"
+                        onKeyDown={e => e.key === 'Enter' && handleSendReply()}
+                      />
+                      <button onClick={handleSendReply} className="bg-indigo-500 text-white p-3 rounded-xl">
+                        <Send size={20} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : isCreatingTicket ? (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Sujet</label>
+                    <input 
+                      type="text" 
+                      value={newTicket.titre}
+                      onChange={e => setNewTicket({...newTicket, titre: e.target.value})}
+                      placeholder="Ex: Problème de paiement"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Message</label>
+                    <textarea 
+                      rows={4}
+                      value={newTicket.message}
+                      onChange={e => setNewTicket({...newTicket, message: e.target.value})}
+                      placeholder="Décrivez votre problème..."
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={() => setIsCreatingTicket(false)} className="flex-1 py-3 bg-slate-100 text-slate-400 font-bold rounded-xl">ANNULER</button>
+                    <button onClick={handleCreateTicket} className="flex-1 py-3 bg-indigo-500 text-white font-black rounded-xl">ENVOYER</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => setIsCreatingTicket(true)}
+                    className="w-full bg-indigo-50 border-2 border-dashed border-indigo-200 p-6 rounded-3xl flex flex-col items-center justify-center gap-2 group hover:bg-indigo-100 transition-all"
+                  >
+                    <div className="w-12 h-12 bg-indigo-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
+                      <MessageSquare size={24} />
+                    </div>
+                    <span className="font-black text-indigo-600 uppercase tracking-widest text-xs mt-2">Nouveau Ticket de Support</span>
+                  </button>
+
+                  <div className="space-y-3">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Mes Tickets Récents</h3>
+                    {supportTickets.map(t => (
+                      <button 
+                        key={t.id}
+                        onClick={() => setSelectedTicket(t)}
+                        className="w-full bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.statut === 'OUVERT' ? 'bg-emerald-50 text-emerald-500' : 'bg-slate-100 text-slate-400'}`}>
+                            {t.statut === 'OUVERT' ? <Clock size={18} /> : <CheckCircle2 size={18} />}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-bold text-slate-800 text-sm truncate max-w-[180px]">{t.titre}</p>
+                            <p className="text-[10px] font-medium text-slate-400">{new Date(t.creeLe).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-200" />
+                      </button>
+                    ))}
+                    {supportTickets.length === 0 && (
+                      <p className="text-center py-8 text-slate-400 font-medium italic text-xs">Aucun ticket en cours</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
