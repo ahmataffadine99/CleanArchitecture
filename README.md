@@ -49,7 +49,9 @@ docker compose up -d --build
 | :--- | :--- | :--- |
 | **Admin** | `admin@ecoeats.fr` | Gestion des comptes & statistiques |
 | **Client** | `client@ecoeats.fr` | Passer des commandes |
-| **Restaurateur** | `resto@ecoeats.fr` | Gérer le menu & workflow |
+| **Restaurateur 1** | `resto@ecoeats.fr` | Le Gourmet Français |
+| **Restaurateur 2** | `italia@ecoeats.fr` | Bella Italia |
+| **Restaurateur 3** | `healthy@ecoeats.fr` | Healthy Garden |
 | **Livreur** | `livreur@ecoeats.fr` | Effectuer les livraisons |
 
 ---
