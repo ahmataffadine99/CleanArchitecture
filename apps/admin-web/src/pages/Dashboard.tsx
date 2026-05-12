@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   BarChart3, Users, ShoppingBag, Utensils, TrendingUp, 
   LogOut, Bell, Search, Filter, Loader2, ArrowUpRight, 
-  Clock, CheckCircle2, AlertCircle, MessageSquare, Sparkles, LayoutGrid, Award
+  Clock, CheckCircle2, AlertCircle, MessageSquare, Sparkles, LayoutGrid, Award, X
 } from 'lucide-react';
 
 interface Stats {
@@ -121,17 +121,17 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
-      <aside className="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-30">
-        <div className="p-8">
+      <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-30">
+        <div className="p-6">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <BarChart3 size={20} />
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <BarChart3 size={16} />
             </div>
-            <span className="text-xl font-black tracking-tight">EcoEATS <span className="text-emerald-500">Admin</span></span>
+            <span className="text-lg font-black tracking-tight">EcoEATS <span className="text-emerald-500">Admin</span></span>
           </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             <NavItem 
               icon={TrendingUp} label="Tableau de bord" 
               active={activeTab === 'dashboard'} 
@@ -158,7 +158,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               onClick={() => setActiveTab('support')} 
             />
             <div className="pt-4 mt-4 border-t border-slate-800">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 px-4">Système</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-4">Système</p>
               <NavItem 
                 icon={LayoutGrid} label="Catégories" 
                 active={activeTab === 'categories'} 
@@ -174,19 +174,19 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Logout */}
-        <div className="mt-auto p-8 border-t border-slate-800">
+        <div className="mt-auto p-6 border-t border-slate-800">
           <button 
             onClick={onLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-2xl transition-all font-bold"
+            className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all font-bold text-sm"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Déconnexion
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-72 p-10">
+      <main className="flex-1 ml-64 p-8">
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-black text-slate-800 tracking-tight">
@@ -928,69 +928,76 @@ function CategoriesView() {
 }
 
 function LivreursPerformanceView() {
-  const [livreurs] = useState([
-    { id: '1', nom: 'Adli Affadine', courses: 142, revenu: 745.20, ecoImpact: 18.5, statut: 'En ligne' },
-    { id: '2', nom: 'Sarah Martin', courses: 98, revenu: 512.20, ecoImpact: 12.1, statut: 'En ligne' },
-    { id: '3', nom: 'Thomas Dubois', courses: 156, revenu: 820.10, ecoImpact: 19.5, statut: 'En pause' },
-  ]);
+  const [livreurs, setLivreurs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLivreurs = async () => {
+      try {
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch('/api/admin/livreurs', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          setLivreurs(await res.json());
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLivreurs();
+  }, []);
 
   return (
-    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-right duration-500">
-      <div className="p-10 border-b border-slate-50 flex justify-between items-center">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-right duration-500">
+      <div className="p-8 border-b border-slate-50 flex justify-between items-center">
         <div>
-          <h3 className="text-2xl font-black text-slate-800">Performance Livreurs</h3>
-          <p className="text-slate-500 font-medium">Récompensez vos meilleurs partenaires décarbonés.</p>
-        </div>
-        <div className="px-5 py-2 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black border border-emerald-100 flex items-center gap-2 shadow-sm">
-          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-          DISPONIBILITÉ RÉSEAU : 98%
+          <h3 className="text-xl font-black text-slate-800">Performance Livreurs</h3>
+          <p className="text-slate-400 text-sm font-medium">Suivi en temps réel de vos partenaires.</p>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-left text-sm">
           <thead>
             <tr className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-              <th className="px-10 py-6">Partenaire</th>
-              <th className="px-10 py-6">Missions</th>
-              <th className="px-10 py-6">Gains Total</th>
-              <th className="px-10 py-6">Score Éco</th>
-              <th className="px-10 py-6 text-right">Analyse</th>
+              <th className="px-8 py-4">Livreur</th>
+              <th className="px-8 py-4">Missions</th>
+              <th className="px-8 py-4">Gains</th>
+              <th className="px-8 py-4">Éco-Score</th>
+              <th className="px-8 py-4 text-right">Statut</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {livreurs.map((l) => (
               <tr key={l.id} className="hover:bg-slate-50/50 transition-all group">
-                <td className="px-10 py-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-slate-800 to-black text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg group-hover:scale-105 group-hover:-rotate-3 transition-all">
+                <td className="px-8 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black">
                       {l.nom[0]}
                     </div>
-                    <div>
-                      <p className="font-bold text-slate-800">{l.nom}</p>
-                      <p className={`text-[10px] font-black ${l.statut === 'En ligne' ? 'text-emerald-500' : 'text-slate-400'}`}>
-                        {l.statut.toUpperCase()}
-                      </p>
-                    </div>
+                    <span className="font-bold text-slate-800">{l.nom}</span>
                   </div>
                 </td>
-                <td className="px-10 py-6 font-bold text-slate-700">{l.courses}</td>
-                <td className="px-10 py-6 font-black text-slate-900">{l.revenu.toFixed(2)} €</td>
-                <td className="px-10 py-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-24 h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                       <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full" style={{ width: `${(l.ecoImpact/20)*100}%` }} />
-                    </div>
-                    <span className="text-xs font-black text-emerald-600">+{l.ecoImpact}kg</span>
-                  </div>
+                <td className="px-8 py-4 font-bold text-slate-500">{l.coursesCount || l.courses || 0}</td>
+                <td className="px-8 py-4 font-black text-slate-900">{(l.portefeuille || l.revenu || 0).toFixed(2)} €</td>
+                <td className="px-8 py-4">
+                  <span className="text-emerald-600 font-bold">+{l.ecoImpact || 0}kg CO2</span>
                 </td>
-                <td className="px-10 py-6 text-right">
-                  <button className="p-3 bg-white border border-slate-100 text-slate-300 hover:text-emerald-500 hover:border-emerald-200 rounded-xl shadow-sm transition-all hover:scale-110 active:scale-90">
-                    <Award size={18} />
-                  </button>
+                <td className="px-8 py-4 text-right">
+                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${l.statut === 'DISPONIBLE' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                    {l.statut || 'HORS-LIGNE'}
+                  </span>
                 </td>
               </tr>
             ))}
+            {livreurs.length === 0 && !loading && (
+              <tr>
+                <td colSpan={5} className="p-10 text-center text-slate-400 italic">Aucun livreur trouvé</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
