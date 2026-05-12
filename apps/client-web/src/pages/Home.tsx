@@ -81,39 +81,59 @@ export default function Home() {
   return (
     <div className="pb-20">
       {/* Hero Section */}
-      <section className="relative h-[500px] flex items-center justify-center mb-12">
-        <div className="absolute inset-0 z-0 overflow-hidden">
+      <section className="relative h-[600px] flex items-center justify-center mb-16 overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2000&auto=format&fit=crop" 
-            className="w-full h-full object-cover scale-105 blur-[2px]"
+            className="w-full h-full object-cover scale-110 blur-[1px] brightness-[0.8]"
             alt="Hero background"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/40 to-[var(--color-background)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/20 to-[var(--color-background)]" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center animate-slide-up">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-6 text-white text-xs font-bold uppercase tracking-widest animate-float">
-            <Sparkles size={14} className="text-amber-400" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center animate-in fade-in zoom-in duration-1000">
+          <div className="inline-flex items-center gap-3 bg-emerald-500/20 backdrop-blur-xl px-6 py-2.5 rounded-full border border-emerald-400/30 mb-8 text-white text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl animate-float">
+            <Sparkles size={16} className="text-emerald-300" />
             L'excellence éthique livrée chez vous
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tight leading-[1.1]">
-            Vos restos locaux <br />
-            <span className="text-emerald-400">livrés avec soin.</span>
+          <h1 className="text-5xl md:text-8xl font-black text-white mb-10 tracking-tight leading-[0.95]">
+            Mangez mieux, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-emerald-500">vivez mieux.</span>
           </h1>
 
-          <div className="glass max-w-2xl mx-auto rounded-3xl md:rounded-[2.5rem] p-2 flex flex-col md:flex-row items-center group focus-within:ring-4 focus-within:ring-emerald-500/20 transition-all">
-            <GlobalSearch 
-              onAddressSelect={handleAddressSelect}
-              className="flex-1 w-full"
-            />
+          <div className="bg-white/10 backdrop-blur-2xl max-w-3xl mx-auto rounded-[3rem] p-3 flex flex-col md:flex-row items-center group border border-white/20 shadow-2xl shadow-black/20 focus-within:ring-8 focus-within:ring-emerald-500/10 transition-all">
+            <div className="flex-1 w-full bg-white rounded-[2.5rem] shadow-inner">
+              <GlobalSearch 
+                onAddressSelect={handleAddressSelect}
+                className="w-full"
+              />
+            </div>
             <button 
               onClick={handleFind}
-              className="bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl md:rounded-[2rem] font-black text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20 hover:scale-105 active:scale-95 w-full md:w-auto"
+              className="bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white px-12 py-5 rounded-[2.5rem] font-black text-sm transition-all flex items-center justify-center gap-3 shadow-xl shadow-emerald-900/20 hover:scale-105 active:scale-95 w-full md:w-auto md:ml-3 mt-3 md:mt-0"
             >
-              Trouver
-              <ArrowRight size={18} />
+              DÉCOUVRIR
+              <ArrowRight size={20} strokeWidth={3} />
             </button>
+          </div>
+          
+          <div className="mt-12 flex items-center justify-center gap-8 text-white/60">
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-black text-white">50+</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Restos</span>
+            </div>
+            <div className="w-px h-8 bg-white/20" />
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-black text-white">100%</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Bio</span>
+            </div>
+            <div className="w-px h-8 bg-white/20" />
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-black text-white">0%</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Carbone</span>
+            </div>
           </div>
         </div>
       </section>

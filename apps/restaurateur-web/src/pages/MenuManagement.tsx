@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Utensils, Save, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Utensils, Save, X, Loader2, Image as ImageIcon, Power, PowerOff } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 type Plat = {
@@ -138,6 +138,25 @@ export default function MenuManagement() {
     }
   };
 
+  const toggleDisponibilite = async (plat: Plat) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`/api/plats/${plat.id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ actif: !plat.actif })
+      });
+      if (res.ok) {
+        chargerMenu();
+      }
+    } catch (e) {
+      console.error("Erreur toggle", e);
+    }
+  };
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-10">
@@ -159,8 +178,8 @@ export default function MenuManagement() {
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Mise à jour de la carte...</p>
         </div>
       ) : (
-        <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white/70 backdrop-blur-xl rounded-[3rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/50">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {plats.length === 0 && (
               <div className="col-span-full py-20 text-center">
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -177,12 +196,12 @@ export default function MenuManagement() {
                   </div>
                 )}
                 
-                <div className="h-48 w-full rounded-2xl overflow-hidden mb-5 bg-slate-100">
+                <div className="h-56 w-full rounded-3xl overflow-hidden mb-6 bg-slate-100 shadow-inner">
                   {plat.imageUrl ? (
-                    <img src={plat.imageUrl} alt={plat.nom} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src={plat.imageUrl} alt={plat.nom} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center text-slate-300">
-                      <ImageIcon size={48} strokeWidth={1} />
+                    <div className="h-full w-full flex items-center justify-center text-slate-200 bg-gradient-to-br from-slate-50 to-slate-100">
+                      <ImageIcon size={64} strokeWidth={1} className="opacity-50" />
                     </div>
                   )}
                 </div>
@@ -205,12 +224,19 @@ export default function MenuManagement() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-slate-100">
-                  <button onClick={() => handleEdit(plat)} className="flex-1 bg-white border border-slate-200 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                    <Edit2 size={16} /> Modifier
+                <div className="flex gap-3 pt-6 border-t border-slate-100/50">
+                  <button 
+                    onClick={() => toggleDisponibilite(plat)} 
+                    className={`h-14 w-14 rounded-2xl transition-all shadow-sm flex items-center justify-center border ${plat.actif ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100 hover:scale-105' : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200 hover:scale-105'}`}
+                    title={plat.actif ? "Mettre en rupture" : "Remettre en stock"}
+                  >
+                    {plat.actif ? <Power size={22} /> : <PowerOff size={22} />}
                   </button>
-                  <button onClick={() => handleDelete(plat.id)} className="p-3 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
-                    <Trash2 size={18} />
+                  <button onClick={() => handleEdit(plat)} className="flex-1 bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200 hover:-translate-y-0.5">
+                    <Edit2 size={18} /> MODIFIER
+                  </button>
+                  <button onClick={() => handleDelete(plat.id)} className="h-14 w-14 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all border border-transparent hover:border-red-100">
+                    <Trash2 size={22} />
                   </button>
                 </div>
               </div>

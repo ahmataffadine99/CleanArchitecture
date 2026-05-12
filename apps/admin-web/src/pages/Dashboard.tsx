@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   BarChart3, Users, ShoppingBag, Utensils, TrendingUp, 
   LogOut, Bell, Search, Filter, Loader2, ArrowUpRight, 
-  Clock, CheckCircle2, AlertCircle, MessageSquare, Sparkles
+  Clock, CheckCircle2, AlertCircle, MessageSquare, Sparkles, LayoutGrid, Award
 } from 'lucide-react';
 
 interface Stats {
@@ -21,7 +21,7 @@ interface Stats {
   commandesRecentes: any[];
 }
 
-type Tab = 'dashboard' | 'users' | 'restaurants' | 'orders' | 'support';
+type Tab = 'dashboard' | 'users' | 'restaurants' | 'orders' | 'support' | 'categories' | 'livreurs';
 
 export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -112,6 +112,8 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
       case 'restaurants': return <RestaurantsView onManage={(r) => setSelectedRestaurant(r)} searchTerm={searchTerm} />;
       case 'orders': return <OrdersView searchTerm={searchTerm} />;
       case 'support': return <SupportView searchTerm={searchTerm} onTicketRead={onTicketRead} />;
+      case 'categories': return <CategoriesView />;
+      case 'livreurs': return <LivreursPerformanceView />;
       default: return <StatsView stats={stats} searchTerm={searchTerm} />;
     }
   };
@@ -155,6 +157,19 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               active={activeTab === 'support'} 
               onClick={() => setActiveTab('support')} 
             />
+            <div className="pt-4 mt-4 border-t border-slate-800">
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 px-4">Système</p>
+              <NavItem 
+                icon={LayoutGrid} label="Catégories" 
+                active={activeTab === 'categories'} 
+                onClick={() => setActiveTab('categories')} 
+              />
+              <NavItem 
+                icon={Award} label="Livreurs TOP" 
+                active={activeTab === 'livreurs'} 
+                onClick={() => setActiveTab('livreurs')} 
+              />
+            </div>
           </nav>
         </div>
 
@@ -225,12 +240,12 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
     (cmd.restaurantNom && cmd.restaurantNom.toLowerCase().includes(searchTerm.toLowerCase()))
   );
   return (
-    <div className="space-y-10">
+    <div className="space-y-12 animate-in fade-in duration-700">
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <StatCard 
-          label="Revenu Total" 
-          value={`${stats.revenuTotalEuros.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`} 
+          label="Chiffre d'Affaires" 
+          value={`${stats.revenuTotalEuros.toFixed(2)} €`} 
           icon={TrendingUp} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50"
@@ -862,17 +877,140 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
   );
 }
 
+// --- NEW VIEWS ---
+
+function CategoriesView() {
+  const [categories, setCategories] = useState(['Burgers', 'Pizza', 'Sushis', 'Healthy', 'Sandwich', 'Desserts', 'Café']);
+  const [newCat, setNewCat] = useState('');
+
+  return (
+    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden p-10 space-y-8 animate-in slide-in-from-right duration-500">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-2xl font-black text-slate-800">Gestion des Catégories</h3>
+          <p className="text-slate-500 font-medium">Définissez les types de cuisine disponibles sur la plateforme.</p>
+        </div>
+        <div className="flex gap-4">
+          <input 
+            type="text" 
+            placeholder="Nouvelle catégorie..." 
+            value={newCat}
+            onChange={(e) => setNewCat(e.target.value)}
+            className="bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all font-bold text-slate-700 w-64 shadow-inner"
+          />
+          <button 
+            onClick={() => { if(newCat.trim()) { setCategories([...categories, newCat.trim()]); setNewCat(''); } }}
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black px-8 py-4 rounded-2xl hover:shadow-xl hover:shadow-emerald-200 transition-all active:scale-95"
+          >
+            AJOUTER
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {categories.map((cat) => (
+          <div key={cat} className="group relative bg-slate-50 border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-2xl hover:shadow-emerald-500/5 transition-all text-center">
+            <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all">
+              <LayoutGrid className="text-emerald-500" size={24} />
+            </div>
+            <span className="font-black text-slate-800 tracking-tight">{cat}</span>
+            <button 
+              onClick={() => setCategories(categories.filter(c => c !== cat))}
+              className="absolute -top-2 -right-2 w-10 h-10 bg-white text-red-400 rounded-full shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:text-red-600 hover:scale-110"
+            >
+              <X size={16} strokeWidth={3} />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LivreursPerformanceView() {
+  const [livreurs] = useState([
+    { id: '1', nom: 'Adli Affadine', courses: 142, revenu: 745.20, ecoImpact: 18.5, statut: 'En ligne' },
+    { id: '2', nom: 'Sarah Martin', courses: 98, revenu: 512.20, ecoImpact: 12.1, statut: 'En ligne' },
+    { id: '3', nom: 'Thomas Dubois', courses: 156, revenu: 820.10, ecoImpact: 19.5, statut: 'En pause' },
+  ]);
+
+  return (
+    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-right duration-500">
+      <div className="p-10 border-b border-slate-50 flex justify-between items-center">
+        <div>
+          <h3 className="text-2xl font-black text-slate-800">Performance Livreurs</h3>
+          <p className="text-slate-500 font-medium">Récompensez vos meilleurs partenaires décarbonés.</p>
+        </div>
+        <div className="px-5 py-2 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black border border-emerald-100 flex items-center gap-2 shadow-sm">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+          DISPONIBILITÉ RÉSEAU : 98%
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+              <th className="px-10 py-6">Partenaire</th>
+              <th className="px-10 py-6">Missions</th>
+              <th className="px-10 py-6">Gains Total</th>
+              <th className="px-10 py-6">Score Éco</th>
+              <th className="px-10 py-6 text-right">Analyse</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {livreurs.map((l) => (
+              <tr key={l.id} className="hover:bg-slate-50/50 transition-all group">
+                <td className="px-10 py-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-slate-800 to-black text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg group-hover:scale-105 group-hover:-rotate-3 transition-all">
+                      {l.nom[0]}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800">{l.nom}</p>
+                      <p className={`text-[10px] font-black ${l.statut === 'En ligne' ? 'text-emerald-500' : 'text-slate-400'}`}>
+                        {l.statut.toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-10 py-6 font-bold text-slate-700">{l.courses}</td>
+                <td className="px-10 py-6 font-black text-slate-900">{l.revenu.toFixed(2)} €</td>
+                <td className="px-10 py-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-24 h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                       <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full" style={{ width: `${(l.ecoImpact/20)*100}%` }} />
+                    </div>
+                    <span className="text-xs font-black text-emerald-600">+{l.ecoImpact}kg</span>
+                  </div>
+                </td>
+                <td className="px-10 py-6 text-right">
+                  <button className="p-3 bg-white border border-slate-100 text-slate-300 hover:text-emerald-500 hover:border-emerald-200 rounded-xl shadow-sm transition-all hover:scale-110 active:scale-90">
+                    <Award size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// --- HELPER COMPONENTS (PREMIUM UI) ---
+
 function NavItem({ icon: Icon, label, active = false, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all font-bold text-sm ${
+      className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all font-bold text-sm mb-1.5 ${
         active 
-          ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
-          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-xl shadow-emerald-500/30 translate-x-2' 
+          : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
       }`}
     >
-      <Icon size={18} />
+      <Icon size={20} className={active ? 'animate-pulse' : 'opacity-70'} />
       {label}
     </button>
   );
@@ -880,19 +1018,22 @@ function NavItem({ icon: Icon, label, active = false, onClick }: any) {
 
 function StatCard({ label, value, icon: Icon, color, bgColor, trend }: any) {
   return (
-    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm group hover:border-emerald-100 transition-all">
-      <div className="flex justify-between items-start mb-4">
-        <div className={`p-3 ${bgColor} ${color} rounded-2xl`}>
-          <Icon size={24} />
+    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group hover:shadow-2xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all duration-500 overflow-hidden relative">
+      <div className="relative z-10">
+        <div className={`w-14 h-14 ${bgColor} ${color} rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:rotate-12 group-hover:scale-110 transition-all duration-500`}>
+          <Icon size={26} />
         </div>
-        <span className="text-[10px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
-          {trend}
-        </span>
+        <div>
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">{label}</p>
+          <h3 className="text-3xl font-black text-slate-800 tracking-tight mb-3">{value}</h3>
+          {trend && (
+            <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100/50">
+              {trend}
+            </span>
+          )}
+        </div>
       </div>
-      <div>
-        <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">{label}</p>
-        <p className="text-2xl font-black text-slate-800">{value}</p>
-      </div>
+      <Icon size={120} className="absolute -bottom-8 -right-8 text-slate-50 group-hover:text-emerald-50/30 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000" />
     </div>
   );
 }
@@ -901,42 +1042,45 @@ function OrderRow({ order }: any) {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'LIVREE': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'EN_COURS': return 'bg-blue-50 text-blue-600 border-blue-100';
-      default: return 'bg-amber-50 text-amber-600 border-amber-100';
+      case 'ANNULEE': return 'bg-rose-50 text-rose-600 border-rose-100';
+      default: return 'bg-blue-50 text-blue-600 border-blue-100';
     }
   };
 
   return (
-    <div className="p-6 flex items-center justify-between hover:bg-slate-50 transition-all">
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-          <ShoppingBag size={20} />
+    <div className="p-8 flex items-center justify-between hover:bg-slate-50/50 transition-all group border-b border-slate-50 last:border-0">
+      <div className="flex items-center gap-6">
+        <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:shadow-lg transition-all border border-transparent group-hover:border-slate-100">
+          <ShoppingBag size={24} />
         </div>
         <div>
-          <p className="font-bold text-slate-800 text-sm truncate w-40">#{order?.id?.slice(0, 8) || '00000000'}</p>
-          <p className="text-xs text-slate-400 font-medium flex items-center gap-1">
-            <Clock size={12} /> {order?.creeLe ? new Date(order.creeLe).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+          <p className="font-black text-slate-800 group-hover:text-emerald-600 transition-colors">#{order?.id?.slice(0, 8) || '00000000'}</p>
+          <p className="text-xs text-slate-400 font-bold flex items-center gap-2 mt-1">
+            <Clock size={14} className="text-slate-300" /> 
+            {order?.creeLe ? new Date(order.creeLe).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
           </p>
         </div>
       </div>
-      <div className="text-right">
-        <p className="font-black text-slate-800">{(order?.prixTotal || 0).toFixed(2)} €</p>
-        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${getStatusStyle(order?.statut || 'INCONNU')}`}>
-          {order?.statut || 'INCONNU'}
-        </span>
+      <div className="flex items-center gap-10">
+        <div className="text-right">
+          <p className="font-black text-slate-900 text-lg">{(order?.prixTotal || 0).toFixed(2)} €</p>
+          <span className={`text-[10px] font-black px-3 py-1 rounded-full border uppercase tracking-widest mt-1 block w-fit ml-auto ${getStatusStyle(order?.statut || 'INCONNU')}`}>
+            {order?.statut || 'INCONNU'}
+          </span>
+        </div>
+        <button className="p-4 bg-white border border-slate-100 text-slate-300 hover:text-emerald-500 hover:border-emerald-200 rounded-2xl shadow-sm transition-all hover:scale-110 active:scale-95">
+          <ArrowUpRight size={20} />
+        </button>
       </div>
-      <button className="p-2 text-slate-300 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all ml-4">
-        <ArrowUpRight size={18} />
-      </button>
     </div>
   );
 }
 
 function StatusRow({ label, status }: { label: string, status: string }) {
   return (
-    <div className="flex justify-between items-center px-4 py-3 rounded-2xl bg-white/5 border border-white/5 group-hover:bg-white/[0.08] transition-colors">
-      <span className="text-slate-400 text-xs font-bold leading-none">{label}</span>
-      <span className="text-emerald-400 text-xs font-black leading-none">{status}</span>
+    <div className="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all cursor-default group/row">
+      <span className="text-slate-400 text-sm font-bold group-hover/row:text-slate-200 transition-colors">{label}</span>
+      <span className="text-emerald-400 font-black text-xs tracking-widest bg-emerald-500/10 px-3 py-1 rounded-lg">{status}</span>
     </div>
   );
 }
