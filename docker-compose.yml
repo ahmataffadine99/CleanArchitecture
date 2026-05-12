@@ -66,5 +66,19 @@ services:
     depends_on:
       - api
 
+  api-nestjs:
+    build:
+      context: .
+      dockerfile: apps/api-nestjs/Dockerfile
+    container_name: ecoeats-api-nestjs
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:affadine@db:5432/ecoeats?schema=public
+      - DB_ADAPTER=postgresql
+      - PORT=3001
+    depends_on:
+      - db
+
 volumes:
   pgdata:
