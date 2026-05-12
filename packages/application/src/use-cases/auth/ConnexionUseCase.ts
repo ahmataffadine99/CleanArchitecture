@@ -22,7 +22,7 @@ export class ConnexionUseCase {
   constructor(
     private readonly depotComptes: DepotComptes,
     private readonly secretJwt: string
-  ) {}
+  ) { }
 
   async executer(req: Req): Promise<Res> {
     // Trouver le compte par email

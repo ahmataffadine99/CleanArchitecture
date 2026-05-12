@@ -10,6 +10,7 @@ export default defineConfig({
   ],
   server: {
     proxy: {
+      //pour brancher avec nest http://api-nestjs:3001
       '/api': 'http://api:3000'
     }
   }
