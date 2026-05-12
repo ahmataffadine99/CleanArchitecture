@@ -23,52 +23,39 @@ async function main() {
   // 1. ADMIN
   await prisma.compteUtilisateur.create({
     data: {
-      id: 'admin-id-1',
-      email: 'admin@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'ADMIN',
-      profilId: 'admin-id-1'
+      id: 'admin-id-1', email: 'admin@ecoeats.fr', motDePasseHache: passwordHashed, role: 'ADMIN', profilId: 'admin-id-1'
     }
   });
 
   // 2. CLIENT
   await prisma.compteUtilisateur.create({
     data: {
-      id: 'client-id-1',
-      email: 'client@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'CLIENT',
-      profilId: 'client-id-1'
+      id: 'client-id-1', email: 'client@ecoeats.fr', motDePasseHache: passwordHashed, role: 'CLIENT', profilId: 'client-id-1'
     }
   });
   await prisma.client.create({
     data: {
-      id: 'client-id-1',
-      nom: 'Jean Client',
-      email: 'client@ecoeats.fr',
-      adresse: '10 Rue de la Paix, Paris',
-      pointsFidelite: 50
+      id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '10 Rue de la Paix, Paris', pointsFidelite: 50
     }
   });
 
   // 3. RESTAURATEURS & RESTAURANTS
   
   // RESTO 1 : Le Gourmet Français
+  const resto1Id = 'resto-id-1';
   await prisma.compteUtilisateur.create({
-    data: {
-      id: 'resto-id-1', email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: 'resto-id-1'
-    }
+    data: { id: resto1Id, email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto1Id }
   });
   const resto1 = await prisma.restaurant.create({
     data: {
-      id: 'resto-id-1',
+      id: resto1Id,
       nom: 'Le Gourmet Français',
       adresse: '5 Avenue des Champs-Élysées, Paris',
       latitude: 48.8698,
       longitude: 2.3075,
-      proprietaireId: 'resto-id-1',
+      proprietaireId: resto1Id,
       imageUrl: 'https://images.unsplash.com/photo-1550966842-30cae4363484',
-      categories: ['FRANCAIS', 'GASTRONOMIE']
+      categories: ['burger', 'français']
     }
   });
 
@@ -84,9 +71,7 @@ async function main() {
   // RESTO 2 : Bella Italia
   const resto2Id = 'resto-id-2';
   await prisma.compteUtilisateur.create({
-    data: {
-      id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id
-    }
+    data: { id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id }
   });
   const resto2 = await prisma.restaurant.create({
     data: {
@@ -97,13 +82,13 @@ async function main() {
       longitude: 2.3724,
       proprietaireId: resto2Id,
       imageUrl: 'https://images.unsplash.com/photo-1579751626657-72bc17010498',
-      categories: ['ITALIEN', 'PIZZA']
+      categories: ['pizza', 'italien']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
-      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbad80ad50' },
+      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591' },
       { id: 'p2-2', nom: 'Lasagnes Maison', description: 'Bœuf, sauce tomate, béchamel.', prixCentimes: 1350, stockJournalier: 10, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3' },
       { id: 'p2-3', nom: 'Limonade Italienne', description: 'Citron pressé, sucre de canne.', prixCentimes: 450, stockJournalier: 40, restaurantId: resto2.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd' }
     ]
@@ -112,9 +97,7 @@ async function main() {
   // RESTO 3 : Healthy Garden
   const resto3Id = 'resto-id-3';
   await prisma.compteUtilisateur.create({
-    data: {
-      id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id
-    }
+    data: { id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id }
   });
   const resto3 = await prisma.restaurant.create({
     data: {
@@ -125,37 +108,25 @@ async function main() {
       longitude: 2.3685,
       proprietaireId: resto3Id,
       imageUrl: 'https://images.unsplash.com/photo-1543332164-6e82f355badc',
-      categories: ['HEALTHY', 'VEGAN']
+      categories: ['healthy', 'vegan']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
       { id: 'p3-1', nom: 'Poke Bowl Saumon', description: 'Riz, saumon frais, avocat, edamame.', prixCentimes: 1450, stockJournalier: 25, restaurantId: resto3.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c' },
-      { id: 'p3-2', nom: 'Smoothie Vert', description: 'Épinards, pomme, gingembre.', prixCentimes: 700, stockJournalier: 20, restaurantId: resto3.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1623065422902-30a2ad299bb4' },
+      { id: 'p3-2', nom: 'Smoothie Vert', description: 'Épinards, pomme, gingembre.', prixCentimes: 700, stockJournalier: 20, restaurantId: resto3.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625' },
       { id: 'p3-3', nom: 'Coca-Cola', description: '33cl glacé.', prixCentimes: 350, stockJournalier: 100, restaurantId: resto3.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97' }
     ]
   });
 
   // 4. LIVREUR
   await prisma.compteUtilisateur.create({
-    data: {
-      id: 'livreur-id-1',
-      email: 'livreur@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'LIVREUR',
-      profilId: 'livreur-id-1'
-    }
+    data: { id: 'livreur-id-1', email: 'livreur@ecoeats.fr', motDePasseHache: passwordHashed, role: 'LIVREUR', profilId: 'livreur-id-1' }
   });
   await prisma.livreur.create({
     data: {
-      id: 'livreur-id-1',
-      nom: 'Marc Rapide',
-      telephone: '0601020304',
-      latitude: 48.8566,
-      longitude: 2.3522,
-      statut: 'DISPONIBLE',
-      estExpert: true
+      id: 'livreur-id-1', nom: 'Marc Rapide', telephone: '0601020304', latitude: 48.8566, longitude: 2.3522, statut: 'DISPONIBLE', estExpert: true
     }
   });
 
