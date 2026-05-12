@@ -56,11 +56,7 @@ async function main() {
   // RESTO 1 : Le Gourmet Français
   await prisma.compteUtilisateur.create({
     data: {
-      id: 'resto-id-1',
-      email: 'resto@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'RESTAURATEUR',
-      profilId: 'resto-id-1'
+      id: 'resto-id-1', email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: 'resto-id-1'
     }
   });
   const resto1 = await prisma.restaurant.create({
@@ -71,17 +67,17 @@ async function main() {
       latitude: 48.8698,
       longitude: 2.3075,
       proprietaireId: 'resto-id-1',
-      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+      imageUrl: 'https://images.unsplash.com/photo-1550966842-30cae4363484',
       categories: ['FRANCAIS', 'GASTRONOMIE']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
-      { id: 'p1-1', nom: 'Burger Gourmet', description: 'Bœuf charolais, comté, sauce maison.', prixCentimes: 1550, stockJournalier: 20, restaurantId: resto1.id, categorie: 'PLAT' },
-      { id: 'p1-2', nom: 'Salade César', description: 'Poulet grillé, croûtons, parmesan.', prixCentimes: 1200, stockJournalier: 15, restaurantId: resto1.id, categorie: 'PLAT' },
-      { id: 'p1-3', nom: 'Vin Rouge Bordeaux', description: 'Verre de 15cl.', prixCentimes: 650, stockJournalier: 50, restaurantId: resto1.id, categorie: 'BOISSON' },
-      { id: 'p1-4', nom: 'Eau Minérale', description: '50cl.', prixCentimes: 250, stockJournalier: 100, restaurantId: resto1.id, categorie: 'BOISSON' }
+      { id: 'p1-1', nom: 'Burger Gourmet', description: 'Bœuf charolais, comté, sauce maison.', prixCentimes: 1550, stockJournalier: 20, restaurantId: resto1.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd' },
+      { id: 'p1-2', nom: 'Salade César', description: 'Poulet grillé, croûtons, parmesan.', prixCentimes: 1200, stockJournalier: 15, restaurantId: resto1.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9' },
+      { id: 'p1-3', nom: 'Vin Rouge Bordeaux', description: 'Verre de 15cl.', prixCentimes: 650, stockJournalier: 50, restaurantId: resto1.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3' },
+      { id: 'p1-4', nom: 'Eau Minérale', description: '50cl.', prixCentimes: 250, stockJournalier: 100, restaurantId: resto1.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1560023907-5f339617ea30' }
     ]
   });
 
@@ -89,11 +85,7 @@ async function main() {
   const resto2Id = 'resto-id-2';
   await prisma.compteUtilisateur.create({
     data: {
-      id: resto2Id,
-      email: 'italia@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'RESTAURATEUR',
-      profilId: resto2Id
+      id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id
     }
   });
   const resto2 = await prisma.restaurant.create({
@@ -104,16 +96,16 @@ async function main() {
       latitude: 48.8546,
       longitude: 2.3724,
       proprietaireId: resto2Id,
-      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
+      imageUrl: 'https://images.unsplash.com/photo-1579751626657-72bc17010498',
       categories: ['ITALIEN', 'PIZZA']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
-      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT' },
-      { id: 'p2-2', nom: 'Lasagnes Maison', description: 'Bœuf, sauce tomate, béchamel.', prixCentimes: 1350, stockJournalier: 10, restaurantId: resto2.id, categorie: 'PLAT' },
-      { id: 'p2-3', nom: 'Limonade Italienne', description: 'Citron pressé, sucre de canne.', prixCentimes: 450, stockJournalier: 40, restaurantId: resto2.id, categorie: 'BOISSON' }
+      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbad80ad50' },
+      { id: 'p2-2', nom: 'Lasagnes Maison', description: 'Bœuf, sauce tomate, béchamel.', prixCentimes: 1350, stockJournalier: 10, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3' },
+      { id: 'p2-3', nom: 'Limonade Italienne', description: 'Citron pressé, sucre de canne.', prixCentimes: 450, stockJournalier: 40, restaurantId: resto2.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd' }
     ]
   });
 
@@ -121,11 +113,7 @@ async function main() {
   const resto3Id = 'resto-id-3';
   await prisma.compteUtilisateur.create({
     data: {
-      id: resto3Id,
-      email: 'healthy@ecoeats.fr',
-      motDePasseHache: passwordHashed,
-      role: 'RESTAURATEUR',
-      profilId: resto3Id
+      id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id
     }
   });
   const resto3 = await prisma.restaurant.create({
@@ -136,15 +124,16 @@ async function main() {
       latitude: 48.8621,
       longitude: 2.3685,
       proprietaireId: resto3Id,
-      imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+      imageUrl: 'https://images.unsplash.com/photo-1543332164-6e82f355badc',
       categories: ['HEALTHY', 'VEGAN']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
-      { id: 'p3-1', nom: 'Poke Bowl Saumon', description: 'Riz, saumon frais, avocat, edamame.', prixCentimes: 1450, stockJournalier: 25, restaurantId: resto3.id, categorie: 'PLAT' },
-      { id: 'p3-2', nom: 'Smoothie Vert', description: 'Épinards, pomme, gingembre.', prixCentimes: 700, stockJournalier: 20, restaurantId: resto3.id, categorie: 'BOISSON' }
+      { id: 'p3-1', nom: 'Poke Bowl Saumon', description: 'Riz, saumon frais, avocat, edamame.', prixCentimes: 1450, stockJournalier: 25, restaurantId: resto3.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c' },
+      { id: 'p3-2', nom: 'Smoothie Vert', description: 'Épinards, pomme, gingembre.', prixCentimes: 700, stockJournalier: 20, restaurantId: resto3.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1623065422902-30a2ad299bb4' },
+      { id: 'p3-3', nom: 'Coca-Cola', description: '33cl glacé.', prixCentimes: 350, stockJournalier: 100, restaurantId: resto3.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97' }
     ]
   });
 
