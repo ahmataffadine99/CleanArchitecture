@@ -35,7 +35,7 @@ async function main() {
   await prisma.compteUtilisateur.create({
     data: {
       id: 'client-id-1',
-      email: 'client@gmail.com',
+      email: 'client@ecoeats.fr',
       motDePasseHache: passwordHashed,
       role: 'CLIENT',
       profilId: 'client-id-1'
@@ -45,7 +45,7 @@ async function main() {
     data: {
       id: 'client-id-1',
       nom: 'Jean Client',
-      email: 'client@gmail.com',
+      email: 'client@ecoeats.fr',
       adresse: '10 Rue de la Paix, Paris',
       pointsFidelite: 50
     }
@@ -55,7 +55,7 @@ async function main() {
   await prisma.compteUtilisateur.create({
     data: {
       id: 'resto-id-1',
-      email: 'resto@restaurant.fr',
+      email: 'resto@ecoeats.fr',
       motDePasseHache: passwordHashed,
       role: 'RESTAURATEUR',
       profilId: 'resto-id-1'
