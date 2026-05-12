@@ -5,7 +5,9 @@ WORKDIR /app
 COPY . .
 
 RUN npm install
-RUN npm run build --workspaces
+
+# Build uniquement les packages partagés
+RUN npm run build --workspace=@ecoeats/domain --workspace=@ecoeats/application --workspace=@ecoeats/infrastructure --workspace=@ecoeats/interface
 
 EXPOSE 3001
 
