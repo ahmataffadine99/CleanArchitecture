@@ -2,9 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json tsconfig.base.json ./
-COPY packages/ ./packages/
-COPY apps/client-web/ ./apps/client-web/
+COPY . .
 
 RUN npm install
 
