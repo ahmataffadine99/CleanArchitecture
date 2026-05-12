@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Loader2, Search } from 'lucide-react';
+import { MapPin, Loader2 } from 'lucide-react';
 
 interface AddressAutocompleteProps {
   value: string;

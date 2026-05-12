@@ -176,7 +176,7 @@ export default function Dashboard() {
   };
 
   const handleCreateTicket = async () => {
-    if (!newTicket.titre || !newTicket.message || !token) return;
+    if (!newTicket.titre || !newTicket.message || !token || !user) return;
     try {
       const res = await fetch('/api/support/tickets', {
         method: 'POST',
@@ -199,7 +199,7 @@ export default function Dashboard() {
   };
 
   const handleSendReply = async () => {
-    if (!reply.trim() || !selectedTicket || !token) return;
+    if (!reply.trim() || !selectedTicket || !token || !user) return;
     try {
       const res = await fetch(`/api/support/tickets/${selectedTicket.id}/message`, {
         method: 'POST',

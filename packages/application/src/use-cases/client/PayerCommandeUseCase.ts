@@ -55,9 +55,11 @@ export class PayerCommandeUseCase {
     if (this.depotClients) {
       try {
         const client = await this.depotClients.trouverParId(req.clientId);
-        const pointsGagnes = Math.floor(commande.prixTotal().enCentimes() / 100);
-        (client as any).crediterPoints(pointsGagnes);
-        await this.depotClients.sauvegarder(client);
+        if (client) {
+          const pointsGagnes = Math.floor(commande.prixTotal().enCentimes() / 100);
+          (client as any).crediterPoints(pointsGagnes);
+          await this.depotClients.sauvegarder(client);
+        }
       } catch (_) {
         // Non bloquant : si le client n'est pas trouvé, on log silencieusement
         console.warn(`[Fidélité] Client ${req.clientId} introuvable pour créditer les points.`);

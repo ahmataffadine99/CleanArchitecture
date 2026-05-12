@@ -7,13 +7,16 @@ import {
   AccepterCommandeUseCase,
   RefuserCommandeUseCase,
   MarquerCommandePreteUseCase,
+  ProposerLivraisonUseCase,
 } from '@ecoeats/application';
 import {
   DEPOT_PLATS,
   DEPOT_RESTAURANTS,
   DEPOT_COMMANDES,
+  DEPOT_LIVREURS,
+  CARTOGRAPHIE,
 } from '../../composition-root/composition-root.module';
-import { DepotPlats, DepotRestaurants, DepotCommandes } from '@ecoeats/application';
+import { DepotPlats, DepotRestaurants, DepotCommandes, DepotLivreurs, ServiceCartographie, ProposerLivraisonUseCase } from '@ecoeats/application';
 
 @Module({
   controllers: [RestaurantController],
@@ -34,9 +37,20 @@ import { DepotPlats, DepotRestaurants, DepotCommandes } from '@ecoeats/applicati
       inject: [DEPOT_PLATS],
     },
     {
+      provide: ProposerLivraisonUseCase,
+      useFactory: (
+        depotCommandes: DepotCommandes,
+        depotLivreurs: DepotLivreurs,
+        depotRestaurants: DepotRestaurants,
+        cartographie: ServiceCartographie
+      ) => new ProposerLivraisonUseCase(depotCommandes, depotLivreurs, depotRestaurants, cartographie),
+      inject: [DEPOT_COMMANDES, DEPOT_LIVREURS, DEPOT_RESTAURANTS, CARTOGRAPHIE],
+    },
+    {
       provide: AccepterCommandeUseCase,
-      useFactory: (depotCommandes: DepotCommandes) => new AccepterCommandeUseCase(depotCommandes),
-      inject: [DEPOT_COMMANDES],
+      useFactory: (depotCommandes: DepotCommandes, proposerLivraison: ProposerLivraisonUseCase) => 
+        new AccepterCommandeUseCase(depotCommandes, proposerLivraison),
+      inject: [DEPOT_COMMANDES, ProposerLivraisonUseCase],
     },
     {
       provide: RefuserCommandeUseCase,
@@ -45,8 +59,9 @@ import { DepotPlats, DepotRestaurants, DepotCommandes } from '@ecoeats/applicati
     },
     {
       provide: MarquerCommandePreteUseCase,
-      useFactory: (depotCommandes: DepotCommandes) => new MarquerCommandePreteUseCase(depotCommandes),
-      inject: [DEPOT_COMMANDES],
+      useFactory: (depotCommandes: DepotCommandes, proposerLivraison: ProposerLivraisonUseCase) => 
+        new MarquerCommandePreteUseCase(depotCommandes, proposerLivraison),
+      inject: [DEPOT_COMMANDES, ProposerLivraisonUseCase],
     },
   ],
 })

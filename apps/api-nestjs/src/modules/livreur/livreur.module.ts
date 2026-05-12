@@ -18,8 +18,13 @@ import { DepotLivreurs, DepotCommandes, DepotRestaurants, ServiceCartographie } 
   providers: [
     {
       provide: ChangerStatutLivreurUseCase,
-      useFactory: (depotLivreurs: DepotLivreurs) => new ChangerStatutLivreurUseCase(depotLivreurs),
-      inject: [DEPOT_LIVREURS],
+      useFactory: (
+        depotLivreurs: DepotLivreurs,
+        depotCommandes: DepotCommandes,
+        depotRestaurants: DepotRestaurants,
+        cartographie: ServiceCartographie
+      ) => new ChangerStatutLivreurUseCase(depotLivreurs, depotCommandes, depotRestaurants, cartographie),
+      inject: [DEPOT_LIVREURS, DEPOT_COMMANDES, DEPOT_RESTAURANTS, CARTOGRAPHIE],
     },
     {
       provide: AttribuerLivraisonUseCase,
