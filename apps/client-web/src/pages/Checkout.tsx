@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useAddressStore } from '../store/addressStore';
-import { LogIn, MapPin, CheckCircle2, Loader2, ChevronLeft, Home, Briefcase, CreditCard } from 'lucide-react';
+import { LogIn, MapPin, CheckCircle2, Loader2, ChevronLeft, Home, Briefcase, CreditCard, Sparkles } from 'lucide-react';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function Checkout() {
@@ -43,6 +43,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [facture, setFacture] = useState<any>(null);
   const [points, setPoints] = useState<number>(0);
+  const [distanceKm, setDistanceKm] = useState<number | null>(null);
   const clientId = user?.profilId;
 
   const fetchPoints = async () => {
@@ -60,9 +61,40 @@ export default function Checkout() {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchPoints();
-  });
+  }, [clientId, token]);
+
+  // Calculate distance when coordinates or restaurant changes
+  useEffect(() => {
+    const calculateDistance = async () => {
+      if (!latitude || !longitude || items.length === 0) {
+        setDistanceKm(null);
+        return;
+      }
+      
+      try {
+        const restoId = items[0].restaurantId;
+        const res = await fetch(`/api/restaurants`);
+        const restaurants = await res.json();
+        const resto = restaurants.find((r: any) => r.id === restoId);
+        
+        if (resto && resto.position) {
+          const R = 6371; // Rayon de la terre
+          const dLat = (resto.position.lat - latitude) * Math.PI / 180;
+          const dLon = (resto.position.lon - longitude) * Math.PI / 180;
+          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(latitude * Math.PI / 180) * Math.cos(resto.position.lat * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          setDistanceKm(Math.round(R * c * 10) / 10);
+        }
+      } catch (err) {
+        console.error('Erreur distance:', err);
+      }
+    };
+    calculateDistance();
+  }, [latitude, longitude, items]);
 
   const getTauxReduction = () => {
     if (points >= 250) return 0.15;
@@ -454,14 +486,26 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <div className="bg-emerald-50 p-8 rounded-[2.5rem] border border-emerald-100 shadow-xl shadow-emerald-100/50">
-                <div className="flex items-center gap-4 text-emerald-700 mb-2">
-                  <CheckCircle2 size={24} />
-                  <span className="font-black tracking-tight">Engagement EcoEATS</span>
+              <div className="bg-emerald-500 text-white p-8 rounded-[2.5rem] shadow-xl shadow-emerald-100/50 relative overflow-hidden">
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-4">
+                    <CheckCircle2 size={24} className="text-emerald-200" />
+                    <span className="font-black tracking-tight uppercase text-sm">Votre Impact Écologique</span>
+                  </div>
+                  {distanceKm !== null ? (
+                    <div className="space-y-2">
+                      <p className="text-3xl font-black">{Math.round(distanceKm * 160)}g <span className="text-sm font-medium opacity-80">de CO2</span></p>
+                      <p className="text-xs font-bold text-emerald-100 leading-relaxed">
+                        Économisés sur cette commande grâce à la proximité du restaurant ({distanceKm} km) et à la livraison 100% décarbonée.
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-xs font-medium leading-relaxed italic opacity-80">
+                      Renseignez votre adresse pour calculer votre impact écologique positif sur cette commande.
+                    </p>
+                  )}
                 </div>
-                <p className="text-emerald-600/80 text-sm font-medium leading-relaxed italic">
-                  Chaque commande passée avec nous réduit l'empreinte carbone moyenne d'un repas de 15% grâce à nos circuits courts.
-                </p>
+                <Sparkles className="absolute -bottom-4 -right-4 text-white/10" size={100} />
               </div>
             </div>
           </div>

@@ -2,13 +2,15 @@ import { DepotCommandes } from "../../ports/DepotCommandes";
 import { DepotComptes } from "../../ports/DepotComptes";
 import { DepotRestaurants } from "../../ports/DepotRestaurants";
 import { DepotTickets } from "../../ports/DepotTickets";
+import { ServiceCartographie } from "../../ports/ServiceCartographie";
 
 export class ObtenirStatsGlobalesUseCase {
   constructor(
     private readonly depotCommandes: DepotCommandes,
     private readonly depotComptes: DepotComptes,
     private readonly depotRestaurants: DepotRestaurants,
-    private readonly depotTickets: DepotTickets
+    private readonly depotTickets: DepotTickets,
+    private readonly cartographie: ServiceCartographie
   ) {}
 
   async executer() {
@@ -19,15 +21,27 @@ export class ObtenirStatsGlobalesUseCase {
       this.depotTickets.listerTickets()
     ]);
 
-    const revenuTotalCentimes = commandes
-      .filter((c: any) => c.getStatut() === "LIVREE")
+    const livrees = commandes.filter((c: any) => c.getStatut() === "LIVREE");
+
+    const revenuTotalCentimes = livrees
       .reduce((acc: number, c: any) => acc + c.prixTotal().enCentimes(), 0);
+
+    // Calcul de l'impact écologique (CO2 économisé en Kg)
+    const totalCO2Grammes = livrees.reduce((acc: number, c: any) => {
+      const resto = restaurants.find(r => r.id === c.restaurantId);
+      if (!resto) return acc;
+      
+      const distance = this.cartographie.calculerDistanceKm(
+        resto.position,
+        c.getPositionLivraison()
+      );
+      
+      return acc + c.calculerCO2Economise(distance);
+    }, 0);
 
     const maintenant = new Date();
     const hier = new Date(maintenant);
     hier.setDate(hier.getDate() - 1);
-    const debutSemaine = new Date(maintenant);
-    debutSemaine.setDate(debutSemaine.getDate() - 7);
 
     const commandesAujourdhui = commandes.filter((c: any) => c.getCreeLe() >= hier).length;
     const commandesHier = commandes.filter((c: any) => c.getCreeLe() < hier && c.getCreeLe() >= new Date(hier.getTime() - 24*3600*1000)).length;
@@ -43,12 +57,6 @@ export class ObtenirStatsGlobalesUseCase {
       return c.creeLe && c.creeLe >= hier;
     }).length;
 
-    const nouveauxRestaurantsSemaine = restaurants.filter((r: any) => {
-      // Si on n'a pas de date de création pour le restaurant, on simule ou on ignore
-      // On va supposer qu'on a besoin de cette donnée mais pour l'instant on met une valeur plausible si absente
-      return true; // Simplification pour l'instant
-    }).length;
-
     const commandesEnAttente = commandes.filter((c: any) => c.getStatut() === "EN_ATTENTE").length;
     const ticketsOuverts = tickets.filter((t: any) => t.statut === "OUVERT" && !t.estLu).length;
 
@@ -57,10 +65,11 @@ export class ObtenirStatsGlobalesUseCase {
       nbCommandes: commandes.length,
       nbRestaurants: restaurants.length,
       revenuTotalEuros: revenuTotalCentimes / 100,
+      co2TotalKg: Math.round(totalCO2Grammes / 100) / 10, // En Kg avec 1 décimale
       tendances: {
         commandes: tendanceCommandes,
         nouveauxComptes: nouveauxComptesHier,
-        restaurantsSemaine: nouveauxRestaurantsSemaine,
+        restaurantsSemaine: restaurants.length, // Simplifié
         enAttente: commandesEnAttente,
         ticketsOuverts: ticketsOuverts
       },

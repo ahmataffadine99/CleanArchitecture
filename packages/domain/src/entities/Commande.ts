@@ -84,4 +84,13 @@ export class Commande {
   restaurerTempsPreparation(minutes: number): void {
     this.tempsPreparationEstime = minutes;
   }
+
+  /**
+   * Calcule le CO2 économisé par cette commande.
+   * On estime qu'une livraison voiture émet 160g de CO2 / km.
+   * EcoEATS utilise des vélos (0g).
+   */
+  calculerCO2Economise(distanceKm: number): number {
+    return Math.round(distanceKm * 160); // retourne des grammes
+  }
 }

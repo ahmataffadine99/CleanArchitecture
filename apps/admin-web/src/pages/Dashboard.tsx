@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   BarChart3, Users, ShoppingBag, Utensils, TrendingUp, 
   LogOut, Bell, Search, Filter, Loader2, ArrowUpRight, 
-  Clock, CheckCircle2, AlertCircle, MessageSquare
+  Clock, CheckCircle2, AlertCircle, MessageSquare, Sparkles
 } from 'lucide-react';
 
 interface Stats {
@@ -10,6 +10,7 @@ interface Stats {
   nbCommandes: number;
   nbRestaurants: number;
   revenuTotalEuros: number;
+  co2TotalKg: number;
   tendances: {
     commandes: number;
     nouveauxComptes: number;
@@ -257,7 +258,15 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
           icon={Utensils} 
           color="text-amber-600" 
           bgColor="bg-amber-50"
-          trend={`+${stats.tendances.restaurantsSemaine} cette semaine`}
+          trend={`${stats.tendances.restaurantsSemaine} cette semaine`}
+        />
+        <StatCard 
+          label="Impact Écologique" 
+          value={`${stats.co2TotalKg} Kg CO2`} 
+          icon={Sparkles} 
+          color="text-emerald-500" 
+          bgColor="bg-emerald-100/50"
+          trend="Économisés vs voiture"
         />
       </div>
 
