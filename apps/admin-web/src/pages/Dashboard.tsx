@@ -112,7 +112,6 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
       case 'restaurants': return <RestaurantsView onManage={(r) => setSelectedRestaurant(r)} searchTerm={searchTerm} />;
       case 'orders': return <OrdersView searchTerm={searchTerm} />;
       case 'support': return <SupportView searchTerm={searchTerm} onTicketRead={onTicketRead} />;
-      case 'categories': return <CategoriesView />;
       case 'livreurs': return <LivreursPerformanceView />;
       default: return <StatsView stats={stats} searchTerm={searchTerm} />;
     }
@@ -158,12 +157,6 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               onClick={() => setActiveTab('support')} 
             />
             <div className="pt-4 mt-4 border-t border-slate-800">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 px-4">Système</p>
-              <NavItem 
-                icon={LayoutGrid} label="Catégories" 
-                active={activeTab === 'categories'} 
-                onClick={() => setActiveTab('categories')} 
-              />
               <NavItem 
                 icon={Award} label="Livreurs TOP" 
                 active={activeTab === 'livreurs'} 
@@ -879,53 +872,6 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
 
 // --- NEW VIEWS ---
 
-function CategoriesView() {
-  const [categories, setCategories] = useState(['Burgers', 'Pizza', 'Sushis', 'Healthy', 'Sandwich', 'Desserts', 'Café']);
-  const [newCat, setNewCat] = useState('');
-
-  return (
-    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden p-10 space-y-8 animate-in slide-in-from-right duration-500">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-2xl font-black text-slate-800">Gestion des Catégories</h3>
-          <p className="text-slate-500 font-medium">Définissez les types de cuisine disponibles sur la plateforme.</p>
-        </div>
-        <div className="flex gap-4">
-          <input 
-            type="text" 
-            placeholder="Nouvelle catégorie..." 
-            value={newCat}
-            onChange={(e) => setNewCat(e.target.value)}
-            className="bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all font-bold text-slate-700 w-64 shadow-inner"
-          />
-          <button 
-            onClick={() => { if(newCat.trim()) { setCategories([...categories, newCat.trim()]); setNewCat(''); } }}
-            className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black px-8 py-4 rounded-2xl hover:shadow-xl hover:shadow-emerald-200 transition-all active:scale-95"
-          >
-            AJOUTER
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {categories.map((cat) => (
-          <div key={cat} className="group relative bg-slate-50 border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-2xl hover:shadow-emerald-500/5 transition-all text-center">
-            <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all">
-              <LayoutGrid className="text-emerald-500" size={24} />
-            </div>
-            <span className="font-black text-slate-800 tracking-tight">{cat}</span>
-            <button 
-              onClick={() => setCategories(categories.filter(c => c !== cat))}
-              className="absolute -top-2 -right-2 w-10 h-10 bg-white text-red-400 rounded-full shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:text-red-600 hover:scale-110"
-            >
-              <X size={16} strokeWidth={3} />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function LivreursPerformanceView() {
   const [livreurs, setLivreurs] = useState<any[]>([]);

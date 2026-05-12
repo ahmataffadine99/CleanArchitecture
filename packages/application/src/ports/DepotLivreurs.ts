@@ -6,4 +6,5 @@ export interface DepotLivreurs {
   listerDisponibles(): Promise<Livreur[]>;
   listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]>;
   retirerPropositionDeTous(commandeId: string): Promise<void>;
+  listerTout(): Promise<Livreur[]>;
 }

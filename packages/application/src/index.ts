@@ -61,6 +61,7 @@ export { ObtenirTousLesComptesUseCase } from "./use-cases/admin/ObtenirTousLesCo
 export { ChangerStatutCompteUseCase } from "./use-cases/admin/ChangerStatutCompteUseCase";
 export { ListerToutesLesCommandesUseCase } from "./use-cases/admin/ListerToutesLesCommandesUseCase";
 export { ObtenirStatsRestaurantUseCase } from "./use-cases/admin/ObtenirStatsRestaurantUseCase";
+export { ListerTousLesLivreursUseCase } from "./use-cases/admin/ListerTousLesLivreursUseCase";
 
 // Use Cases Support
 export { CreerTicketUseCase } from "./use-cases/support/CreerTicketUseCase";

@@ -177,8 +177,6 @@ export default function MenuManagement() {
           <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Mise à jour de la carte...</p>
         </div>
-      ) : (
-      ) : (
         <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/40">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {plats.length === 0 && (

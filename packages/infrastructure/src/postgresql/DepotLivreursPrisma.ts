@@ -47,6 +47,11 @@ export class DepotLivreursPrisma implements DepotLivreurs {
     return rows.map((r) => this.reconstruire(r as any));
   }
 
+  async listerTout(): Promise<Livreur[]> {
+    const rows = await this.prisma.livreur.findMany();
+    return rows.map((r) => this.reconstruire(r as any));
+  }
+
   async listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]> {
     const rows = await this.prisma.livreur.findMany({
       where: {

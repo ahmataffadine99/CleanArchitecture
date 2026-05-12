@@ -9,7 +9,8 @@ import {
   EnvoyerMessageTicketUseCase,
   CloturerTicketUseCase,
   MarquerTicketCommeLuUseCase,
-  ObtenirStatsRestaurantUseCase
+  ObtenirStatsRestaurantUseCase,
+  ListerTousLesLivreursUseCase
 } from "@ecoeats/application";
 
 export function routerAdmin(
@@ -22,9 +23,20 @@ export function routerAdmin(
   envoyerMessageTicket: EnvoyerMessageTicketUseCase,
   cloturerTicket: CloturerTicketUseCase,
   marquerTicketCommeLu: MarquerTicketCommeLuUseCase,
-  obtenirStatsRestaurant: ObtenirStatsRestaurantUseCase
+  obtenirStatsRestaurant: ObtenirStatsRestaurantUseCase,
+  listerTousLesLivreurs: ListerTousLesLivreursUseCase
 ) {
   const router = Router();
+
+  // GET /api/admin/livreurs
+  router.get("/livreurs", async (req, res) => {
+    try {
+      const livreurs = await listerTousLesLivreurs.executer();
+      res.json(livreurs);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   // GET /api/admin/stats
   router.get("/stats", async (req, res) => {

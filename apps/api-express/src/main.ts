@@ -39,7 +39,8 @@ import {
   ListerTicketsUseCase,
   CloturerTicketUseCase,
   MarquerTicketCommeLuUseCase,
-  ObtenirStatsRestaurantUseCase
+  ObtenirStatsRestaurantUseCase,
+  ListerTousLesLivreursUseCase
 } from "@ecoeats/application";
 
 import { PrismaClient } from "@prisma/client";
@@ -143,7 +144,8 @@ app.use("/api/admin", requireAuth, requireRole("ADMIN"), routerAdmin(
   envoyerMessageTicket,
   cloturerTicket,
   marquerCommeLu,
-  obtenirStatsRestaurant
+  obtenirStatsRestaurant,
+  new ListerTousLesLivreursUseCase(depotLivreurs)
 ));
 
 // Routes SUPPORT (Client, Resto, Livreur)

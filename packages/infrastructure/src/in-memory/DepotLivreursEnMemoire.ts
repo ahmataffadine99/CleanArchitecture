@@ -28,4 +28,8 @@ export class DepotLivreursEnMemoire implements DepotLivreurs {
       livreur.refuserProposition(commandeId);
     }
   }
+
+  async listerTout(): Promise<Livreur[]> {
+    return [...this.store.values()];
+  }
 }
