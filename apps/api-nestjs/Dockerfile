@@ -9,7 +9,7 @@ RUN npm install
 RUN npm run build --workspace=@ecoeats/domain
 RUN npm run build --workspace=@ecoeats/application
 RUN npm run build --workspace=@ecoeats/infrastructure
-RUN npm run build --workspace=@ecoeats/interface || echo "Interface build partial"
+RUN npm run build --workspace=@ecoeats/interface
 
 EXPOSE 3001
 
