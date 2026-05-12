@@ -1,6 +1,5 @@
 FROM node:20-alpine
 
-# Installation des dépendances système nécessaires pour Prisma sur Alpine
 RUN apk add --no-cache libc6-compat openssl
 
 WORKDIR /app
@@ -9,10 +8,8 @@ COPY . .
 
 RUN npm install
 
-# Génération des types Prisma
 RUN npx prisma generate --schema=packages/infrastructure/prisma/schema.prisma
 
-# Build ordonné des packages partagés
 RUN npm run build --workspace=@ecoeats/domain
 RUN npm run build --workspace=@ecoeats/application
 RUN npm run build --workspace=@ecoeats/infrastructure
@@ -20,4 +17,5 @@ RUN npm run build --workspace=@ecoeats/interface
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev", "--workspace=apps/api-express"]
+# Lancer le seed PUIS le serveur
+CMD npx prisma db seed && npm run dev --workspace=apps/api-express
