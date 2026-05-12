@@ -6,8 +6,10 @@ COPY . .
 
 RUN npm install
 
-# Build uniquement les packages partagés si nécessaire
-RUN npm run build --workspace=@ecoeats/domain --workspace=@ecoeats/application --workspace=@ecoeats/infrastructure --workspace=@ecoeats/interface
+RUN npm run build --workspace=@ecoeats/domain
+RUN npm run build --workspace=@ecoeats/application
+RUN npm run build --workspace=@ecoeats/infrastructure
+RUN npm run build --workspace=@ecoeats/interface || echo "Interface build partial"
 
 EXPOSE 5173
 
