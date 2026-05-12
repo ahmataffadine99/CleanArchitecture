@@ -48,7 +48,7 @@ async function main() {
       latitude: 48.8698,
       longitude: 2.3075,
       proprietaireId: resto1Id,
-      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop',
       categories: ['burger', 'français']
     }
   });
@@ -75,7 +75,7 @@ async function main() {
       latitude: 48.8546,
       longitude: 2.3724,
       proprietaireId: resto2Id,
-      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop',
       categories: ['pizza', 'italien']
     }
   });
@@ -101,7 +101,7 @@ async function main() {
       latitude: 48.8621,
       longitude: 2.3685,
       proprietaireId: resto3Id,
-      imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop',
       categories: ['healthy', 'vegan']
     }
   });

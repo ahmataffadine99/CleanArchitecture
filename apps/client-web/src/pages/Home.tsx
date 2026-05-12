@@ -195,7 +195,7 @@ export default function Home() {
                   adresse={resto.adresse}
                   isFavorite={favIds.includes(resto.id)}
                   onToggleFavorite={() => toggleRestaurant(resto.id, user?.profilId, token || undefined)}
-                  image={`https://images.unsplash.com/photo-${1550966871 + index}-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`}
+                  image={resto.imageUrl || `https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`}
                   ecoScore={90 - (index * 5)} // Dummy data for visual
                 />
               ))}
