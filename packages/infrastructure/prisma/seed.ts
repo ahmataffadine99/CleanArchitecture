@@ -54,7 +54,7 @@ async function main() {
       latitude: 48.8698,
       longitude: 2.3075,
       proprietaireId: resto1Id,
-      imageUrl: 'https://images.unsplash.com/photo-1550966842-30cae4363484',
+      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
       categories: ['burger', 'français']
     }
   });
@@ -81,14 +81,14 @@ async function main() {
       latitude: 48.8546,
       longitude: 2.3724,
       proprietaireId: resto2Id,
-      imageUrl: 'https://images.unsplash.com/photo-1579751626657-72bc17010498',
+      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
       categories: ['pizza', 'italien']
     }
   });
 
   await prisma.platMenu.createMany({
     data: [
-      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591' },
+      { id: 'p2-1', nom: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic frais.', prixCentimes: 1100, stockJournalier: 30, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbad80ad50' },
       { id: 'p2-2', nom: 'Lasagnes Maison', description: 'Bœuf, sauce tomate, béchamel.', prixCentimes: 1350, stockJournalier: 10, restaurantId: resto2.id, categorie: 'PLAT', imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3' },
       { id: 'p2-3', nom: 'Limonade Italienne', description: 'Citron pressé, sucre de canne.', prixCentimes: 450, stockJournalier: 40, restaurantId: resto2.id, categorie: 'BOISSON', imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd' }
     ]

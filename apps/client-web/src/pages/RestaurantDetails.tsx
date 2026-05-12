@@ -87,16 +87,16 @@ export default function RestaurantDetails() {
       {/* Hero Restaurant */}
       <div className="relative rounded-3xl overflow-hidden bg-slate-800 h-64 mb-10 shadow-lg animate-slide-up">
         <img 
-          src={`https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200&auto=format&fit=crop`} 
+          src={restaurant.imageUrl || `https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200&auto=format&fit=crop`} 
           alt={restaurant.nom}
-          className="w-full h-full object-cover opacity-50"
+          className="w-full h-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end">
           <div>
             <h1 className="text-4xl font-extrabold mb-2">{restaurant.nom}</h1>
             <p className="text-slate-300 flex items-center gap-2">
-              📍 {restaurant.adresse?.rue}, {restaurant.adresse?.ville}
+              📍 {restaurant.adresse}
             </p>
           </div>
           <button 
