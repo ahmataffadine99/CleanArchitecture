@@ -2,23 +2,21 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copier les fichiers de configuration du monorepo
-COPY package.json package-lock.json ./
-COPY tsconfig.base.json ./
+# On commence par copier les fichiers de définition du monorepo
+COPY package.json package-lock.json tsconfig.base.json ./
 
-# Copier les packages partagés (nécessaires pour le build)
+# On copie TOUS les packages car ils sont interdépendants
 COPY packages/ ./packages/
 
-# Copier le code de l'application api-express
+# On copie l'application backend
 COPY apps/api-express/ ./apps/api-express/
 
-# Installation des dépendances
+# Installation
 RUN npm install
 
-# Build des packages partagés
+# Build global des packages (pour résoudre les problèmes de rootDir)
 RUN npm run build --workspaces
 
 EXPOSE 3000
 
-# Commande par défaut (en mode dev pour l'instant pour le hot-reload si on monte un volume)
 CMD ["npm", "run", "dev", "--workspace=apps/api-express"]
