@@ -182,7 +182,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-black text-slate-800 tracking-tight">
-              {activeTab === 'dashboard' ? 'Bonjour, Adli' : 
+              {activeTab === 'dashboard' ? 'Bonjour, Administrateur' : 
                activeTab === 'users' ? 'Gestion des Utilisateurs' :
                activeTab === 'restaurants' ? 'Gestion des Restaurants' : 'Suivi des Commandes'}
             </h1>
