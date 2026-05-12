@@ -36,5 +36,15 @@ services:
     depends_on:
       - api
 
+  livreur-web:
+    build:
+      context: .
+      dockerfile: apps/livreur-web/Dockerfile
+    container_name: ecoeats-livreur-web
+    ports:
+      - "5174:5174"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
