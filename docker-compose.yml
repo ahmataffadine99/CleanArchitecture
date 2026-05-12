@@ -46,5 +46,15 @@ services:
     depends_on:
       - api
 
+  restaurateur-web:
+    build:
+      context: .
+      dockerfile: apps/restaurateur-web/Dockerfile
+    container_name: ecoeats-restaurateur-web
+    ports:
+      - "5175:5175"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
