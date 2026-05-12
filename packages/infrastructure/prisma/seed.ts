@@ -35,7 +35,7 @@ async function main() {
   });
   await prisma.client.create({
     data: {
-      id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '10 Rue de la Paix, Paris', pointsFidelite: 50
+      id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '10 Rue de la Paix, 75002', pointsFidelite: 50
     }
   });
 
@@ -50,11 +50,11 @@ async function main() {
     data: {
       id: resto1Id,
       nom: 'Le Gourmet Français',
-      adresse: '5 Avenue des Champs-Élysées, Paris',
+      adresse: '5 Avenue des Champs-Élysées, 75008',
       latitude: 48.8698,
       longitude: 2.3075,
       proprietaireId: resto1Id,
-      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+      imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1000&auto=format&fit=crop',
       categories: ['burger', 'français']
     }
   });
@@ -77,11 +77,11 @@ async function main() {
     data: {
       id: resto2Id,
       nom: 'Bella Italia',
-      adresse: '12 Rue de la Roquette, Paris',
+      adresse: '12 Rue de la Roquette, 75015',
       latitude: 48.8546,
       longitude: 2.3724,
       proprietaireId: resto2Id,
-      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
+      imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000&auto=format&fit=crop',
       categories: ['pizza', 'italien']
     }
   });
@@ -103,11 +103,11 @@ async function main() {
     data: {
       id: resto3Id,
       nom: 'Healthy Garden',
-      adresse: '24 Boulevard Voltaire, Paris',
+      adresse: '24 Boulevard Voltaire, 75012',
       latitude: 48.8621,
       longitude: 2.3685,
       proprietaireId: resto3Id,
-      imageUrl: 'https://images.unsplash.com/photo-1543332164-6e82f355badc',
+      imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1000&auto=format&fit=crop',
       categories: ['healthy', 'vegan']
     }
   });
