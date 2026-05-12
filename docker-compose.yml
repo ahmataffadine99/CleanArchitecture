@@ -12,5 +12,19 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  api:
+    build:
+      context: .
+      dockerfile: apps/api-express/Dockerfile
+    container_name: ecoeats-api
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:affadine@db:5432/ecoeats?schema=public
+      - DB_ADAPTER=postgresql
+      - PORT=3000
+    depends_on:
+      - db
+
 volumes:
   pgdata:
