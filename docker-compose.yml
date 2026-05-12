@@ -26,5 +26,15 @@ services:
     depends_on:
       - db
 
+  client-web:
+    build:
+      context: .
+      dockerfile: apps/client-web/Dockerfile
+    container_name: ecoeats-client-web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
