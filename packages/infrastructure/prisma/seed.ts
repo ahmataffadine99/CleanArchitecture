@@ -30,12 +30,12 @@ async function main() {
     data: { id: 'client-id-1', email: 'client@ecoeats.fr', motDePasseHache: passwordHashed, role: 'CLIENT', profilId: 'client-id-1' }
   });
   await prisma.client.create({
-    data: { id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '10 Rue de la Paix, 75002', pointsFidelite: 50 }
+    data: { id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '1 Place de la Bastille, 75004 Paris', pointsFidelite: 50 }
   });
 
   // 3. RESTAURATEURS & RESTAURANTS
   
-  // RESTO 1 : Le Gourmet Français (PARIS 12)
+  // RESTO 1 : Le Gourmet Français (BASTILLE)
   const resto1Id = 'resto-id-1';
   await prisma.compteUtilisateur.create({
     data: { id: resto1Id, email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto1Id }
@@ -62,7 +62,7 @@ async function main() {
     ]
   });
 
-  // RESTO 2 : Bella Italia (PARIS 15)
+  // RESTO 2 : Bella Italia (ROQUETTE - BASTILLE)
   const resto2Id = 'resto-id-2';
   await prisma.compteUtilisateur.create({
     data: { id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id }
@@ -71,9 +71,9 @@ async function main() {
     data: {
       id: resto2Id,
       nom: 'Bella Italia',
-      adresse: '12 Rue de la Roquette, 75015 Paris',
-      latitude: 48.8546,
-      longitude: 2.3724,
+      adresse: '12 Rue de la Roquette, 75011 Paris',
+      latitude: 48.8540,
+      longitude: 2.3700,
       proprietaireId: resto2Id,
       imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop',
       categories: ['pizza', 'italien']
@@ -88,7 +88,7 @@ async function main() {
     ]
   });
 
-  // RESTO 3 : Healthy Garden (PARIS 11)
+  // RESTO 3 : Healthy Garden (RICHARD LENOIR - BASTILLE)
   const resto3Id = 'resto-id-3';
   await prisma.compteUtilisateur.create({
     data: { id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id }
@@ -98,8 +98,8 @@ async function main() {
       id: resto3Id,
       nom: 'Healthy Garden',
       adresse: '24 Boulevard Voltaire, 75011 Paris',
-      latitude: 48.8621,
-      longitude: 2.3685,
+      latitude: 48.8600,
+      longitude: 2.3720,
       proprietaireId: resto3Id,
       imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop',
       categories: ['healthy', 'vegan']
@@ -120,7 +120,7 @@ async function main() {
   });
   await prisma.livreur.create({
     data: {
-      id: 'livreur-id-1', nom: 'Marc Rapide', telephone: '0601020304', latitude: 48.8566, longitude: 2.3522, statut: 'DISPONIBLE', estExpert: true
+      id: 'livreur-id-1', nom: 'Marc Rapide', telephone: '0601020304', latitude: 48.8531, longitude: 2.3691, statut: 'DISPONIBLE', estExpert: true
     }
   });
 

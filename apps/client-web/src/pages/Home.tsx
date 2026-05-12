@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <div className="pb-20">
       {/* Hero Section */}
-      <section className="relative h-[500px] flex items-center justify-center overflow-hidden mb-12">
+      <section className="relative h-[500px] flex items-center justify-center mb-12">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2000&auto=format&fit=crop" 
