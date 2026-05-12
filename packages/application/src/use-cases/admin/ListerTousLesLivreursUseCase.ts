@@ -12,8 +12,8 @@ export class ListerTousLesLivreursUseCase {
       statut: l.getStatut(),
       portefeuille: l.getPortefeuille().enEuros(),
       estExpert: l.estExpert,
-      coursesCount: l.getCommandesEnCoursIds().length + (l.getPropositionsIds().length > 0 ? 1 : 0), // Simulation
-      impactEco: 95 // Valeur par défaut pour l'affichage
+      coursesCount: l.getCommandesEnCoursIds().length + (l.getPropositionsIds().length > 0 ? 1 : 0),
+      impactEco: 95
     }));
   }
 }

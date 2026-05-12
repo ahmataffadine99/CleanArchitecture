@@ -57,7 +57,6 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   }, []);
 
   const onTicketRead = () => {
-    // Re-fetch stats to update the badge
     const fetchStats = async () => {
         try {
           const token = localStorage.getItem('admin_token');
@@ -183,9 +182,9 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-black text-slate-800 tracking-tight">
-              {activeTab === 'dashboard' ? 'Bonjour, Adli 👋' : 
-               activeTab === 'users' ? 'Gestion des Utilisateurs 👥' :
-               activeTab === 'restaurants' ? 'Gestion des Restaurants 🍽️' : 'Suivi des Commandes 📦'}
+              {activeTab === 'dashboard' ? 'Bonjour, Adli' : 
+               activeTab === 'users' ? 'Gestion des Utilisateurs' :
+               activeTab === 'restaurants' ? 'Gestion des Restaurants' : 'Suivi des Commandes'}
             </h1>
             <p className="text-slate-500 font-medium">
               {activeTab === 'dashboard' ? "Voici ce qu'il se passe sur la plateforme aujourd'hui." : 
@@ -750,7 +749,6 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[700px]">
-      {/* Liste des Tickets */}
       <div className="lg:col-span-1 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         <div className="p-6 border-b border-slate-50">
           <h3 className="text-lg font-bold text-slate-800">Tickets reçus</h3>
@@ -798,11 +796,9 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
               </div>
             </button>
           ))}
-          {filteredTickets.length === 0 && <div className="p-10 text-center text-slate-300 italic">Aucun ticket trouvé</div>}
         </div>
       </div>
 
-      {/* Discussion */}
       <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         {selectedTicket ? (
           <>
