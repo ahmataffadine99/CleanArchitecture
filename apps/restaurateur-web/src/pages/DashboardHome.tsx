@@ -74,7 +74,7 @@ export default function DashboardHome() {
   const topItems = Object.entries(topItemsMap)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
-    .map(([nom, quantite]) => ({ nom, ventes: quantite, img: '🍽️' }));
+    .map(([nom, quantite]) => ({ nom, ventes: quantite, img: '' }));
 
   // ---- NOUVEAU: Évolution des ventes (7 derniers jours) ----
   const getLast7DaysData = () => {
@@ -108,7 +108,7 @@ export default function DashboardHome() {
   return (
     <div className="p-8 max-w-7xl mx-auto animate-fade-in">
       <div className="mb-10">
-        <h1 className="text-3xl font-extrabold text-slate-800 mb-2">Bonjour, {restaurant?.nom || "Partenaire"} 👋</h1>
+        <h1 className="text-3xl font-extrabold text-slate-800 mb-2">Bonjour, {restaurant?.nom || "Partenaire"}</h1>
         <p className="text-slate-500">Voici un aperçu de vos vraies données (liées à l'API).</p>
       </div>
 

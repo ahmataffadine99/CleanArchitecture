@@ -61,11 +61,9 @@ export function creerRoutesClient(deps: {
         categorie: p.categorie,
       });
 
-      const actifsSeulement = (p: any) => p.actif !== false;
-
       res.json({ 
-        disponibles: disponibles.filter(actifsSeulement).map(formater), 
-        rupture: rupture.filter(actifsSeulement).map(formater) 
+        disponibles: disponibles.map(formater), 
+        rupture: rupture.map(formater) 
       });
     } catch (err) { next(err); }
   });

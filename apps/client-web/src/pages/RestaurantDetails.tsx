@@ -111,36 +111,42 @@ export default function RestaurantDetails() {
       {/* Menu Section */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Menu</h2>
       
-      {menu.disponibles.length === 0 ? (
+      {menu.disponibles.length === 0 && menu.rupture.length === 0 ? (
         <div className="bg-slate-50 text-slate-500 p-8 rounded-2xl text-center border border-slate-200 border-dashed">
           Aucun plat disponible pour le moment.
         </div>
       ) : (
         <div className="space-y-10">
           {/* Section Plats */}
-          {menu.disponibles.filter(p => !p.categorie || p.categorie === 'PLAT').length > 0 && (
+          {[...menu.disponibles, ...menu.rupture].filter(p => !p.categorie || p.categorie === 'PLAT').length > 0 && (
             <div>
               <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="w-8 h-[2px] bg-slate-200"></span> PLATS PRINCIPAUX
               </h3>
               <div className="grid gap-4">
-                {menu.disponibles.filter(p => !p.categorie || p.categorie === 'PLAT').map((item) => (
-                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
-                ))}
+                {[...menu.disponibles, ...menu.rupture]
+                  .filter(p => !p.categorie || p.categorie === 'PLAT')
+                  .sort((a, b) => (a.actif === false ? 1 : 0) - (b.actif === false ? 1 : 0))
+                  .map((item) => (
+                    <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
+                  ))}
               </div>
             </div>
           )}
 
           {/* Section Boissons */}
-          {menu.disponibles.filter(p => p.categorie === 'BOISSON').length > 0 && (
+          {[...menu.disponibles, ...menu.rupture].filter(p => p.categorie === 'BOISSON').length > 0 && (
             <div>
               <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="w-8 h-[2px] bg-slate-200"></span> BOISSONS & RAFRAÎCHISSEMENTS
               </h3>
               <div className="grid gap-4">
-                {menu.disponibles.filter(p => p.categorie === 'BOISSON').map((item) => (
-                  <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
-                ))}
+                {[...menu.disponibles, ...menu.rupture]
+                  .filter(p => p.categorie === 'BOISSON')
+                  .sort((a, b) => (a.actif === false ? 1 : 0) - (b.actif === false ? 1 : 0))
+                  .map((item) => (
+                    <MenuCard key={item.id} item={item} onSelect={setSelectedPlat} onAdd={handleAddToCart} isFav={favPlats.includes(item.id)} onToggleFav={() => togglePlat(item.id, user?.profilId, token || undefined)} />
+                  ))}
               </div>
             </div>
           )}
@@ -176,9 +182,9 @@ export default function RestaurantDetails() {
                     <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-full border border-emerald-100">
                       {selectedPlat.prix.toFixed(2)} €
                     </span>
-                    {selectedPlat.stock <= 0 && (
+                    {(selectedPlat.stock <= 0 || selectedPlat.actif === false) && (
                       <span className="px-2.5 py-0.5 bg-red-50 text-red-600 text-xs font-bold rounded-full border border-red-100 uppercase tracking-wider">
-                        Épuisé
+                        Indisponible
                       </span>
                     )}
                   </div>
@@ -215,7 +221,7 @@ export default function RestaurantDetails() {
                     setSelectedPlat(null);
                   }}
                   className={`w-full py-4 rounded-2xl font-black text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                    selectedPlat.stock > 0 
+                    (selectedPlat.stock > 0 && selectedPlat.actif !== false)
                     ? 'bg-slate-900 text-white hover:bg-slate-800 hover:shadow-slate-400/30' 
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
                   }`}
@@ -261,17 +267,23 @@ function MenuCard({ item, onSelect, onAdd, isFav, onToggleFav }: {
       </div>
       
       <div className="flex flex-col items-end justify-between">
-        <div className="h-24 w-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 hidden sm:block border border-slate-50">
+        <div className="h-24 w-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 hidden sm:block border border-slate-50 relative">
            <img 
             src={item.imageUrl || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80`} 
             alt={item.nom}
-            className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" 
+            className={`w-full h-full object-cover transition-all ${item.actif === false || item.stock <= 0 ? 'grayscale opacity-50' : 'opacity-90 group-hover:opacity-100'}`} 
           />
+          {(item.actif === false || item.stock <= 0) && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <span className="bg-white/90 text-slate-900 text-[8px] font-black px-2 py-1 rounded-lg uppercase tracking-tighter shadow-sm">INDISPONIBLE</span>
+            </div>
+          )}
         </div>
         <button 
+          disabled={item.actif === false || item.stock <= 0}
           onClick={(e) => { e.stopPropagation(); onAdd(item); }}
-          className="mt-4 sm:mt-0 flex items-center justify-center h-10 w-10 bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-full transition-colors"
-          title="Ajouter au panier"
+          className={`mt-4 sm:mt-0 flex items-center justify-center h-10 w-10 rounded-full transition-colors ${item.actif === false || item.stock <= 0 ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white'}`}
+          title={item.actif === false || item.stock <= 0 ? "Indisponible" : "Ajouter au panier"}
         >
           <Plus size={20} className="stroke-[2.5]" />
         </button>
