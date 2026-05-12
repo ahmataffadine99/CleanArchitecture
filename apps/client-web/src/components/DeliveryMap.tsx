@@ -49,18 +49,18 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
 };
 
 // Icônes personnalisées
-const createCustomIcon = (emoji: string, bgColor: string) => {
+const createCustomIcon = (label: string, bgColor: string) => {
   return L.divIcon({
     className: 'custom-icon',
-    html: `<div style="background-color: ${bgColor}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid white;">${emoji}</div>`,
+    html: `<div style="background-color: ${bgColor}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid white;">${label}</div>`,
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
 };
 
-const restaurantIcon = createCustomIcon('🏪', '#10b981'); // Emerald 500
-const clientIcon = createCustomIcon('🏠', '#3b82f6'); // Blue 500
-const livreurIcon = createCustomIcon('🚴', '#f59e0b'); // Amber 500
+const restaurantIcon = createCustomIcon('R', '#10b981'); // Emerald 500
+const clientIcon = createCustomIcon('C', '#3b82f6'); // Blue 500
+const livreurIcon = createCustomIcon('L', '#f59e0b'); // Amber 500
 
 export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPLETE' }: DeliveryMapProps) {
   const [route, setRoute] = useState<[number, number][]>([]);

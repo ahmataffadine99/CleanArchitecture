@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, X, Heart } from 'lucide-react';
+import { ArrowLeft, Plus, X, Heart, MapPin } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useFavoriteStore } from '../store/favoriteStore';
@@ -96,7 +96,7 @@ export default function RestaurantDetails() {
           <div>
             <h1 className="text-4xl font-extrabold mb-2">{restaurant.nom}</h1>
             <p className="text-slate-300 flex items-center gap-2">
-              📍 {restaurant.adresse}
+              <MapPin size={16} className="text-slate-300 shrink-0" /> {restaurant.adresse}
             </p>
           </div>
           <button 
