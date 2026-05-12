@@ -43,6 +43,15 @@ docker compose up -d --build
 | **API Express** | http://localhost:3000 | Core Engine |
 | **API NestJS** | http://localhost:3001 | Auth & Support |
 
+### Comptes de Test (Mot de passe par défaut : `password123`)
+
+| Rôle | Email | Utilisation |
+| :--- | :--- | :--- |
+| **Admin** | `admin@ecoeats.fr` | Gestion des comptes & statistiques |
+| **Client** | `client@gmail.com` | Passer des commandes |
+| **Restaurateur** | `resto@restaurant.fr` | Gérer le menu & workflow |
+| **Livreur** | `livreur@ecoeats.fr` | Effectuer les livraisons |
+
 ---
 
 ## Concepts Plug & Play Implémentés

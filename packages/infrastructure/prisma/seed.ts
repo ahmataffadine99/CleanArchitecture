@@ -1,163 +1,130 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Début du remplissage de la base de données (seeding)...");
+  const passwordHashed = await bcrypt.hash('password123', 10);
 
-  // 1. Créer un client
-  const client = await prisma.client.upsert({
-    where: { email: "jean.dupont@email.com" },
-    update: {},
-    create: {
-      id: "client-1",
-      nom: "Jean Dupont",
-      email: "jean.dupont@email.com",
-      adresse: "10 Rue de la Paix, 75000 Paris",
-    },
+  console.log('--- Nettoyage de la base de données ---');
+  await prisma.messageTicket.deleteMany();
+  await prisma.ticketSupport.deleteMany();
+  await prisma.articleCommande.deleteMany();
+  await prisma.facture.deleteMany();
+  await prisma.commande.deleteMany();
+  await prisma.platMenu.deleteMany();
+  await prisma.restaurant.deleteMany();
+  await prisma.client.deleteMany();
+  await prisma.livreur.deleteMany();
+  await prisma.compteUtilisateur.deleteMany();
+
+  console.log('--- Création des comptes ---');
+
+  // 1. ADMIN
+  await prisma.compteUtilisateur.create({
+    data: {
+      id: 'admin-id-1',
+      email: 'admin@ecoeats.fr',
+      motDePasseHache: passwordHashed,
+      role: 'ADMIN',
+      profilId: 'admin-id-1'
+    }
   });
-  console.log(" Client créé :", client.nom);
 
-  // 2. Créer un restaurant
-  const restaurant = await prisma.restaurant.upsert({
-    where: { id: "resto-1" },
-    update: {},
-    create: {
-      id: "resto-1",
-      nom: "Le Bon Burger Éthique",
-      adresse: "15 Avenue des Champs-Élysées, 75008 Paris",
+  // 2. CLIENT
+  await prisma.compteUtilisateur.create({
+    data: {
+      id: 'client-id-1',
+      email: 'client@gmail.com',
+      motDePasseHache: passwordHashed,
+      role: 'CLIENT',
+      profilId: 'client-id-1'
+    }
+  });
+  await prisma.client.create({
+    data: {
+      id: 'client-id-1',
+      nom: 'Jean Client',
+      email: 'client@gmail.com',
+      adresse: '10 Rue de la Paix, Paris',
+      pointsFidelite: 50
+    }
+  });
+
+  // 3. RESTAURATEUR
+  await prisma.compteUtilisateur.create({
+    data: {
+      id: 'resto-id-1',
+      email: 'resto@restaurant.fr',
+      motDePasseHache: passwordHashed,
+      role: 'RESTAURATEUR',
+      profilId: 'resto-id-1'
+    }
+  });
+  const restaurant = await prisma.restaurant.create({
+    data: {
+      id: 'resto-id-1',
+      nom: 'Le Gourmet Français',
+      adresse: '5 Avenue des Champs-Élysées, Paris',
       latitude: 48.8698,
       longitude: 2.3075,
-      proprietaireId: "proprio-1",
-    },
-  });
-  console.log("🍔 Restaurant créé :", restaurant.nom);
-
-  // 3. Ajouter des plats au menu de ce restaurant
-  await prisma.platMenu.upsert({
-    where: { id: "plat-1" },
-    update: {},
-    create: {
-      id: "plat-1",
-      nom: "Burger Classique Bio",
-      description: "Pain artisanal, steak haché bio, cheddar affiné",
-      prixCentimes: 1200, // 12,00€
-      allergenes: ["Gluten", "Lactose"],
-      stockJournalier: 50,
-      restaurantId: restaurant.id,
-    },
+      proprietaireId: 'resto-id-1',
+      imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+      categories: ['FRANCAIS', 'GASTRONOMIE']
+    }
   });
 
-  await prisma.platMenu.upsert({
-    where: { id: "plat-2" },
-    update: {},
-    create: {
-      id: "plat-2",
-      nom: "Frites Maison",
-      description: "Pommes de terre d'Ile de France, sauce secrète",
-      prixCentimes: 450, // 4,50€
-      allergenes: [],
-      stockJournalier: 100,
-      restaurantId: restaurant.id,
-    },
-  });
-  console.log("Plats menus créés.");
-
-  // --- RESTAURANT 2 : Pizzeria Solidaire ---
-  const resto2 = await prisma.restaurant.upsert({
-    where: { id: "resto-2" },
-    update: {},
-    create: {
-      id: "resto-2",
-      nom: "La Pizzeria Solidaire",
-      adresse: "42 Rue de la République, 69002 Lyon",
-      latitude: 45.7640,
-      longitude: 4.8357,
-      proprietaireId: "proprio-2",
-    },
-  });
-  console.log("Restaurant créé :", resto2.nom);
-
-  await prisma.platMenu.upsert({
-    where: { id: "plat-3" },
-    update: {},
-    create: {
-      id: "plat-3",
-      nom: "Pizza Margherita Locale",
-      description: "Tomates anciennes de la ferme, Mozzarella artisanale, basilic frais",
-      prixCentimes: 1050, // 10,50€
-      allergenes: ["Gluten", "Lactose"],
-      stockJournalier: 30,
-      restaurantId: resto2.id,
-    },
+  await prisma.platMenu.createMany({
+    data: [
+      {
+        id: 'plat-1',
+        nom: 'Burger Gourmet',
+        description: 'Bœuf charolais, comté affiné, sauce maison.',
+        prixCentimes: 1550,
+        stockJournalier: 20,
+        restaurantId: restaurant.id,
+        categorie: 'PLAT'
+      },
+      {
+        id: 'plat-2',
+        nom: 'Salade César',
+        description: 'Poulet grillé, croûtons, parmesan.',
+        prixCentimes: 1200,
+        stockJournalier: 15,
+        restaurantId: restaurant.id,
+        categorie: 'PLAT'
+      }
+    ]
   });
 
-  await prisma.platMenu.upsert({
-    where: { id: "plat-4" },
-    update: {},
-    create: {
-      id: "plat-4",
-      nom: "Tiramisu au café équitable",
-      description: "Véritable tiramisu italien, café bio pur arabica",
-      prixCentimes: 600, // 6,00€
-      allergenes: ["Gluten", "Lactose", "Œufs"],
-      stockJournalier: 20,
-      restaurantId: resto2.id,
-    },
+  // 4. LIVREUR
+  await prisma.compteUtilisateur.create({
+    data: {
+      id: 'livreur-id-1',
+      email: 'livreur@ecoeats.fr',
+      motDePasseHache: passwordHashed,
+      role: 'LIVREUR',
+      profilId: 'livreur-id-1'
+    }
+  });
+  await prisma.livreur.create({
+    data: {
+      id: 'livreur-id-1',
+      nom: 'Marc Rapide',
+      telephone: '0601020304',
+      latitude: 48.8566,
+      longitude: 2.3522,
+      statut: 'DISPONIBLE',
+      estExpert: true
+    }
   });
 
-  // --- RESTAURANT 3 : Sushi Éco ---
-  const resto3 = await prisma.restaurant.upsert({
-    where: { id: "resto-3" },
-    update: {},
-    create: {
-      id: "resto-3",
-      nom: "Sushi Éco",
-      adresse: "12 Rue Sainte-Catherine, 33000 Bordeaux",
-      latitude: 44.8378,
-      longitude: -0.5792,
-      proprietaireId: "proprio-3",
-    },
-  });
-  console.log(" Restaurant créé :", resto3.nom);
-
-  await prisma.platMenu.upsert({
-    where: { id: "plat-5" },
-    update: {},
-    create: {
-      id: "plat-5",
-      nom: "Plateau Maki & Sushi (12 pcs)",
-      description: "Saumon label rouge, thon albacore pêche responsable, riz vinaigré, gingembre bio",
-      prixCentimes: 1690, // 16,90€
-      allergenes: ["Poisson", "Soja"],
-      stockJournalier: 40,
-      restaurantId: resto3.id,
-    },
-  });
-
-  // 4. Créer un livreur disponible
-  const livreur = await prisma.livreur.upsert({
-    where: { id: "livreur-1" },
-    update: {},
-    create: {
-      id: "livreur-1",
-      nom: "Alice Livraisons",
-      telephone: "0601020304",
-      latitude: 48.8700,
-      longitude: 2.3080, // Très proche du restaurant
-      statut: "DISPONIBLE",
-      portefeuilleCentimes: 0,
-      estExpert: true,
-    },
-  });
-  console.log(" Livreur créé :", livreur.nom);
-
-  console.log("Seeding terminé avec succès !");
+  console.log('--- Seed terminé avec succès ! ---');
 }
 
 main()
   .catch((e) => {
-    console.error("Erreur lors du seeding :", e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {
