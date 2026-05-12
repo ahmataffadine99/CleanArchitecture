@@ -39,7 +39,11 @@ export class AttribuerLivraisonUseCase {
       restaurant.id
     );
 
-    livreurChoisi.prendreEnCharge(commande.id);
+    if (!livreurChoisi) {
+      throw new Error("Aucun livreur disponible pour le moment à proximité du restaurant.");
+    }
+
+    livreurChoisi.prendreEnCharge(commande.id, restaurant.id);
     commande.assignerLivreur(livreurChoisi.id);
 
     await this.depotLivreurs.sauvegarder(livreurChoisi);

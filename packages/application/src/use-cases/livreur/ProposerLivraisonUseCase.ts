@@ -21,8 +21,9 @@ export class ProposerLivraisonUseCase {
     private readonly cartographie: ServiceCartographie
   ) {}
 
-  async executer(req: Req): Promise<Livreur> {
+  async executer(req: Req): Promise<Livreur | undefined> {
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
+    if (!commande) throw new Error("Commande introuvable");
 
     const statut = commande.getStatut();
     if (statut !== StatutCommande.PRETE && statut !== StatutCommande.EN_PREPARATION) {
@@ -30,6 +31,7 @@ export class ProposerLivraisonUseCase {
     }
 
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
+    if (!restaurant) throw new Error("Restaurant introuvable");
     const livreursEligibles = await this.depotLivreurs.listerEligiblesPourRestaurant(commande.restaurantId);
 
     // Filtrer les livreurs par proximité du restaurant
