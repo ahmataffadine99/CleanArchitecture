@@ -92,7 +92,7 @@ export default function GlobalSearch({
       </div>
 
       {isOpen && (addressResults.length > 0 || restaurantResults.length > 0) && (
-        <ul className="absolute z-[100] w-full mt-4 bg-white border border-slate-100 rounded-3xl shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-300">
+        <ul className="absolute z-[9999] w-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-3xl shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-300">
           
           {/* Restaurants Section */}
           {restaurantResults.length > 0 && (

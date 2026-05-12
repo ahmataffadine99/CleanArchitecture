@@ -35,7 +35,7 @@ async function main() {
 
   // 3. RESTAURATEURS & RESTAURANTS
   
-  // RESTO 1 : Le Gourmet Français
+  // RESTO 1 : Le Gourmet Français (PARIS 12)
   const resto1Id = 'resto-id-1';
   await prisma.compteUtilisateur.create({
     data: { id: resto1Id, email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto1Id }
@@ -44,9 +44,9 @@ async function main() {
     data: {
       id: resto1Id,
       nom: 'Le Gourmet Français',
-      adresse: '5 Avenue des Champs-Élysées, 75008',
-      latitude: 48.8698,
-      longitude: 2.3075,
+      adresse: '12 Avenue Daumesnil, 75012 Paris',
+      latitude: 48.8475,
+      longitude: 2.3755,
       proprietaireId: resto1Id,
       imageUrl: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop',
       categories: ['burger', 'français']
@@ -62,7 +62,7 @@ async function main() {
     ]
   });
 
-  // RESTO 2 : Bella Italia
+  // RESTO 2 : Bella Italia (PARIS 15)
   const resto2Id = 'resto-id-2';
   await prisma.compteUtilisateur.create({
     data: { id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id }
@@ -71,7 +71,7 @@ async function main() {
     data: {
       id: resto2Id,
       nom: 'Bella Italia',
-      adresse: '12 Rue de la Roquette, 75015',
+      adresse: '12 Rue de la Roquette, 75015 Paris',
       latitude: 48.8546,
       longitude: 2.3724,
       proprietaireId: resto2Id,
@@ -88,7 +88,7 @@ async function main() {
     ]
   });
 
-  // RESTO 3 : Healthy Garden
+  // RESTO 3 : Healthy Garden (PARIS 11)
   const resto3Id = 'resto-id-3';
   await prisma.compteUtilisateur.create({
     data: { id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id }
@@ -97,7 +97,7 @@ async function main() {
     data: {
       id: resto3Id,
       nom: 'Healthy Garden',
-      adresse: '24 Boulevard Voltaire, 75012',
+      adresse: '24 Boulevard Voltaire, 75011 Paris',
       latitude: 48.8621,
       longitude: 2.3685,
       proprietaireId: resto3Id,
