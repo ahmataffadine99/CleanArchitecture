@@ -67,7 +67,7 @@ export class DepotCommandesPrisma implements DepotCommandes {
       where: { restaurantId },
       include: { articles: true },
     });
-    return rows.map((r) => this.reconstruire(r));
+    return rows.map((r: any) => this.reconstruire(r));
   }
 
   async trouverParClient(clientId: string): Promise<Commande[]> {
@@ -75,7 +75,7 @@ export class DepotCommandesPrisma implements DepotCommandes {
       where: { clientId },
       include: { articles: true },
     });
-    return rows.map((r) => this.reconstruire(r));
+    return rows.map((r: any) => this.reconstruire(r));
   }
 
   async trouverParLivreur(livreurId: string): Promise<Commande[]> {
@@ -84,14 +84,14 @@ export class DepotCommandesPrisma implements DepotCommandes {
       include: { articles: true },
       orderBy: { creeLe: 'desc' }
     });
-    return rows.map((r) => this.reconstruire(r));
+    return rows.map((r: any) => this.reconstruire(r));
   }
 
   async trouverTout(): Promise<Commande[]> {
     const rows = await this.prisma.commande.findMany({
       include: { articles: true },
     });
-    return rows.map((r) => this.reconstruire(r));
+    return rows.map((r: any) => this.reconstruire(r));
   }
 
   async trouverCommandesSansLivreur(): Promise<Commande[]> {
@@ -102,7 +102,7 @@ export class DepotCommandesPrisma implements DepotCommandes {
       },
       include: { articles: true },
     });
-    return rows.map((r) => this.reconstruire(r));
+    return rows.map((r: any) => this.reconstruire(r));
   }
 
   private reconstruire(row: any): Commande {

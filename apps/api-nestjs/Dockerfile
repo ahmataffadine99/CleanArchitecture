@@ -6,6 +6,8 @@ COPY . .
 
 RUN npm install
 
+RUN npx prisma generate --schema=packages/infrastructure/prisma/schema.prisma
+
 RUN npm run build --workspace=@ecoeats/domain
 RUN npm run build --workspace=@ecoeats/application
 RUN npm run build --workspace=@ecoeats/infrastructure

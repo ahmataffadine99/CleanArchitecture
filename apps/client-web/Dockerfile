@@ -6,7 +6,8 @@ COPY . .
 
 RUN npm install
 
-# Même pour les frontends, on build les packages pour garantir la cohérence des types
+RUN npx prisma generate --schema=packages/infrastructure/prisma/schema.prisma
+
 RUN npm run build --workspace=@ecoeats/domain
 RUN npm run build --workspace=@ecoeats/application
 RUN npm run build --workspace=@ecoeats/infrastructure
