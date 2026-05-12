@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import RestaurantCard from '../components/RestaurantCard';
-import AddressAutocomplete from '../components/AddressAutocomplete';
+import GlobalSearch from '../components/GlobalSearch';
 import { 
   Utensils, Pizza, Coffee, Beef, 
   Salad, Dessert, Sandwich, ArrowRight, Sparkles, Fish
@@ -103,13 +103,9 @@ export default function Home() {
           </h1>
 
           <div className="glass max-w-2xl mx-auto rounded-3xl md:rounded-[2.5rem] p-2 flex flex-col md:flex-row items-center group focus-within:ring-4 focus-within:ring-emerald-500/20 transition-all">
-            <AddressAutocomplete 
-              value={address}
-              onChange={setAddress}
-              onSelect={handleAddressSelect}
-              placeholder="Saisissez votre adresse..."
+            <GlobalSearch 
+              onAddressSelect={handleAddressSelect}
               className="flex-1 w-full"
-              inputClassName="!bg-transparent !border-0 !shadow-none !pl-4 focus:ring-0"
             />
             <button 
               onClick={handleFind}
