@@ -22,8 +22,13 @@ export class TerminerLivraisonUseCase {
 
   async executer(req: Req): Promise<{ livreur: Livreur; gains: Money }> {
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
+    if (!commande) throw new Error("Commande introuvable");
+
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
+    if (!livreur) throw new Error("Livreur introuvable");
+
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
+    if (!restaurant) throw new Error("Restaurant introuvable");
 
     // Calcul distance restaurant → client (réelle)
     const distanceKm = this.cartographie.calculerDistanceKm(

@@ -29,14 +29,14 @@ export class ListerCommandesRestaurantUseCase {
         if (cmd.getLivreurId() && this.depotLivreurs) {
           try {
             const l = await this.depotLivreurs.trouverParId(cmd.getLivreurId()!);
-            livreurNom = l.nom;
+            if (l) livreurNom = l.nom;
           } catch (_) {}
         }
 
         return {
           ...cmd,
-          clientNom: client.nom,
-          clientTelephone: (client as any).telephone || 'Non renseigné',
+          clientNom: client?.nom || 'Client Inconnu',
+          clientTelephone: (client as any)?.telephone || 'Non renseigné',
           livreurNom,
           statut: cmd.getStatut(),
           creeLe: cmd.getCreeLe(),

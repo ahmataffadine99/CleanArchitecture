@@ -14,7 +14,10 @@ export class AccepterLivraisonUseCase {
 
   async executer(req: Req): Promise<void> {
     const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
+    if (!livreur) throw new Error("Livreur introuvable");
+
     const commande = await this.depotCommandes.trouverParId(req.commandeId);
+    if (!commande) throw new Error("Commande introuvable");
 
     livreur.accepterProposition(req.commandeId, commande.restaurantId);
     commande.assignerLivreur(livreur.id);

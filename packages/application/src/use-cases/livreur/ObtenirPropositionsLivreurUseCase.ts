@@ -25,12 +25,17 @@ export class ObtenirPropositionsLivreurUseCase {
 
   async executer(livreurId: string): Promise<PropositionDetaillee[]> {
     const livreur = await this.depotLivreurs.trouverParId(livreurId);
+    if (!livreur) return [];
+    
     const details: PropositionDetaillee[] = [];
 
     for (const commandeId of livreur.getPropositionsIds()) {
       try {
         const commande = await this.depotCommandes.trouverParId(commandeId);
+        if (!commande) continue;
+
         const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
+        if (!restaurant) continue;
         
         const distanceApproche = this.cartographie.calculerDistanceKm(livreur.position, restaurant.position);
         const distanceLivraison = this.cartographie.calculerDistanceKm(restaurant.position, commande.getPositionLivraison());
