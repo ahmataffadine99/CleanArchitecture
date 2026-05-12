@@ -15,4 +15,4 @@ RUN npm run build --workspace=@ecoeats/interface
 
 EXPOSE 3001
 
-CMD ["npm", "run", "dev", "--workspace=apps/api-nestjs"]
+CMD ["npm", "run", "start:dev", "--workspace=apps/api-nestjs"]
