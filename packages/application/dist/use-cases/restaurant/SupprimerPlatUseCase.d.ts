@@ -4,4 +4,3 @@ export declare class SupprimerPlatUseCase {
     constructor(depotPlats: DepotPlats);
     executer(platId: string): Promise<void>;
 }
-//# sourceMappingURL=SupprimerPlatUseCase.d.ts.map

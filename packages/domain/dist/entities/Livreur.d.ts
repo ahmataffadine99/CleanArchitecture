@@ -27,4 +27,3 @@ export declare class Livreur {
     accepterProposition(commandeId: string, restaurantId: string): void;
     refuserProposition(commandeId: string): void;
 }
-//# sourceMappingURL=Livreur.d.ts.map

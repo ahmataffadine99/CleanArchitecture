@@ -18,4 +18,3 @@ export declare class AttribuerLivraisonUseCase {
     executer(req: Req): Promise<Resultat>;
 }
 export {};
-//# sourceMappingURL=AttribuerLivraisonUseCase.d.ts.map

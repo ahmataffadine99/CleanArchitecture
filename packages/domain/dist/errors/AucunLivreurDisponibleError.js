@@ -10,4 +10,3 @@ class AucunLivreurDisponibleError extends ErreurMetier_1.ErreurMetier {
     restaurantId;
 }
 exports.AucunLivreurDisponibleError = AucunLivreurDisponibleError;
-//# sourceMappingURL=AucunLivreurDisponibleError.js.map

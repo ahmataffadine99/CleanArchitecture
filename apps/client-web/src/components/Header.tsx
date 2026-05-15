@@ -40,7 +40,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          
           <Link to="/" className="flex items-center gap-2 cursor-pointer group">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <UtensilsCrossed size={22} strokeWidth={2} />
@@ -50,7 +50,7 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Navigation - Right */}
+          
           <div className="flex items-center gap-x-4">
             {user ? (
               <div className="relative" ref={dropdownRef}>

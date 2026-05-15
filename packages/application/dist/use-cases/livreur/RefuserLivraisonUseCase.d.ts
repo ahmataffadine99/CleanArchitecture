@@ -9,4 +9,3 @@ export declare class RefuserLivraisonUseCase {
     executer(req: Req): Promise<void>;
 }
 export {};
-//# sourceMappingURL=RefuserLivraisonUseCase.d.ts.map

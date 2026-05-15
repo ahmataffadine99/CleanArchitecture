@@ -10,4 +10,3 @@ export declare class DepotRestaurantsPrisma implements DepotRestaurants {
     trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null>;
     private mapToEntity;
 }
-//# sourceMappingURL=DepotRestaurantsPrisma.d.ts.map

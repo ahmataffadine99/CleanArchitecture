@@ -19,4 +19,3 @@ export declare class ConnexionUseCase {
     executer(req: Req): Promise<Res>;
 }
 export {};
-//# sourceMappingURL=ConnexionUseCase.d.ts.map

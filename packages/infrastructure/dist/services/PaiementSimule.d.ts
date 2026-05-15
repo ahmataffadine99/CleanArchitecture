@@ -5,4 +5,3 @@ export declare class PaiementSimule implements ServicePaiement {
         transactionId: string;
     }>;
 }
-//# sourceMappingURL=PaiementSimule.d.ts.map

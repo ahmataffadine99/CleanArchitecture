@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-// Extension de l'interface Request d'Express pour y stocker les infos de l'utilisateur connecté
 declare global {
   namespace Express {
     interface Request {
@@ -40,7 +39,6 @@ export function creerAuthMiddleware(secretJwt: string) {
   };
 }
 
-// Helper pour vérifier le rôle d'une route spécifique
 export function requireRole(role: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user || req.user.role !== role) {

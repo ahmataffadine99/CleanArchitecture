@@ -2,10 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalculPrixService = void 0;
 const Money_1 = require("../value-objects/Money");
-// Formule : prix plats + frais livraison (0.50€/km) + frais service (10% du sous-total)
 class CalculPrixService {
-    static TARIF_KM = 0.5; // euros par km
-    static TAUX_FRAIS_SERVICE = 0.10; // 10%
+    static TARIF_KM = 0.5;
+    static TAUX_FRAIS_SERVICE = 0.10;
     calculerFraisLivraison(distanceKm) {
         return Money_1.Money.fromEuros(distanceKm * CalculPrixService.TARIF_KM);
     }
@@ -17,12 +16,12 @@ class CalculPrixService {
     }
     getTauxReduction(points) {
         if (points >= 250)
-            return 0.15; // Platine 15%
+            return 0.15;
         if (points >= 100)
-            return 0.10; // Or 10%
+            return 0.10;
         if (points >= 50)
-            return 0.05; // Argent 5%
-        return 0; // Bronze 0%
+            return 0.05;
+        return 0;
     }
     calculerTotal(articles, distanceKm, tauxReduction = 0) {
         const prixPlats = this.calculerSousTotalPlats(articles);
@@ -34,4 +33,3 @@ class CalculPrixService {
     }
 }
 exports.CalculPrixService = CalculPrixService;
-//# sourceMappingURL=CalculPrixService.js.map

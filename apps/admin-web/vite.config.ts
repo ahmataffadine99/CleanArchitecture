@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    port: 5176, // Port spécifique pour l'admin
+    port: 5176,
     proxy: {
       '/api': {
         target: 'http://api:3000',

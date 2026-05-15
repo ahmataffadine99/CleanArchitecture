@@ -1,6 +1,5 @@
 import { Coordonnees } from "../value-objects/Coordonnees";
 
-// Calcul de la distance à vol d'oiseau via la formule de Haversine
 export class CalculDistanceService {
   private static readonly RAYON_TERRE_KM = 6371;
 

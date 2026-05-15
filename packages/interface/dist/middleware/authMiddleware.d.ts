@@ -13,4 +13,3 @@ declare global {
 }
 export declare function creerAuthMiddleware(secretJwt: string): (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
 export declare function requireRole(role: string): (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
-//# sourceMappingURL=authMiddleware.d.ts.map

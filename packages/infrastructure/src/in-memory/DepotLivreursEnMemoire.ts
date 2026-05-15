@@ -19,7 +19,6 @@ export class DepotLivreursEnMemoire implements DepotLivreurs {
   }
 
   async listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]> {
-    // Dans la version en mémoire, on retourne tous les disponibles (pas de filtrage par secteur)
     return this.listerDisponibles();
   }
 

@@ -15,7 +15,6 @@ interface DeliveryMapProps {
   mode?: 'RECUPERATION' | 'LIVRAISON' | 'COMPLETE';
 }
 
-// Composant pour ajuster le zoom de la carte
 const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
   const map = useMap();
   useEffect(() => {
@@ -27,7 +26,7 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
     } else if (mode === 'LIVRAISON') {
       latLngs = [[client.latitude, client.longitude]];
       if (livreur) latLngs.push([livreur.latitude, livreur.longitude]);
-      else latLngs.push([restaurant.latitude, restaurant.longitude]); // Default fallback
+      else latLngs.push([restaurant.latitude, restaurant.longitude]);
     } else {
       latLngs = [
         [restaurant.latitude, restaurant.longitude],
@@ -48,7 +47,6 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
   return null;
 };
 
-// Icônes personnalisées
 const createCustomIcon = (label: string, bgColor: string) => {
   return L.divIcon({
     className: 'custom-icon',
@@ -58,15 +56,14 @@ const createCustomIcon = (label: string, bgColor: string) => {
   });
 };
 
-const restaurantIcon = createCustomIcon('R', '#10b981'); // Emerald 500
-const clientIcon = createCustomIcon('C', '#3b82f6'); // Blue 500
-const livreurIcon = createCustomIcon('L', '#f59e0b'); // Amber 500
+const restaurantIcon = createCustomIcon('R', '#10b981');
+const clientIcon = createCustomIcon('C', '#3b82f6');
+const livreurIcon = createCustomIcon('L', '#f59e0b');
 
 export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPLETE' }: DeliveryMapProps) {
   const [route, setRoute] = useState<[number, number][]>([]);
 
   useEffect(() => {
-    // Calcul de l'itinéraire OSRM (gratuit)
     const fetchRoute = async () => {
       try {
         let origin = restaurant;
@@ -85,7 +82,6 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
         const data = await res.json();
         if (data.routes && data.routes.length > 0) {
           const coordinates = data.routes[0].geometry.coordinates;
-          // OSRM retourne [lng, lat], Leaflet veut [lat, lng]
           const latLngs = coordinates.map((c: [number, number]) => [c[1], c[0]]);
           setRoute(latLngs);
         }
@@ -98,7 +94,7 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
 
   return (
     <div className="w-full h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-inner border mx-auto z-0" style={{ zIndex: 0 }}>
-      {/* On force zIndex 0 pour éviter le z-index 400 de leaflet qui passe au dessus des modals Tailwind */}
+      
       <MapContainer 
         center={[restaurant.latitude, restaurant.longitude]} 
         zoom={13} 

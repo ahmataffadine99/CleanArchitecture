@@ -11,4 +11,3 @@ export declare class DepotLivreursPrisma implements DepotLivreurs {
     retirerPropositionDeTous(commandeId: string): Promise<void>;
     private reconstruire;
 }
-//# sourceMappingURL=DepotLivreursPrisma.d.ts.map

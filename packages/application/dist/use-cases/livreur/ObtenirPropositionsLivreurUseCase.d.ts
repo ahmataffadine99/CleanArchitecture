@@ -20,4 +20,3 @@ export declare class ObtenirPropositionsLivreurUseCase {
     constructor(depotLivreurs: DepotLivreurs, depotCommandes: DepotCommandes, depotRestaurants: DepotRestaurants, cartographie: ServiceCartographie);
     executer(livreurId: string): Promise<PropositionDetaillee[]>;
 }
-//# sourceMappingURL=ObtenirPropositionsLivreurUseCase.d.ts.map

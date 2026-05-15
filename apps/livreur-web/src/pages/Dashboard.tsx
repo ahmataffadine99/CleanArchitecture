@@ -38,7 +38,6 @@ export default function Dashboard() {
         setLivreur(data);
         setIsOnline(data.statut !== 'INDISPONIBLE');
         
-        // Charger les détails des commandes en cours
         if (data.commandesEnCoursIds?.length > 0) {
           const details = await Promise.all(data.commandesEnCoursIds.map(async (id: string) => {
              const r = await fetch(`/api/commandes/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -222,7 +221,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
-      {/* Header */}
+      
       <header className="bg-white border-b border-slate-100 px-6 py-6 sticky top-0 z-10 shadow-sm">
         <div className="flex justify-between items-center max-w-lg mx-auto">
           <div className="flex items-center gap-4">
@@ -251,7 +250,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
+      
       <main className="max-w-lg mx-auto px-6 py-8 space-y-8">
         {error && (
           <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
@@ -260,7 +259,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Portefeuille */}
+        
         <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
           <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all duration-700"></div>
           <div className="flex items-center gap-3 text-slate-400 mb-2 relative z-10">
@@ -294,7 +293,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* État de Livraison */}
+        
         {!isOnline ? (
           <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 text-center space-y-4 shadow-sm">
             <div className="h-20 w-20 bg-slate-50 text-slate-300 rounded-[2rem] flex items-center justify-center mx-auto">
@@ -346,8 +345,8 @@ export default function Dashboard() {
                       <div className="bg-emerald-50 text-emerald-600 px-3 py-2 rounded-xl text-xs font-black flex flex-col items-end gap-1">
                          <span className="text-sm">+ {prop.montantLivraison.toFixed(2)} €</span>
                          <div className="flex flex-col items-end text-[9px] opacity-80 font-bold leading-tight uppercase tracking-tighter">
-                            <span>🔍 Approche: {prop.distanceApprocheKm} km</span>
-                            <span>📦 Livraison: {prop.distanceLivraisonKm} km</span>
+                            <span> Approche: {prop.distanceApprocheKm} km</span>
+                            <span> Livraison: {prop.distanceLivraisonKm} km</span>
                          </div>
                       </div>
                    </div>
@@ -447,11 +446,11 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* Affichage de la carte interactive de l'itinéraire */}
+                  
                   {cmd.restaurantPosition && cmd.clientPosition && (
                     <div className="h-[300px] w-full rounded-2xl overflow-hidden relative border border-slate-100 mt-2 shadow-inner">
                        <div className="absolute top-4 left-4 z-[400] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-xs font-black text-slate-800 shadow-lg border border-slate-100 flex items-center gap-2">
-                         {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? '📍 Aller chercher la commande' : '📍 Livrer au client'}
+                         {cmd.statut === 'PRETE' || cmd.statut === 'EN_PREPARATION' ? ' Aller chercher la commande' : ' Livrer au client'}
                        </div>
                        <DeliveryMap 
                          restaurant={cmd.restaurantPosition}
@@ -466,7 +465,7 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Logout */}
+      
       <footer className="max-w-lg mx-auto px-6 mt-12 pb-12">
         <button 
           onClick={logout}
@@ -476,7 +475,7 @@ export default function Dashboard() {
         </button>
       </footer>
 
-      {/* Modal Historique du portefeuille */}
+      
       {showHistoryModal && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowHistoryModal(false)}></div>
@@ -531,7 +530,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal Avis */}
+      
       {showAvisModal && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowAvisModal(false)}></div>
@@ -587,7 +586,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal Support */}
+      
       {showSupportModal && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => { setShowSupportModal(false); setSelectedTicket(null); setIsCreatingTicket(false); }}></div>

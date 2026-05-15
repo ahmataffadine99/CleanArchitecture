@@ -7,4 +7,3 @@ export declare class DepotLivreursEnMemoire implements DepotLivreurs {
     listerDisponibles(): Promise<Livreur[]>;
     retirerPropositionDeTous(commandeId: string): Promise<void>;
 }
-//# sourceMappingURL=DepotLivreursEnMemoire.d.ts.map

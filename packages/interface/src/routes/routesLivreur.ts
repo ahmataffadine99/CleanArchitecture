@@ -28,7 +28,6 @@ export function creerRoutesLivreur(deps: {
 }): Router {
   const router = Router();
 
-  // GET /livreurs/:id/propositions
   router.get("/livreurs/:id/propositions", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const details = await deps.obtenirPropositions.executer(req.params.id);
@@ -36,7 +35,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /livreurs/:id/historique
   router.get("/livreurs/:id/historique", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const historique = await deps.listerHistorique.executer(req.params.id);
@@ -44,7 +42,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /livreurs/:id/avis
   router.get("/livreurs/:id/avis", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const avis = await deps.obtenirAvis.executer(req.params.id);
@@ -52,7 +49,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /livreurs/:id
   router.get("/livreurs/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const livreur = await deps.obtenirLivreur.executer(req.params.id);
@@ -68,7 +64,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // PATCH /livreurs/:id/statut
   router.patch("/livreurs/:id/statut", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const livreur = await deps.changerStatut.executer({
@@ -79,7 +74,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/attribuer-livreur
   router.post("/commandes/:id/attribuer-livreur", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { commande, livreur } = await deps.attribuerLivraison.executer({ commandeId: req.params.id });
@@ -91,7 +85,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/livree
   router.post("/commandes/:id/livree", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { livreur, gains } = await deps.terminerLivraison.executer({
@@ -107,7 +100,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /livreurs/:id/propositions/:commandeId/accepter
   router.post("/livreurs/:id/propositions/:commandeId/accepter", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.accepterLivraison.executer({
@@ -121,7 +113,6 @@ export function creerRoutesLivreur(deps: {
     }
   });
 
-  // POST /livreurs/:id/propositions/:commandeId/refuser
   router.post("/livreurs/:id/propositions/:commandeId/refuser", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.refuserLivraison.executer({
@@ -132,7 +123,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/recuperer
   router.post("/commandes/:id/recuperer", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.recupererCommande.executer({
@@ -143,7 +133,6 @@ export function creerRoutesLivreur(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /commandes/:id
   router.get("/commandes/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commande = await deps.obtenirCommande.executer(req.params.id);

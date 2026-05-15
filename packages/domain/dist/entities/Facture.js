@@ -41,4 +41,3 @@ class Facture {
     }
 }
 exports.Facture = Facture;
-//# sourceMappingURL=Facture.js.map

@@ -11,4 +11,3 @@ export declare class RecupererCommandeUseCase {
     executer(req: Req): Promise<void>;
 }
 export {};
-//# sourceMappingURL=RecupererCommandeUseCase.d.ts.map

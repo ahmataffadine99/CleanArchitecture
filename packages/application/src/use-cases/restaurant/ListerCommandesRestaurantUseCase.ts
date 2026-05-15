@@ -13,7 +13,6 @@ export class ListerCommandesRestaurantUseCase {
   async executer(restaurantId: string): Promise<any[]> {
     let commandes = [];
     if (restaurantId === "all") {
-      // Pour une démo multi-resto sans login
       commandes = await this.depotCommandes.trouverTout(); 
     } else {
       commandes = await this.depotCommandes.trouverParRestaurant(restaurantId);

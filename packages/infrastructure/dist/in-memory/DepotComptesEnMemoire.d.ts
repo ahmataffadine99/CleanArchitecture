@@ -6,4 +6,3 @@ export declare class DepotComptesEnMemoire implements DepotComptes {
     trouverParEmail(email: string): Promise<CompteUtilisateur | null>;
     trouverParId(id: string): Promise<CompteUtilisateur | null>;
 }
-//# sourceMappingURL=DepotComptesEnMemoire.d.ts.map

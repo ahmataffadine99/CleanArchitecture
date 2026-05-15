@@ -15,7 +15,7 @@ export class DepotFavorisPrisma implements DepotFavoris {
   async retirerRestaurant(clientId: string, restaurantId: string): Promise<void> {
     await this.prisma.favoriRestaurant.delete({
       where: { clientId_restaurantId: { clientId, restaurantId } }
-    }).catch(() => {}); // Ignorer si déjà supprimé
+    }).catch(() => {});
   }
 
   async listerRestaurants(clientId: string): Promise<string[]> {

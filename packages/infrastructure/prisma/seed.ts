@@ -20,12 +20,10 @@ async function main() {
 
   console.log('--- Création des comptes ---');
 
-  // 1. ADMIN
   await prisma.compteUtilisateur.create({
     data: { id: 'admin-id-1', email: 'admin@ecoeats.fr', motDePasseHache: passwordHashed, role: 'ADMIN', profilId: 'admin-id-1' }
   });
 
-  // 2. CLIENT
   await prisma.compteUtilisateur.create({
     data: { id: 'client-id-1', email: 'client@ecoeats.fr', motDePasseHache: passwordHashed, role: 'CLIENT', profilId: 'client-id-1' }
   });
@@ -33,9 +31,7 @@ async function main() {
     data: { id: 'client-id-1', nom: 'Jean Client', email: 'client@ecoeats.fr', adresse: '1 Place de la Bastille, 75004 Paris', pointsFidelite: 50 }
   });
 
-  // 3. RESTAURATEURS & RESTAURANTS
   
-  // RESTO 1 : Le Gourmet Français (BASTILLE)
   const resto1Id = 'resto-id-1';
   await prisma.compteUtilisateur.create({
     data: { id: resto1Id, email: 'resto@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto1Id }
@@ -62,7 +58,6 @@ async function main() {
     ]
   });
 
-  // RESTO 2 : Bella Italia (ROQUETTE - BASTILLE)
   const resto2Id = 'resto-id-2';
   await prisma.compteUtilisateur.create({
     data: { id: resto2Id, email: 'italia@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto2Id }
@@ -88,7 +83,6 @@ async function main() {
     ]
   });
 
-  // RESTO 3 : Healthy Garden (RICHARD LENOIR - BASTILLE)
   const resto3Id = 'resto-id-3';
   await prisma.compteUtilisateur.create({
     data: { id: resto3Id, email: 'healthy@ecoeats.fr', motDePasseHache: passwordHashed, role: 'RESTAURATEUR', profilId: resto3Id }
@@ -114,7 +108,6 @@ async function main() {
     ]
   });
 
-  // 4. LIVREUR
   await prisma.compteUtilisateur.create({
     data: { id: 'livreur-id-1', email: 'livreur@ecoeats.fr', motDePasseHache: passwordHashed, role: 'LIVREUR', profilId: 'livreur-id-1' }
   });

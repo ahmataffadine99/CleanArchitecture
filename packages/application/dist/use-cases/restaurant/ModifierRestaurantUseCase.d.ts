@@ -13,4 +13,3 @@ export declare class ModifierRestaurantUseCase {
     executer(req: Req): Promise<void>;
 }
 export {};
-//# sourceMappingURL=ModifierRestaurantUseCase.d.ts.map

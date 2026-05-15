@@ -5,4 +5,3 @@ export declare class DepotFacturesEnMemoire implements DepotFactures {
     sauvegarder(facture: Facture): Promise<void>;
     trouverParCommande(commandeId: string): Promise<Facture | null>;
 }
-//# sourceMappingURL=DepotFacturesEnMemoire.d.ts.map

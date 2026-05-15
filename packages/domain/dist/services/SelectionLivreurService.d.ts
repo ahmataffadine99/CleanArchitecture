@@ -4,4 +4,3 @@ export declare class SelectionLivreurService {
     private readonly calculDistance;
     trouverLePlusProche(livreurs: Livreur[], positionRestaurant: Coordonnees, restaurantId: string): Livreur;
 }
-//# sourceMappingURL=SelectionLivreurService.d.ts.map

@@ -10,4 +10,3 @@ export declare class DepotCommandesEnMemoire implements DepotCommandes {
     trouverTout(): Promise<Commande[]>;
     trouverCommandesSansLivreur(): Promise<Commande[]>;
 }
-//# sourceMappingURL=DepotCommandesEnMemoire.d.ts.map

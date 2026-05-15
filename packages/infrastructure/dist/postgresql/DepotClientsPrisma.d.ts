@@ -7,4 +7,3 @@ export declare class DepotClientsPrisma implements DepotClients {
     sauvegarder(client: Client): Promise<void>;
     trouverParId(id: string): Promise<Client>;
 }
-//# sourceMappingURL=DepotClientsPrisma.d.ts.map

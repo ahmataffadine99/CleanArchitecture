@@ -26,7 +26,6 @@ export class ObtenirStatsGlobalesUseCase {
     const revenuTotalCentimes = livrees
       .reduce((acc: number, c: any) => acc + c.prixTotal().enCentimes(), 0);
 
-    // Calcul de l'impact écologique (CO2 économisé en Kg)
     const totalCO2Grammes = livrees.reduce((acc: number, c: any) => {
       const resto = restaurants.find(r => r.id === c.restaurantId);
       if (!resto) return acc;
@@ -65,11 +64,11 @@ export class ObtenirStatsGlobalesUseCase {
       nbCommandes: commandes.length,
       nbRestaurants: restaurants.length,
       revenuTotalEuros: revenuTotalCentimes / 100,
-      co2TotalKg: Math.round(totalCO2Grammes / 100) / 10, // En Kg avec 1 décimale
+      co2TotalKg: Math.round(totalCO2Grammes / 100) / 10,
       tendances: {
         commandes: tendanceCommandes,
         nouveauxComptes: nouveauxComptesHier,
-        restaurantsSemaine: restaurants.length, // Simplifié
+        restaurantsSemaine: restaurants.length,
         enAttente: commandesEnAttente,
         ticketsOuverts: ticketsOuverts
       },

@@ -6,4 +6,3 @@ export declare class ListerHistoriqueLivreurUseCase {
     constructor(depotCommandes: DepotCommandes, depotRestaurants: DepotRestaurants);
     executer(livreurId: string): Promise<any[]>;
 }
-//# sourceMappingURL=ListerHistoriqueLivreurUseCase.d.ts.map

@@ -25,20 +25,16 @@ export class ConnexionUseCase {
   ) { }
 
   async executer(req: Req): Promise<Res> {
-    // Trouver le compte par email
     const compte = await this.depotComptes.trouverParEmail(req.email);
     if (!compte) throw new IdentifiantsInvalidesError();
 
-    // Vérifier le mot de passe contre le hash
     const motDePasseValide = await bcrypt.compare(req.motDePasse, compte.motDePasseHache);
     if (!motDePasseValide) throw new IdentifiantsInvalidesError();
 
-    // Vérifier si le compte est actif
     if (!compte.estActif) {
       throw new CompteSuspenduError();
     }
 
-    // Générer le token JWT avec les infos utiles
     const token = jwt.sign(
       {
         sub: compte.id,

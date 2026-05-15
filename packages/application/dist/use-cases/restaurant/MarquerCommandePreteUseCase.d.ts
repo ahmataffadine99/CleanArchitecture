@@ -7,4 +7,3 @@ export declare class MarquerCommandePreteUseCase {
     constructor(depotCommandes: DepotCommandes, proposerLivraison: ProposerLivraisonUseCase);
     executer(commandeId: string): Promise<Commande>;
 }
-//# sourceMappingURL=MarquerCommandePreteUseCase.d.ts.map

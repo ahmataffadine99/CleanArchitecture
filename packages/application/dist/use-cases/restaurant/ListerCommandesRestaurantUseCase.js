@@ -13,7 +13,6 @@ class ListerCommandesRestaurantUseCase {
     async executer(restaurantId) {
         let commandes = [];
         if (restaurantId === "all") {
-            // Pour une démo multi-resto sans login
             commandes = await this.depotCommandes.trouverTout();
         }
         else {
@@ -62,4 +61,3 @@ class ListerCommandesRestaurantUseCase {
     }
 }
 exports.ListerCommandesRestaurantUseCase = ListerCommandesRestaurantUseCase;
-//# sourceMappingURL=ListerCommandesRestaurantUseCase.js.map

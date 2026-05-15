@@ -10,7 +10,6 @@ class ListerHistoriqueLivreurUseCase {
     }
     async executer(livreurId) {
         const commandes = await this.depotCommandes.trouverParLivreur(livreurId);
-        // On ne garde que les commandes terminées pour l'historique
         const commandesTerminees = commandes.filter(cmd => cmd.getStatut() === 'LIVREE');
         return Promise.all(commandesTerminees.map(async (cmd) => {
             let restaurantNom = "Restaurant";
@@ -23,11 +22,10 @@ class ListerHistoriqueLivreurUseCase {
                 id: cmd.id,
                 statut: cmd.getStatut(),
                 creeLe: cmd.getCreeLe(),
-                gainsCentimes: cmd.getFraisLivraison().enCentimes(), // Gains estimé: frais de livraison
+                gainsCentimes: cmd.getFraisLivraison().enCentimes(),
                 restaurantNom
             };
         }));
     }
 }
 exports.ListerHistoriqueLivreurUseCase = ListerHistoriqueLivreurUseCase;
-//# sourceMappingURL=ListerHistoriqueLivreurUseCase.js.map

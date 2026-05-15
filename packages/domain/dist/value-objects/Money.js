@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Money = void 0;
-// Représente un montant monétaire en centimes pour éviter les erreurs de virgule flottante
 class Money {
     centimes;
     constructor(centimes) {
@@ -43,4 +42,3 @@ class Money {
     }
 }
 exports.Money = Money;
-//# sourceMappingURL=Money.js.map

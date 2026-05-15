@@ -56,9 +56,7 @@ export class DepotLivreursPrisma implements DepotLivreurs {
     const rows = await this.prisma.livreur.findMany({
       where: {
         OR: [
-          // Disponible
           { statut: StatutLivreur.DISPONIBLE },
-          // En livraison mais potentiellement éligible (expert + même resto)
           {
             statut: StatutLivreur.EN_LIVRAISON,
             estExpert: true,
@@ -68,8 +66,6 @@ export class DepotLivreursPrisma implements DepotLivreurs {
       }
     });
 
-    // Note: Prisma filter for array length might be tricky,
-    // so we additionaly filter in JS to be safe
     return rows
       .map((r) => this.reconstruire(r as any))
       .filter(l => l.estDisponible(restaurantId));
@@ -105,13 +101,11 @@ export class DepotLivreursPrisma implements DepotLivreurs {
       row.currentRestaurantId || undefined
     );
 
-    // Restaurer le statut depuis la base
     const statut = row.statut as StatutLivreur;
     if (statut === StatutLivreur.DISPONIBLE) {
       livreur.seDeclarerDisponible();
     } else if (statut === StatutLivreur.EN_LIVRAISON) {
-      // Pour EN_LIVRAISON, on doit ré-attacher les commandes
-      livreur.seDeclarerDisponible(); // On le met dispo d'abord pour pouvoir charger
+      livreur.seDeclarerDisponible();
       for (const cmdId of (row.commandesEnCoursIds || [])) {
         try { livreur.prendreEnCharge(cmdId, row.currentRestaurantId || ''); } catch (_) {}
       }

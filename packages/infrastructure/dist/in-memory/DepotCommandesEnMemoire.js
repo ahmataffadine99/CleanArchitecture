@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DepotCommandesEnMemoire = void 0;
 const domain_1 = require("@ecoeats/domain");
-// Stockage en mémoire vive — utile pour les tests et le démarrage sans DB
 class DepotCommandesEnMemoire {
     store = new Map();
     async sauvegarder(commande) {
@@ -33,4 +32,3 @@ class DepotCommandesEnMemoire {
     }
 }
 exports.DepotCommandesEnMemoire = DepotCommandesEnMemoire;
-//# sourceMappingURL=DepotCommandesEnMemoire.js.map

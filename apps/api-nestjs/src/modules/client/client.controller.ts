@@ -7,7 +7,6 @@ import {
   PayerCommandeUseCase
 } from '@ecoeats/application';
 
-// DTOs locaux pour typer la requête
 class AjoutArticleDto { clientId: string; platId: string; quantite: number; }
 class PasserCommandeDto { clientId: string; adresseLivraison: string; }
 class PayerCommandeDto { clientId: string; }
@@ -47,7 +46,6 @@ export class ClientController {
   @Post('panier/articles')
   @HttpCode(HttpStatus.CREATED)
   async ajouterArticlePanier(@Body() rawDto: AjoutArticleDto) {
-    // Attention: pas de validation fine DTO ici sans class-validator mais fonctionnel
     const panier = await this.ajouterAuPanier.executer(rawDto);
     return {
       restaurantId: panier.getRestaurantId(),
@@ -70,7 +68,6 @@ export class ClientController {
   async passerLaCommande(@Body() dto: PasserCommandeDto) {
     const panier = this.ajouterAuPanier.getPanier(dto.clientId);
     if (!panier || panier.estVide()) {
-      // Nous utiliserons le ExceptionFilter Nest pour mapper proprement
       throw new Error("Le panier est vide."); 
     }
     const commande = await this.passerCommande.executer({

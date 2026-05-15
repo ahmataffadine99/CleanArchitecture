@@ -6,4 +6,3 @@ export interface DepotLivreurs {
     listerEligiblesPourRestaurant(restaurantId: string): Promise<Livreur[]>;
     retirerPropositionDeTous(commandeId: string): Promise<void>;
 }
-//# sourceMappingURL=DepotLivreurs.d.ts.map

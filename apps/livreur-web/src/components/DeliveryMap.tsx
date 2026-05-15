@@ -15,7 +15,6 @@ interface DeliveryMapProps {
   mode?: 'RECUPERATION' | 'LIVRAISON' | 'COMPLETE';
 }
 
-// Composant pour ajuster le zoom de la carte
 const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
   const map = useMap();
   useEffect(() => {
@@ -27,7 +26,7 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
     } else if (mode === 'LIVRAISON') {
       latLngs = [[client.latitude, client.longitude]];
       if (livreur) latLngs.push([livreur.latitude, livreur.longitude]);
-      else latLngs.push([restaurant.latitude, restaurant.longitude]); // Default fallback
+      else latLngs.push([restaurant.latitude, restaurant.longitude]);
     } else {
       latLngs = [
         [restaurant.latitude, restaurant.longitude],
@@ -37,8 +36,6 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
     }
 
     if (latLngs.length > 0) {
-      // S'il n'y a qu'un seul point (ex: juste restau et pas de livreur connu), 
-      // on centre simplement dessus avec un bon zoom
       if (latLngs.length === 1) {
         map.setView(latLngs[0], 15);
       } else {
@@ -50,7 +47,6 @@ const MapBounds = ({ restaurant, client, livreur, mode }: DeliveryMapProps) => {
   return null;
 };
 
-// Icônes personnalisées
 const createCustomIcon = (emoji: string, bgColor: string) => {
   return L.divIcon({
     className: 'custom-icon',
@@ -60,27 +56,23 @@ const createCustomIcon = (emoji: string, bgColor: string) => {
   });
 };
 
-const restaurantIcon = createCustomIcon('🏪', '#10b981'); // Emerald 500
-const clientIcon = createCustomIcon('🏠', '#3b82f6'); // Blue 500
-const livreurIcon = createCustomIcon('🚴', '#f59e0b'); // Amber 500
+const restaurantIcon = createCustomIcon('', '#10b981');
+const clientIcon = createCustomIcon('', '#3b82f6');
+const livreurIcon = createCustomIcon('', '#f59e0b');
 
 export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPLETE' }: DeliveryMapProps) {
   const [route, setRoute] = useState<[number, number][]>([]);
 
   useEffect(() => {
-    // Calcul de l'itinéraire OSRM (gratuit)
     const fetchRoute = async () => {
       try {
         let origin = restaurant;
         let dest = client;
         
-        // Si on est en mode récupération et qu'on connaît le livreur, on trace Livreur -> Resto
         if (mode === 'RECUPERATION' && livreur) {
            origin = livreur;
            dest = restaurant;
         } 
-        // En mode livraison sans livreur, on trace Resto -> Client (par défaut)
-        // En mode livraison avec livreur, on trace Livreur -> Client
         else if (mode === 'LIVRAISON' && livreur) {
            origin = livreur;
            dest = client;
@@ -90,7 +82,6 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
         const data = await res.json();
         if (data.routes && data.routes.length > 0) {
           const coordinates = data.routes[0].geometry.coordinates;
-          // OSRM retourne [lng, lat], Leaflet veut [lat, lng]
           const latLngs = coordinates.map((c: [number, number]) => [c[1], c[0]]);
           setRoute(latLngs);
         }
@@ -103,7 +94,7 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
 
   return (
     <div className="w-full h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-inner border mx-auto z-0" style={{ zIndex: 0 }}>
-      {/* On force zIndex 0 pour éviter le z-index 400 de leaflet qui passe au dessus des modals Tailwind */}
+      
       <MapContainer 
         center={[restaurant.latitude, restaurant.longitude]} 
         zoom={13} 
@@ -115,12 +106,12 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
           attribution='&copy; Google Maps'
         />
         
-        {/* On affiche le marqueur Resto si on récupère, ou en mode complet */}
+        
         {(mode === 'RECUPERATION' || mode === 'COMPLETE' || mode === 'LIVRAISON') && (
            <Marker position={[restaurant.latitude, restaurant.longitude]} icon={restaurantIcon} />
         )}
         
-        {/* On affiche le marqueur Client si on est en livraison, ou en mode complet */}
+        
         {(mode === 'LIVRAISON' || mode === 'COMPLETE') && (
            <Marker position={[client.latitude, client.longitude]} icon={clientIcon} />
         )}
@@ -133,7 +124,7 @@ export default function DeliveryMap({ restaurant, client, livreur, mode = 'COMPL
             color="#10b981" 
             weight={6} 
             opacity={0.8} 
-            dashArray={mode === 'COMPLETE' ? "10, 10" : undefined} // Ligne continue si on guide vraiment
+            dashArray={mode === 'COMPLETE' ? "10, 10" : undefined}
           />
         )}
         

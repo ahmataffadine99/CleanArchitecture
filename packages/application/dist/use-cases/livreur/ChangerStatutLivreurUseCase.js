@@ -17,7 +17,6 @@ class ChangerStatutLivreurUseCase {
         const livreur = await this.depotLivreurs.trouverParId(req.livreurId);
         if (req.statut === "DISPONIBLE") {
             livreur.seDeclarerDisponible();
-            // Assigner les propositions en attente (seulement celles à proximité)
             const commandesSansLivreur = await this.depotCommandes.trouverCommandesSansLivreur();
             for (const cmd of commandesSansLivreur) {
                 const restaurant = await this.depotRestaurants.trouverParId(cmd.restaurantId);
@@ -35,4 +34,3 @@ class ChangerStatutLivreurUseCase {
     }
 }
 exports.ChangerStatutLivreurUseCase = ChangerStatutLivreurUseCase;
-//# sourceMappingURL=ChangerStatutLivreurUseCase.js.map

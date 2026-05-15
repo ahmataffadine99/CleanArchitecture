@@ -4,4 +4,3 @@ export declare class CartographieHaversine implements ServiceCartographie {
     private readonly calculateur;
     calculerDistanceKm(pointA: Coordonnees, pointB: Coordonnees): number;
 }
-//# sourceMappingURL=CartographieHaversine.d.ts.map

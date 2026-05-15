@@ -37,7 +37,7 @@ function App() {
         </Routes>
       </div>
       
-      {/* Footer */}
+      
       <footer className="bg-slate-50 border-t border-slate-200 mt-20 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex justify-between items-center text-slate-500 font-medium text-sm">
           <p>&copy; {new Date().getFullYear()} EcoEATS. Tous droits réservés.</p>

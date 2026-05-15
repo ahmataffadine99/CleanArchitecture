@@ -15,9 +15,7 @@ class AccepterLivraisonUseCase {
         commande.assignerLivreur(livreur.id);
         await this.depotLivreurs.sauvegarder(livreur);
         await this.depotCommandes.sauvegarder(commande);
-        // Nettoyer les propositions chez tous les autres livreurs
         await this.depotLivreurs.retirerPropositionDeTous(req.commandeId);
     }
 }
 exports.AccepterLivraisonUseCase = AccepterLivraisonUseCase;
-//# sourceMappingURL=AccepterLivraisonUseCase.js.map

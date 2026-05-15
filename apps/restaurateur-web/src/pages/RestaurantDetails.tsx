@@ -30,7 +30,6 @@ export default function RestaurantDetails() {
   useEffect(() => {
     if (!id) return;
 
-    // Récupérer les infos du restaurant et son menu
     Promise.all([
       fetch('/api/restaurants').then(res => res.json()),
       fetch(`/api/restaurants/${id}/menu`).then(res => res.json())
@@ -39,7 +38,6 @@ export default function RestaurantDetails() {
         const found = restosData.find((r: any) => r.id === id);
         if (found) setRestaurant(found);
         
-        // On n'affiche que les plats disponibles
         setMenuItems(menuData.disponibles || []);
       })
       .catch((err) => console.error(err))
@@ -69,7 +67,7 @@ export default function RestaurantDetails() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      {/* Bouton retour */}
+      
       <button 
         onClick={() => navigate('/')}
         className="mb-6 flex items-center gap-2 text-slate-500 hover:text-emerald-500 transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100"
@@ -78,7 +76,7 @@ export default function RestaurantDetails() {
         <span className="font-medium text-sm">Retour aux restaurants</span>
       </button>
 
-      {/* Hero Restaurant */}
+      
       <div className="relative rounded-3xl overflow-hidden bg-slate-800 h-64 mb-10 shadow-lg animate-slide-up">
         <img 
           src={`https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200&auto=format&fit=crop`} 
@@ -89,12 +87,12 @@ export default function RestaurantDetails() {
         <div className="absolute bottom-6 left-6 text-white">
           <h1 className="text-4xl font-extrabold mb-2">{restaurant.nom}</h1>
           <p className="text-slate-300 flex items-center gap-2">
-            📍 {restaurant.adresse?.rue}, {restaurant.adresse?.ville}
+             {restaurant.adresse?.rue}, {restaurant.adresse?.ville}
           </p>
         </div>
       </div>
 
-      {/* Menu Section */}
+      
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Menu</h2>
       
       {menuItems.length === 0 ? (

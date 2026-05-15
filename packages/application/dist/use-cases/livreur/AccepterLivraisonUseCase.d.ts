@@ -11,4 +11,3 @@ export declare class AccepterLivraisonUseCase {
     executer(req: Req): Promise<void>;
 }
 export {};
-//# sourceMappingURL=AccepterLivraisonUseCase.d.ts.map

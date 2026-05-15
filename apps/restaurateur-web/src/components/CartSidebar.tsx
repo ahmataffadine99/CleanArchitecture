@@ -18,7 +18,7 @@ export default function CartSidebar() {
       />
       
       <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl z-50 flex flex-col animate-slide-up sm:animate-none">
-        {/* Header */}
+        
         <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white">
           <div className="flex items-center gap-2 text-slate-800">
             <ShoppingBag size={22} className="text-emerald-500" />
@@ -35,7 +35,7 @@ export default function CartSidebar() {
           </button>
         </div>
 
-        {/* Content */}
+        
         <div className="flex-1 overflow-y-auto p-5">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
@@ -73,7 +73,7 @@ export default function CartSidebar() {
                       </div>
                     </div>
                     
-                    {/* Controls */}
+                    
                     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-full px-2 py-1 shadow-sm h-fit">
                       <button 
                         onClick={() => removeItem(item.id)}
@@ -83,7 +83,6 @@ export default function CartSidebar() {
                       </button>
                       <span className="font-semibold text-slate-700 w-4 text-center text-sm">{item.quantite}</span>
                       <button 
-                         // Note: on triche un peu sur restaurantId car on l'a déjà dans le store
                         onClick={() => addItem(item, useCartStore.getState().restaurantId!)}
                         className="p-1 text-slate-400 hover:text-emerald-600 transition-colors"
                       >
@@ -97,7 +96,7 @@ export default function CartSidebar() {
           )}
         </div>
 
-        {/* Footer / Checkout */}
+        
         {items.length > 0 && (
           <div className="p-5 bg-white border-t border-slate-100 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
             <div className="flex justify-between items-center mb-4 text-slate-600">

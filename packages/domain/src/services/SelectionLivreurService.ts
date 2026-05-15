@@ -3,7 +3,6 @@ import { Coordonnees } from "../value-objects/Coordonnees";
 import { CalculDistanceService } from "./CalculDistanceService";
 import { AucunLivreurDisponibleError } from "../errors/AucunLivreurDisponibleError";
 
-// Sélectionne le livreur disponible le plus proche du restaurant
 export class SelectionLivreurService {
   private readonly calculDistance = new CalculDistanceService();
 

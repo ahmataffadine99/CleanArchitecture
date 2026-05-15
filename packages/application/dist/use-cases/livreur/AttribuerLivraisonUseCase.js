@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AttribuerLivraisonUseCase = void 0;
 const domain_1 = require("@ecoeats/domain");
 const domain_2 = require("@ecoeats/domain");
-// Trouve le livreur le plus proche du restaurant et lui attribue la commande
 class AttribuerLivraisonUseCase {
     depotCommandes;
     depotLivreurs;
@@ -30,4 +29,3 @@ class AttribuerLivraisonUseCase {
     }
 }
 exports.AttribuerLivraisonUseCase = AttribuerLivraisonUseCase;
-//# sourceMappingURL=AttribuerLivraisonUseCase.js.map

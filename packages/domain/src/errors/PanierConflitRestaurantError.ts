@@ -1,6 +1,5 @@
 import { ErreurMetier } from "./ErreurMetier";
 
-// Lancée quand on ajoute un article d'un restaurant différent du panier actuel
 export class PanierConflitRestaurantError extends ErreurMetier {
   constructor(restaurantActuelId: string, nouvelArticleRestaurantId: string) {
     super(

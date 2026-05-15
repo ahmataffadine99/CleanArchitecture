@@ -5,4 +5,3 @@ export declare class ObtenirMonRestaurantUseCase {
     constructor(depotRestaurants: DepotRestaurants);
     executer(proprietaireId: string): Promise<Restaurant | null>;
 }
-//# sourceMappingURL=ObtenirMonRestaurantUseCase.d.ts.map

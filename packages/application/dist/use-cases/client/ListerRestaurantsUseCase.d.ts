@@ -5,4 +5,3 @@ export declare class ListerRestaurantsUseCase {
     constructor(depotRestaurants: DepotRestaurants);
     executer(): Promise<Restaurant[]>;
 }
-//# sourceMappingURL=ListerRestaurantsUseCase.d.ts.map

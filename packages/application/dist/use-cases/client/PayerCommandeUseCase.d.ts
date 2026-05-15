@@ -20,4 +20,3 @@ export declare class PayerCommandeUseCase {
     executer(req: Req): Promise<Resultat>;
 }
 export {};
-//# sourceMappingURL=PayerCommandeUseCase.d.ts.map

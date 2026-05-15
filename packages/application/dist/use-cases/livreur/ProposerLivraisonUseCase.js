@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProposerLivraisonUseCase = void 0;
 const domain_1 = require("@ecoeats/domain");
-// Trouve les livreurs à proximité et leur envoie une proposition
 class ProposerLivraisonUseCase {
     depotCommandes;
     depotLivreurs;
@@ -23,7 +22,6 @@ class ProposerLivraisonUseCase {
         }
         const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
         const livreursEligibles = await this.depotLivreurs.listerEligiblesPourRestaurant(commande.restaurantId);
-        // Filtrer les livreurs par proximité du restaurant
         const livreursProches = livreursEligibles.filter(livreur => {
             const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
             return distance <= this.RAYON_ACTION_KM;
@@ -32,8 +30,7 @@ class ProposerLivraisonUseCase {
             livreur.recevoirProposition(commande.id);
             await this.depotLivreurs.sauvegarder(livreur);
         }
-        return livreursProches[0]; // Retourne le premier notifié (ou undefined si aucun)
+        return livreursProches[0];
     }
 }
 exports.ProposerLivraisonUseCase = ProposerLivraisonUseCase;
-//# sourceMappingURL=ProposerLivraisonUseCase.js.map

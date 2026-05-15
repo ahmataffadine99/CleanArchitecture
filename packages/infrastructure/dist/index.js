@@ -17,7 +17,6 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/index.ts
 var index_exports = {};
 __export(index_exports, {
   CartographieHaversine: () => CartographieHaversine,
@@ -40,7 +39,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/in-memory/DepotCommandesEnMemoire.ts
 var import_domain = require("@ecoeats/domain");
 var DepotCommandesEnMemoire = class {
   store = /* @__PURE__ */ new Map();
@@ -71,7 +69,6 @@ var DepotCommandesEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotRestaurantsEnMemoire.ts
 var import_domain2 = require("@ecoeats/domain");
 var DepotRestaurantsEnMemoire = class {
   store = /* @__PURE__ */ new Map();
@@ -91,7 +88,6 @@ var DepotRestaurantsEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotPlatsEnMemoire.ts
 var import_domain3 = require("@ecoeats/domain");
 var DepotPlatsEnMemoire = class {
   store = /* @__PURE__ */ new Map();
@@ -111,7 +107,6 @@ var DepotPlatsEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotClientsEnMemoire.ts
 var import_domain4 = require("@ecoeats/domain");
 var DepotClientsEnMemoire = class {
   store = /* @__PURE__ */ new Map();
@@ -125,7 +120,6 @@ var DepotClientsEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotLivreursEnMemoire.ts
 var DepotLivreursEnMemoire = class {
   store = /* @__PURE__ */ new Map();
   async sauvegarder(livreur) {
@@ -149,7 +143,6 @@ var DepotLivreursEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotFacturesEnMemoire.ts
 var DepotFacturesEnMemoire = class {
   store = /* @__PURE__ */ new Map();
   async sauvegarder(facture) {
@@ -160,7 +153,6 @@ var DepotFacturesEnMemoire = class {
   }
 };
 
-// src/in-memory/DepotComptesEnMemoire.ts
 var DepotComptesEnMemoire = class {
   store = /* @__PURE__ */ new Map();
   async sauvegarder(compte) {
@@ -177,7 +169,6 @@ var DepotComptesEnMemoire = class {
   }
 };
 
-// src/postgresql/DepotCommandesPrisma.ts
 var import_domain5 = require("@ecoeats/domain");
 var import_domain6 = require("@ecoeats/domain");
 var DepotCommandesPrisma = class {
@@ -329,7 +320,6 @@ var DepotCommandesPrisma = class {
   }
 };
 
-// src/postgresql/DepotRestaurantsPrisma.ts
 var import_domain7 = require("@ecoeats/domain");
 var import_domain8 = require("@ecoeats/domain");
 var import_domain9 = require("@ecoeats/domain");
@@ -390,7 +380,6 @@ var DepotRestaurantsPrisma = class {
   }
 };
 
-// src/postgresql/DepotPlatsPrisma.ts
 var import_domain10 = require("@ecoeats/domain");
 var import_domain11 = require("@ecoeats/domain");
 var DepotPlatsPrisma = class {
@@ -462,7 +451,6 @@ var DepotPlatsPrisma = class {
   }
 };
 
-// src/postgresql/DepotClientsPrisma.ts
 var import_domain12 = require("@ecoeats/domain");
 var import_domain13 = require("@ecoeats/domain");
 var DepotClientsPrisma = class {
@@ -496,7 +484,6 @@ var DepotClientsPrisma = class {
   }
 };
 
-// src/postgresql/DepotLivreursPrisma.ts
 var import_domain14 = require("@ecoeats/domain");
 var DepotLivreursPrisma = class {
   constructor(prisma) {
@@ -545,9 +532,7 @@ var DepotLivreursPrisma = class {
     const rows = await this.prisma.livreur.findMany({
       where: {
         OR: [
-          // Disponible
           { statut: import_domain14.StatutLivreur.DISPONIBLE },
-          // En livraison mais potentiellement éligible (expert + même resto)
           {
             statut: import_domain14.StatutLivreur.EN_LIVRAISON,
             estExpert: true,
@@ -603,7 +588,6 @@ var DepotLivreursPrisma = class {
   }
 };
 
-// src/postgresql/DepotComptesPrisma.ts
 var import_domain15 = require("@ecoeats/domain");
 var DepotComptesPrisma = class {
   constructor(prisma) {
@@ -651,7 +635,6 @@ var DepotComptesPrisma = class {
   }
 };
 
-// src/postgresql/DepotAvisPrisma.ts
 var import_domain16 = require("@ecoeats/domain");
 var DepotAvisPrisma = class {
   constructor(prisma) {
@@ -689,7 +672,6 @@ var DepotAvisPrisma = class {
   }
 };
 
-// src/postgresql/DepotFavorisPrisma.ts
 var DepotFavorisPrisma = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -730,7 +712,6 @@ var DepotFavorisPrisma = class {
   }
 };
 
-// src/services/CartographieHaversine.ts
 var import_domain17 = require("@ecoeats/domain");
 var CartographieHaversine = class {
   calculateur = new import_domain17.CalculDistanceService();
@@ -739,7 +720,6 @@ var CartographieHaversine = class {
   }
 };
 
-// src/services/PaiementSimule.ts
 var import_uuid = require("uuid");
 var PaiementSimule = class {
   async encaisser(montantCentimes, clientId) {
@@ -748,7 +728,6 @@ var PaiementSimule = class {
     return { success: true, transactionId: `TXN-${(0, import_uuid.v4)().slice(0, 8).toUpperCase()}` };
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   CartographieHaversine,
   DepotAvisPrisma,

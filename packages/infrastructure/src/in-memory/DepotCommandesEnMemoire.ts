@@ -2,7 +2,6 @@ import { Commande, Coordonnees } from "@ecoeats/domain";
 import { CommandeIntrouvableError } from "@ecoeats/domain";
 import { DepotCommandes } from "@ecoeats/application";
 
-// Stockage en mémoire vive — utile pour les tests et le démarrage sans DB
 export class DepotCommandesEnMemoire implements DepotCommandes {
   private readonly store = new Map<string, Commande>();
 

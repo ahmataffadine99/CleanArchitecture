@@ -9,4 +9,3 @@ export declare class GererFavorisUseCase {
     retirerPlat(clientId: string, platId: string): Promise<void>;
     listerPlats(clientId: string): Promise<string[]>;
 }
-//# sourceMappingURL=GererFavorisUseCase.d.ts.map

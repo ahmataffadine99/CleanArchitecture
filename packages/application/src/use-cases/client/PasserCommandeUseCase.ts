@@ -43,14 +43,12 @@ export class PasserCommandeUseCase {
       positionLivraison
     );
 
-    // Vérifier que les stocks sont toujours OK et les baisser
     for (const article of req.panier.getArticles()) {
       const plat = await this.depotPlats.trouverParId(article.menuItemId);
       plat.diminuerStock(article.quantite);
       await this.depotPlats.sauvegarder(plat);
     }
 
-    // Calculer la réduction basée sur les points de fidélité
     const points = (client as any).getPointsFidelite ? (client as any).getPointsFidelite() : 0;
     const tauxReduction = this.calculPrix.getTauxReduction(points);
 

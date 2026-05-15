@@ -11,4 +11,3 @@ class ListerRestaurantsUseCase {
     }
 }
 exports.ListerRestaurantsUseCase = ListerRestaurantsUseCase;
-//# sourceMappingURL=ListerRestaurantsUseCase.js.map

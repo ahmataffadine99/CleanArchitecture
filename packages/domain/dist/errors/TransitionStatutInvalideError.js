@@ -8,4 +8,3 @@ class TransitionStatutInvalideError extends ErreurMetier_1.ErreurMetier {
     }
 }
 exports.TransitionStatutInvalideError = TransitionStatutInvalideError;
-//# sourceMappingURL=TransitionStatutInvalideError.js.map

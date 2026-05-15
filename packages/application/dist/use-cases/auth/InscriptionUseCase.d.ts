@@ -33,4 +33,3 @@ export declare class InscriptionUseCase {
     executer(req: Req): Promise<Res>;
 }
 export {};
-//# sourceMappingURL=InscriptionUseCase.d.ts.map

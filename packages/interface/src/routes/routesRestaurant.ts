@@ -9,7 +9,7 @@ import {
   ListerCommandesRestaurantUseCase,
   ModifierRestaurantUseCase,
   ObtenirMonRestaurantUseCase,
-  AjouterAuPanierUseCase, // On réutilise son service in-memory pour voir les paniers
+  AjouterAuPanierUseCase,
 } from "@ecoeats/application";
 import { requireRole } from "../middleware/authMiddleware";
 
@@ -27,7 +27,6 @@ export function creerRoutesRestaurant(deps: {
 }): Router {
   const router = Router();
 
-  // GET /restaurant/mon-restaurant (RESTAURATEUR Uniquement)
   router.get("/restaurant/mon-restaurant", async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user || !req.user.profilId) {
@@ -41,12 +40,10 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /restaurant/:id/commandes
   router.get("/restaurant/:id/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commandes = await deps.listerCommandes.executer(req.params.id);
       res.json(commandes.map((c: any) => {
-        // Handle both Commande instances (if DepotClients wasn't injected) and plain objects
         const isPlain = typeof c.getStatut !== 'function';
         
         return {
@@ -71,7 +68,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /restaurant/:id/paniers-actifs
   router.get("/restaurant/:id/paniers-actifs", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const paniers = deps.servicePanier.getTousLesPaniersParRestaurant(req.params.id);
@@ -86,7 +82,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // PATCH /restaurant/:id (Restaurateur Uniquement — Profil)
   router.patch("/restaurant/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.modifierRestaurant.executer({ restaurantId: req.params.id, ...req.body });
@@ -94,7 +89,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /restaurant/:id/plats (Restaurateur Uniquement)
   router.post("/restaurant/:id/plats", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const plat = await deps.ajouterPlat.executer({ restaurantId: req.params.id, ...req.body });
@@ -102,7 +96,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // PATCH /plats/:id (Restaurateur Uniquement)
   router.patch("/plats/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.modifierPlat.executer({ platId: req.params.id, ...req.body });
@@ -110,7 +103,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // DELETE /plats/:id (Restaurateur Uniquement)
   router.delete("/plats/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deps.supprimerPlat.executer(req.params.id);
@@ -118,7 +110,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/accepter (Restaurateur Uniquement)
   router.post("/commandes/:id/accepter", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commande = await deps.accepterCommande.executer({
@@ -129,7 +120,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/refuser (Restaurateur Uniquement)
   router.post("/commandes/:id/refuser", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commande = await deps.refuserCommande.executer(req.params.id);
@@ -137,7 +127,6 @@ export function creerRoutesRestaurant(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/prete (Restaurateur Uniquement)
   router.post("/commandes/:id/prete", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commande = await deps.marquerPrete.executer(req.params.id);

@@ -11,7 +11,6 @@ export class ListerHistoriqueLivreurUseCase {
   async executer(livreurId: string): Promise<any[]> {
     const commandes = await this.depotCommandes.trouverParLivreur(livreurId);
     
-    // On ne garde que les commandes terminées pour l'historique
     const commandesTerminees = commandes.filter(cmd => 
       cmd.getStatut() === 'LIVREE'
     );
@@ -27,7 +26,7 @@ export class ListerHistoriqueLivreurUseCase {
         id: cmd.id,
         statut: cmd.getStatut(),
         creeLe: cmd.getCreeLe(),
-        gainsCentimes: cmd.getFraisLivraison().enCentimes(), // Gains estimé: frais de livraison
+        gainsCentimes: cmd.getFraisLivraison().enCentimes(),
         restaurantNom
       };
     }));

@@ -19,4 +19,3 @@ export declare class AjouterAuPanierUseCase {
     private obtenirOuCreerPanier;
 }
 export {};
-//# sourceMappingURL=AjouterAuPanierUseCase.d.ts.map

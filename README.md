@@ -72,10 +72,4 @@ Pour prouver la robustesse de l'architecture, le projet intègre :
 
 ---
 
-## Tests
-```bash
-npm test # Lance les tests unitaires sur toutes les couches
-```
-
----
 *Projet réalisé dans le cadre pédagogique Clean Architecture.*

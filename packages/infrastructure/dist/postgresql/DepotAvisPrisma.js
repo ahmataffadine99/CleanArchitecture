@@ -40,4 +40,3 @@ class DepotAvisPrisma {
     }
 }
 exports.DepotAvisPrisma = DepotAvisPrisma;
-//# sourceMappingURL=DepotAvisPrisma.js.map

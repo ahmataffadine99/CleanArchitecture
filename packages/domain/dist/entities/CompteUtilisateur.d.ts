@@ -7,4 +7,3 @@ export declare class CompteUtilisateur {
     readonly profilId: string;
     constructor(id: string, email: string, motDePasseHache: string, role: RoleUtilisateur, profilId: string);
 }
-//# sourceMappingURL=CompteUtilisateur.d.ts.map

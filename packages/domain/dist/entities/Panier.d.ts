@@ -13,4 +13,3 @@ export declare class Panier {
     estVide(): boolean;
     prixTotal(): Money;
 }
-//# sourceMappingURL=Panier.d.ts.map

@@ -23,7 +23,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-[280px] bg-slate-900 border-r border-slate-800 h-screen sticky top-0 flex flex-col hidden md:flex font-sans">
-      {/* Logo */}
+      
       <div className="h-24 flex items-center px-8 border-b border-slate-800/80">
         <div className="flex items-center gap-3 cursor-pointer group">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
@@ -38,7 +38,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
+      
       <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto hidden-scrollbar">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -63,7 +63,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer Profil */}
+      
       <div className="p-6 border-t border-slate-800/80 bg-slate-900/50">
         <button 
           onClick={logout}

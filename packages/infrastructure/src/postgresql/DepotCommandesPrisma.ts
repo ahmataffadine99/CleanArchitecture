@@ -7,13 +7,11 @@ export class DepotCommandesPrisma implements DepotCommandes {
   constructor(private readonly prisma: PrismaClient) {}
 
   async sauvegarder(commande: Commande): Promise<void> {
-    // On vérifie si la commande existe déjà
     const existe = await this.prisma.commande.findUnique({
       where: { id: commande.id },
     });
 
     if (existe) {
-      // Mise à jour seulement des champs qui changent (statut, livreur, tempsPrepa)
       await this.prisma.commande.update({
         where: { id: commande.id },
         data: {
@@ -25,7 +23,6 @@ export class DepotCommandesPrisma implements DepotCommandes {
         },
       });
     } else {
-      // Création initiale avec tous les articles
       await this.prisma.commande.create({
         data: {
           id: commande.id,
@@ -131,18 +128,15 @@ export class DepotCommandesPrisma implements DepotCommandes {
       row.creeLe
     );
 
-    // Restaurer le statut via la machine à états (ceci ne restaure pas le temps de préparation)
     const transitions: StatutCommande[] = this.retrouverTransitions(row.statut as StatutCommande);
     for (const t of transitions) {
       try { commande.changerStatut(t); } catch (_) {}
     }
 
-    // Restaurer le temps de préparation s'il est présent
     if (row.tempsPreparation !== null && row.tempsPreparation !== undefined) {
       commande.restaurerTempsPreparation(row.tempsPreparation);
     }
 
-    // Restaurer le livreur assigné
     if (row.livreurId) {
       commande.assignerLivreur(row.livreurId);
     }

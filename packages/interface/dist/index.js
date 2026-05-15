@@ -21,16 +21,11 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../../node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
   "../../node_modules/safe-buffer/index.js"(exports2, module2) {
     "use strict";
@@ -89,7 +84,6 @@ var require_safe_buffer = __commonJS({
   }
 });
 
-// ../../node_modules/jws/lib/data-stream.js
 var require_data_stream = __commonJS({
   "../../node_modules/jws/lib/data-stream.js"(exports2, module2) {
     "use strict";
@@ -138,7 +132,6 @@ var require_data_stream = __commonJS({
   }
 });
 
-// ../../node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js
 var require_param_bytes_for_alg = __commonJS({
   "../../node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js"(exports2, module2) {
     "use strict";
@@ -162,7 +155,6 @@ var require_param_bytes_for_alg = __commonJS({
   }
 });
 
-// ../../node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js
 var require_ecdsa_sig_formatter = __commonJS({
   "../../node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js"(exports2, module2) {
     "use strict";
@@ -176,7 +168,7 @@ var require_ecdsa_sig_formatter = __commonJS({
     var ENCODED_TAG_SEQ = TAG_SEQ | PRIMITIVE_BIT | CLASS_UNIVERSAL << 6;
     var ENCODED_TAG_INT = TAG_INT | CLASS_UNIVERSAL << 6;
     function base64Url(base64) {
-      return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\
     }
     function signatureAsBuffer(signature) {
       if (Buffer2.isBuffer(signature)) {
@@ -302,7 +294,6 @@ var require_ecdsa_sig_formatter = __commonJS({
   }
 });
 
-// ../../node_modules/buffer-equal-constant-time/index.js
 var require_buffer_equal_constant_time = __commonJS({
   "../../node_modules/buffer-equal-constant-time/index.js"(exports2, module2) {
     "use strict";
@@ -336,7 +327,6 @@ var require_buffer_equal_constant_time = __commonJS({
   }
 });
 
-// ../../node_modules/jwa/index.js
 var require_jwa = __commonJS({
   "../../node_modules/jwa/index.js"(exports2, module2) {
     "use strict";
@@ -409,7 +399,7 @@ var require_jwa = __commonJS({
       }
     }
     function fromBase64(base64) {
-      return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\
     }
     function toBase64(base64url) {
       base64url = base64url.toString();
@@ -561,7 +551,6 @@ var require_jwa = __commonJS({
   }
 });
 
-// ../../node_modules/jws/lib/tostring.js
 var require_tostring = __commonJS({
   "../../node_modules/jws/lib/tostring.js"(exports2, module2) {
     "use strict";
@@ -576,7 +565,6 @@ var require_tostring = __commonJS({
   }
 });
 
-// ../../node_modules/jws/lib/sign-stream.js
 var require_sign_stream = __commonJS({
   "../../node_modules/jws/lib/sign-stream.js"(exports2, module2) {
     "use strict";
@@ -587,7 +575,7 @@ var require_sign_stream = __commonJS({
     var toString = require_tostring();
     var util = require("util");
     function base64url(string, encoding) {
-      return Buffer2.from(string, encoding).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      return Buffer2.from(string, encoding).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\
     }
     function jwsSecuredInput(header, payload, encoding) {
       encoding = encoding || "utf8";
@@ -652,7 +640,6 @@ var require_sign_stream = __commonJS({
   }
 });
 
-// ../../node_modules/jws/lib/verify-stream.js
 var require_verify_stream = __commonJS({
   "../../node_modules/jws/lib/verify-stream.js"(exports2, module2) {
     "use strict";
@@ -768,7 +755,6 @@ var require_verify_stream = __commonJS({
   }
 });
 
-// ../../node_modules/jws/index.js
 var require_jws = __commonJS({
   "../../node_modules/jws/index.js"(exports2) {
     "use strict";
@@ -802,7 +788,6 @@ var require_jws = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/decode.js
 var require_decode = __commonJS({
   "../../node_modules/jsonwebtoken/decode.js"(exports2, module2) {
     "use strict";
@@ -835,7 +820,6 @@ var require_decode = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/JsonWebTokenError.js
 var require_JsonWebTokenError = __commonJS({
   "../../node_modules/jsonwebtoken/lib/JsonWebTokenError.js"(exports2, module2) {
     "use strict";
@@ -854,7 +838,6 @@ var require_JsonWebTokenError = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/NotBeforeError.js
 var require_NotBeforeError = __commonJS({
   "../../node_modules/jsonwebtoken/lib/NotBeforeError.js"(exports2, module2) {
     "use strict";
@@ -870,7 +853,6 @@ var require_NotBeforeError = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/TokenExpiredError.js
 var require_TokenExpiredError = __commonJS({
   "../../node_modules/jsonwebtoken/lib/TokenExpiredError.js"(exports2, module2) {
     "use strict";
@@ -886,7 +868,6 @@ var require_TokenExpiredError = __commonJS({
   }
 });
 
-// ../../node_modules/ms/index.js
 var require_ms = __commonJS({
   "../../node_modules/ms/index.js"(exports2, module2) {
     "use strict";
@@ -1003,7 +984,6 @@ var require_ms = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/timespan.js
 var require_timespan = __commonJS({
   "../../node_modules/jsonwebtoken/lib/timespan.js"(exports2, module2) {
     "use strict";
@@ -1025,7 +1005,6 @@ var require_timespan = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/constants.js
 var require_constants = __commonJS({
   "../../node_modules/semver/internal/constants.js"(exports2, module2) {
     "use strict";
@@ -1057,7 +1036,6 @@ var require_constants = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/debug.js
 var require_debug = __commonJS({
   "../../node_modules/semver/internal/debug.js"(exports2, module2) {
     "use strict";
@@ -1067,7 +1045,6 @@ var require_debug = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/re.js
 var require_re = __commonJS({
   "../../node_modules/semver/internal/re.js"(exports2, module2) {
     "use strict";
@@ -1155,7 +1132,6 @@ var require_re = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/parse-options.js
 var require_parse_options = __commonJS({
   "../../node_modules/semver/internal/parse-options.js"(exports2, module2) {
     "use strict";
@@ -1174,7 +1150,6 @@ var require_parse_options = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/identifiers.js
 var require_identifiers = __commonJS({
   "../../node_modules/semver/internal/identifiers.js"(exports2, module2) {
     "use strict";
@@ -1199,7 +1174,6 @@ var require_identifiers = __commonJS({
   }
 });
 
-// ../../node_modules/semver/classes/semver.js
 var require_semver = __commonJS({
   "../../node_modules/semver/classes/semver.js"(exports2, module2) {
     "use strict";
@@ -1360,8 +1334,6 @@ var require_semver = __commonJS({
           }
         } while (++i);
       }
-      // preminor will bump the version up to the next minor release, and immediately
-      // down to pre-release. premajor and prepatch work the same way.
       inc(release, identifier, identifierBase) {
         if (release.startsWith("pre")) {
           if (!identifier && identifierBase === false) {
@@ -1393,8 +1365,6 @@ var require_semver = __commonJS({
             this.inc("patch", identifier, identifierBase);
             this.inc("pre", identifier, identifierBase);
             break;
-          // If the input is a non-prerelease version, this acts the same as
-          // prepatch.
           case "prerelease":
             if (this.prerelease.length === 0) {
               this.inc("patch", identifier, identifierBase);
@@ -1428,8 +1398,6 @@ var require_semver = __commonJS({
             }
             this.prerelease = [];
             break;
-          // This probably shouldn't be used publicly.
-          // 1.0.0 'pre' would become 1.0.0-0 which is the wrong direction.
           case "pre": {
             const base = Number(identifierBase) ? 1 : 0;
             if (this.prerelease.length === 0) {
@@ -1478,7 +1446,6 @@ var require_semver = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/parse.js
 var require_parse = __commonJS({
   "../../node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
@@ -1500,7 +1467,6 @@ var require_parse = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/valid.js
 var require_valid = __commonJS({
   "../../node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
@@ -1513,7 +1479,6 @@ var require_valid = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/clean.js
 var require_clean = __commonJS({
   "../../node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
@@ -1526,7 +1491,6 @@ var require_clean = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/inc.js
 var require_inc = __commonJS({
   "../../node_modules/semver/functions/inc.js"(exports2, module2) {
     "use strict";
@@ -1550,7 +1514,6 @@ var require_inc = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/diff.js
 var require_diff = __commonJS({
   "../../node_modules/semver/functions/diff.js"(exports2, module2) {
     "use strict";
@@ -1594,7 +1557,6 @@ var require_diff = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/major.js
 var require_major = __commonJS({
   "../../node_modules/semver/functions/major.js"(exports2, module2) {
     "use strict";
@@ -1604,7 +1566,6 @@ var require_major = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/minor.js
 var require_minor = __commonJS({
   "../../node_modules/semver/functions/minor.js"(exports2, module2) {
     "use strict";
@@ -1614,7 +1575,6 @@ var require_minor = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/patch.js
 var require_patch = __commonJS({
   "../../node_modules/semver/functions/patch.js"(exports2, module2) {
     "use strict";
@@ -1624,7 +1584,6 @@ var require_patch = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/prerelease.js
 var require_prerelease = __commonJS({
   "../../node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
@@ -1637,7 +1596,6 @@ var require_prerelease = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/compare.js
 var require_compare = __commonJS({
   "../../node_modules/semver/functions/compare.js"(exports2, module2) {
     "use strict";
@@ -1647,7 +1605,6 @@ var require_compare = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/rcompare.js
 var require_rcompare = __commonJS({
   "../../node_modules/semver/functions/rcompare.js"(exports2, module2) {
     "use strict";
@@ -1657,7 +1614,6 @@ var require_rcompare = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/compare-loose.js
 var require_compare_loose = __commonJS({
   "../../node_modules/semver/functions/compare-loose.js"(exports2, module2) {
     "use strict";
@@ -1667,7 +1623,6 @@ var require_compare_loose = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/compare-build.js
 var require_compare_build = __commonJS({
   "../../node_modules/semver/functions/compare-build.js"(exports2, module2) {
     "use strict";
@@ -1681,7 +1636,6 @@ var require_compare_build = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/sort.js
 var require_sort = __commonJS({
   "../../node_modules/semver/functions/sort.js"(exports2, module2) {
     "use strict";
@@ -1691,7 +1645,6 @@ var require_sort = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/rsort.js
 var require_rsort = __commonJS({
   "../../node_modules/semver/functions/rsort.js"(exports2, module2) {
     "use strict";
@@ -1701,7 +1654,6 @@ var require_rsort = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/gt.js
 var require_gt = __commonJS({
   "../../node_modules/semver/functions/gt.js"(exports2, module2) {
     "use strict";
@@ -1711,7 +1663,6 @@ var require_gt = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/lt.js
 var require_lt = __commonJS({
   "../../node_modules/semver/functions/lt.js"(exports2, module2) {
     "use strict";
@@ -1721,7 +1672,6 @@ var require_lt = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/eq.js
 var require_eq = __commonJS({
   "../../node_modules/semver/functions/eq.js"(exports2, module2) {
     "use strict";
@@ -1731,7 +1681,6 @@ var require_eq = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/neq.js
 var require_neq = __commonJS({
   "../../node_modules/semver/functions/neq.js"(exports2, module2) {
     "use strict";
@@ -1741,7 +1690,6 @@ var require_neq = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/gte.js
 var require_gte = __commonJS({
   "../../node_modules/semver/functions/gte.js"(exports2, module2) {
     "use strict";
@@ -1751,7 +1699,6 @@ var require_gte = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/lte.js
 var require_lte = __commonJS({
   "../../node_modules/semver/functions/lte.js"(exports2, module2) {
     "use strict";
@@ -1761,7 +1708,6 @@ var require_lte = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/cmp.js
 var require_cmp = __commonJS({
   "../../node_modules/semver/functions/cmp.js"(exports2, module2) {
     "use strict";
@@ -1811,7 +1757,6 @@ var require_cmp = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/coerce.js
 var require_coerce = __commonJS({
   "../../node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
@@ -1857,7 +1802,6 @@ var require_coerce = __commonJS({
   }
 });
 
-// ../../node_modules/semver/internal/lrucache.js
 var require_lrucache = __commonJS({
   "../../node_modules/semver/internal/lrucache.js"(exports2, module2) {
     "use strict";
@@ -1895,7 +1839,6 @@ var require_lrucache = __commonJS({
   }
 });
 
-// ../../node_modules/semver/classes/range.js
 var require_range = __commonJS({
   "../../node_modules/semver/classes/range.js"(exports2, module2) {
     "use strict";
@@ -2018,7 +1961,6 @@ var require_range = __commonJS({
           });
         });
       }
-      // if ANY of the sets match ALL of its comparators, then pass
       test(version) {
         if (!version) {
           return false;
@@ -2272,7 +2214,6 @@ var require_range = __commonJS({
   }
 });
 
-// ../../node_modules/semver/classes/comparator.js
 var require_comparator = __commonJS({
   "../../node_modules/semver/classes/comparator.js"(exports2, module2) {
     "use strict";
@@ -2385,7 +2326,6 @@ var require_comparator = __commonJS({
   }
 });
 
-// ../../node_modules/semver/functions/satisfies.js
 var require_satisfies = __commonJS({
   "../../node_modules/semver/functions/satisfies.js"(exports2, module2) {
     "use strict";
@@ -2402,7 +2342,6 @@ var require_satisfies = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/to-comparators.js
 var require_to_comparators = __commonJS({
   "../../node_modules/semver/ranges/to-comparators.js"(exports2, module2) {
     "use strict";
@@ -2412,7 +2351,6 @@ var require_to_comparators = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/max-satisfying.js
 var require_max_satisfying = __commonJS({
   "../../node_modules/semver/ranges/max-satisfying.js"(exports2, module2) {
     "use strict";
@@ -2441,7 +2379,6 @@ var require_max_satisfying = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/min-satisfying.js
 var require_min_satisfying = __commonJS({
   "../../node_modules/semver/ranges/min-satisfying.js"(exports2, module2) {
     "use strict";
@@ -2470,7 +2407,6 @@ var require_min_satisfying = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/min-version.js
 var require_min_version = __commonJS({
   "../../node_modules/semver/ranges/min-version.js"(exports2, module2) {
     "use strict";
@@ -2529,7 +2465,6 @@ var require_min_version = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/valid.js
 var require_valid2 = __commonJS({
   "../../node_modules/semver/ranges/valid.js"(exports2, module2) {
     "use strict";
@@ -2545,7 +2480,6 @@ var require_valid2 = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/outside.js
 var require_outside = __commonJS({
   "../../node_modules/semver/ranges/outside.js"(exports2, module2) {
     "use strict";
@@ -2614,7 +2548,6 @@ var require_outside = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/gtr.js
 var require_gtr = __commonJS({
   "../../node_modules/semver/ranges/gtr.js"(exports2, module2) {
     "use strict";
@@ -2624,7 +2557,6 @@ var require_gtr = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/ltr.js
 var require_ltr = __commonJS({
   "../../node_modules/semver/ranges/ltr.js"(exports2, module2) {
     "use strict";
@@ -2634,7 +2566,6 @@ var require_ltr = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/intersects.js
 var require_intersects = __commonJS({
   "../../node_modules/semver/ranges/intersects.js"(exports2, module2) {
     "use strict";
@@ -2648,7 +2579,6 @@ var require_intersects = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/simplify.js
 var require_simplify = __commonJS({
   "../../node_modules/semver/ranges/simplify.js"(exports2, module2) {
     "use strict";
@@ -2698,7 +2628,6 @@ var require_simplify = __commonJS({
   }
 });
 
-// ../../node_modules/semver/ranges/subset.js
 var require_subset = __commonJS({
   "../../node_modules/semver/ranges/subset.js"(exports2, module2) {
     "use strict";
@@ -2860,7 +2789,6 @@ var require_subset = __commonJS({
   }
 });
 
-// ../../node_modules/semver/index.js
 var require_semver2 = __commonJS({
   "../../node_modules/semver/index.js"(exports2, module2) {
     "use strict";
@@ -2955,7 +2883,6 @@ var require_semver2 = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/asymmetricKeyDetailsSupported.js
 var require_asymmetricKeyDetailsSupported = __commonJS({
   "../../node_modules/jsonwebtoken/lib/asymmetricKeyDetailsSupported.js"(exports2, module2) {
     "use strict";
@@ -2964,7 +2891,6 @@ var require_asymmetricKeyDetailsSupported = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/rsaPssKeyDetailsSupported.js
 var require_rsaPssKeyDetailsSupported = __commonJS({
   "../../node_modules/jsonwebtoken/lib/rsaPssKeyDetailsSupported.js"(exports2, module2) {
     "use strict";
@@ -2973,7 +2899,6 @@ var require_rsaPssKeyDetailsSupported = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/validateAsymmetricKey.js
 var require_validateAsymmetricKey = __commonJS({
   "../../node_modules/jsonwebtoken/lib/validateAsymmetricKey.js"(exports2, module2) {
     "use strict";
@@ -3027,7 +2952,6 @@ var require_validateAsymmetricKey = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/lib/psSupported.js
 var require_psSupported = __commonJS({
   "../../node_modules/jsonwebtoken/lib/psSupported.js"(exports2, module2) {
     "use strict";
@@ -3036,7 +2960,6 @@ var require_psSupported = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/verify.js
 var require_verify = __commonJS({
   "../../node_modules/jsonwebtoken/verify.js"(exports2, module2) {
     "use strict";
@@ -3252,7 +3175,6 @@ var require_verify = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.includes/index.js
 var require_lodash = __commonJS({
   "../../node_modules/lodash.includes/index.js"(exports2, module2) {
     "use strict";
@@ -3437,7 +3359,6 @@ var require_lodash = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.isboolean/index.js
 var require_lodash2 = __commonJS({
   "../../node_modules/lodash.isboolean/index.js"(exports2, module2) {
     "use strict";
@@ -3454,7 +3375,6 @@ var require_lodash2 = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.isinteger/index.js
 var require_lodash3 = __commonJS({
   "../../node_modules/lodash.isinteger/index.js"(exports2, module2) {
     "use strict";
@@ -3519,7 +3439,6 @@ var require_lodash3 = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.isnumber/index.js
 var require_lodash4 = __commonJS({
   "../../node_modules/lodash.isnumber/index.js"(exports2, module2) {
     "use strict";
@@ -3536,7 +3455,6 @@ var require_lodash4 = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.isplainobject/index.js
 var require_lodash5 = __commonJS({
   "../../node_modules/lodash.isplainobject/index.js"(exports2, module2) {
     "use strict";
@@ -3581,7 +3499,6 @@ var require_lodash5 = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.isstring/index.js
 var require_lodash6 = __commonJS({
   "../../node_modules/lodash.isstring/index.js"(exports2, module2) {
     "use strict";
@@ -3599,7 +3516,6 @@ var require_lodash6 = __commonJS({
   }
 });
 
-// ../../node_modules/lodash.once/index.js
 var require_lodash7 = __commonJS({
   "../../node_modules/lodash.once/index.js"(exports2, module2) {
     "use strict";
@@ -3681,7 +3597,6 @@ var require_lodash7 = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/sign.js
 var require_sign = __commonJS({
   "../../node_modules/jsonwebtoken/sign.js"(exports2, module2) {
     "use strict";
@@ -3805,7 +3720,7 @@ var require_sign = __commonJS({
         if (secretOrPrivateKey.type !== "private") {
           return failure(new Error(`secretOrPrivateKey must be an asymmetric key when using ${header.alg}`));
         }
-        if (!options.allowInsecureKeySizes && !header.alg.startsWith("ES") && secretOrPrivateKey.asymmetricKeyDetails !== void 0 && //KeyObject.asymmetricKeyDetails is supported in Node 15+
+        if (!options.allowInsecureKeySizes && !header.alg.startsWith("ES") && secretOrPrivateKey.asymmetricKeyDetails !== void 0 &&
         secretOrPrivateKey.asymmetricKeyDetails.modulusLength < 2048) {
           return failure(new Error(`secretOrPrivateKey has a minimum key size of 2048 bits for ${header.alg}`));
         }
@@ -3907,7 +3822,6 @@ var require_sign = __commonJS({
   }
 });
 
-// ../../node_modules/jsonwebtoken/index.js
 var require_jsonwebtoken = __commonJS({
   "../../node_modules/jsonwebtoken/index.js"(exports2, module2) {
     "use strict";
@@ -3922,7 +3836,6 @@ var require_jsonwebtoken = __commonJS({
   }
 });
 
-// src/index.ts
 var index_exports = {};
 __export(index_exports, {
   creerAuthMiddleware: () => creerAuthMiddleware,
@@ -3935,7 +3848,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/routes/routesClient.ts
 var import_express = require("express");
 function creerRoutesClient(deps) {
   const router = (0, import_express.Router)();
@@ -4161,7 +4073,6 @@ function creerRoutesClient(deps) {
   return router;
 }
 
-// src/routes/routesRestaurant.ts
 var import_express2 = require("express");
 function creerRoutesRestaurant(deps) {
   const router = (0, import_express2.Router)();
@@ -4284,7 +4195,6 @@ function creerRoutesRestaurant(deps) {
   return router;
 }
 
-// src/routes/routesLivreur.ts
 var import_express3 = require("express");
 function creerRoutesLivreur(deps) {
   const router = (0, import_express3.Router)();
@@ -4412,7 +4322,6 @@ function creerRoutesLivreur(deps) {
   return router;
 }
 
-// src/routes/routesAuth.ts
 var import_express4 = require("express");
 function creerRoutesAuth(deps) {
   const router = (0, import_express4.Router)();
@@ -4437,7 +4346,6 @@ function creerRoutesAuth(deps) {
   return router;
 }
 
-// src/middleware/gestionnaireErreurs.ts
 var import_domain = require("@ecoeats/domain");
 var codesHttp = {
   PANIER_CONFLIT_RESTAURANT: 409,
@@ -4464,7 +4372,6 @@ function gestionnaireErreurs(err, req, res, next) {
   res.status(500).json({ code: "ERREUR_INTERNE", message: "Une erreur inattendue s'est produite." });
 }
 
-// src/middleware/authMiddleware.ts
 var import_jsonwebtoken = __toESM(require_jsonwebtoken());
 function creerAuthMiddleware(secretJwt) {
   return function authMiddleware(req, res, next) {
@@ -4495,7 +4402,6 @@ function requireRole(role) {
     next();
   };
 }
-// Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   creerAuthMiddleware,
   creerRoutesAuth,

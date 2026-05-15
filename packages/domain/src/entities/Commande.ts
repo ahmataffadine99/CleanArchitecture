@@ -6,7 +6,7 @@ import { TransitionStatutInvalideError } from "../errors/TransitionStatutInvalid
 
 export class Commande {
   private statut: StatutCommande = StatutCommande.EN_ATTENTE;
-  private tempsPreparationEstime: number | null = null; // en minutes
+  private tempsPreparationEstime: number | null = null;
   private livreurId: string | null = null;
   private readonly creeLe: Date;
 
@@ -45,7 +45,6 @@ export class Commande {
 
   assignerLivreur(livreurId: string): void {
     this.livreurId = livreurId;
-    // On ne change plus le statut ici automatiquement pour permettre l'étape "Pickup" (En attente de collecte)
   }
 
   recuperer(): void {
@@ -91,6 +90,6 @@ export class Commande {
    * EcoEATS utilise des vélos (0g).
    */
   calculerCO2Economise(distanceKm: number): number {
-    return Math.round(distanceKm * 160); // retourne des grammes
+    return Math.round(distanceKm * 160);
   }
 }

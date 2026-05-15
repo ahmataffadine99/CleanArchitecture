@@ -26,7 +26,6 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: (newItem, restId) => {
     set((state) => {
-      // Vérification de la règle Clean Architecture : 1 seul restaurant par panier
       if (state.restaurantId && state.restaurantId !== restId && state.items.length > 0) {
         alert("Vous ne pouvez commander que dans un seul restaurant à la fois. Videz votre panier pour changer de restaurant.");
         return state;

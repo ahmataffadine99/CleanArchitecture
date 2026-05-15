@@ -65,7 +65,6 @@ export class DepotTicketsPrisma implements DepotTickets {
 
     const tickets = [];
     for (const row of rows) {
-      // Fetch author details
       const compte = await (this.prisma as any).compteUtilisateur.findFirst({
         where: { profilId: row.auteurId }
       });

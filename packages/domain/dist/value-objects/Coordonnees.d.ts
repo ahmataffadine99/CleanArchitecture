@@ -5,4 +5,3 @@ export declare class Coordonnees {
     estEgal(autre: Coordonnees): boolean;
     toString(): string;
 }
-//# sourceMappingURL=Coordonnees.d.ts.map

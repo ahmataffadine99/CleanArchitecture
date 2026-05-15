@@ -10,4 +10,3 @@ class RestaurantIntrouvableError extends ErreurMetier_1.ErreurMetier {
     restaurantId;
 }
 exports.RestaurantIntrouvableError = RestaurantIntrouvableError;
-//# sourceMappingURL=RestaurantIntrouvableError.js.map

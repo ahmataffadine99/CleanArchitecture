@@ -21,7 +21,6 @@ export default function GlobalSearch({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -32,7 +31,6 @@ export default function GlobalSearch({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [wrapperRef]);
 
-  // Combined Search
   useEffect(() => {
     if (!query || query.length < 2) {
       setAddressResults([]);
@@ -44,11 +42,9 @@ export default function GlobalSearch({
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        // 1. Search Addresses (Nominatim)
         const addrPromise = fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1&countrycodes=fr`)
           .then(res => res.json());
 
-        // 2. Search Restaurants (Our API)
         const restPromise = fetch(`/api/restaurants`)
           .then(res => res.json())
           .then(data => {
@@ -112,7 +108,7 @@ export default function GlobalSearch({
         <div className="absolute z-[10001] w-full left-0 right-0 mt-3 bg-white border border-slate-100 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
           
           <div className="max-h-[450px] overflow-y-auto no-scrollbar">
-            {/* Section Restaurants */}
+            
             {restaurantResults.length > 0 && (
               <div className="p-4 bg-emerald-50/30">
                 <h3 className="px-3 py-2 text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-2">Restaurants correspondants</h3>
@@ -136,7 +132,7 @@ export default function GlobalSearch({
               </div>
             )}
 
-            {/* Section Adresses */}
+            
             {addressResults.length > 0 && (
               <div className="p-4">
                 <h3 className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Adresses de livraison (Proximité)</h3>

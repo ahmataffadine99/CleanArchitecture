@@ -36,4 +36,3 @@ export type CommandeLivree = {
     date: Date;
 };
 export type EvenementCommande = CommandeCreee | CommandePayee | CommandeAcceptee | CommandeRefusee | CommandePrete | CommandeLivree;
-//# sourceMappingURL=EvenementsCommande.d.ts.map

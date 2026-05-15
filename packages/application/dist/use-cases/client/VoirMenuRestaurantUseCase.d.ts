@@ -10,4 +10,3 @@ export declare class VoirMenuRestaurantUseCase {
     executer(restaurantId: string): Promise<Resultat>;
 }
 export {};
-//# sourceMappingURL=VoirMenuRestaurantUseCase.d.ts.map

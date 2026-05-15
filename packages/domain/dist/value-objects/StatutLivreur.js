@@ -7,4 +7,3 @@ var StatutLivreur;
     StatutLivreur["INDISPONIBLE"] = "INDISPONIBLE";
     StatutLivreur["EN_LIVRAISON"] = "EN_LIVRAISON";
 })(StatutLivreur || (exports.StatutLivreur = StatutLivreur = {}));
-//# sourceMappingURL=StatutLivreur.js.map

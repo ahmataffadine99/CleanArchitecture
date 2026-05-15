@@ -10,7 +10,6 @@ type Req = {
 
 import { ServiceCartographie } from "../../ports/ServiceCartographie";
 
-// Trouve les livreurs à proximité et leur envoie une proposition
 export class ProposerLivraisonUseCase {
   private readonly RAYON_ACTION_KM = 30.0;
 
@@ -34,7 +33,6 @@ export class ProposerLivraisonUseCase {
     if (!restaurant) throw new Error("Restaurant introuvable");
     const livreursEligibles = await this.depotLivreurs.listerEligiblesPourRestaurant(commande.restaurantId);
 
-    // Filtrer les livreurs par proximité du restaurant
     const livreursProches = livreursEligibles.filter(livreur => {
       const distance = this.cartographie.calculerDistanceKm(restaurant.position, livreur.position);
       return distance <= this.RAYON_ACTION_KM;
@@ -45,6 +43,6 @@ export class ProposerLivraisonUseCase {
       await this.depotLivreurs.sauvegarder(livreur);
     }
 
-    return livreursProches[0]; // Retourne le premier notifié (ou undefined si aucun)
+    return livreursProches[0];
   }
 }

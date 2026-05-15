@@ -22,7 +22,7 @@ export class ListerCommandesClientUseCase {
       } catch (_) {}
 
       let livreurNom = undefined;
-      let livreurPosition = undefined; // Pourrait provenir du livreur s'il transmet sa position
+      let livreurPosition = undefined;
       if (cmd.getLivreurId()) {
         try {
           const l = await this.depotLivreurs.trouverParId(cmd.getLivreurId()!);

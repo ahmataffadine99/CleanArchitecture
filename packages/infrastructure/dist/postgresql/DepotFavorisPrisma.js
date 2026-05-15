@@ -16,7 +16,7 @@ class DepotFavorisPrisma {
     async retirerRestaurant(clientId, restaurantId) {
         await this.prisma.favoriRestaurant.delete({
             where: { clientId_restaurantId: { clientId, restaurantId } }
-        }).catch(() => { }); // Ignorer si déjà supprimé
+        }).catch(() => { });
     }
     async listerRestaurants(clientId) {
         const rows = await this.prisma.favoriRestaurant.findMany({ where: { clientId } });
@@ -40,4 +40,3 @@ class DepotFavorisPrisma {
     }
 }
 exports.DepotFavorisPrisma = DepotFavorisPrisma;
-//# sourceMappingURL=DepotFavorisPrisma.js.map

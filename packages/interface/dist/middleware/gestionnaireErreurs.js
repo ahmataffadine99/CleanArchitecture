@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gestionnaireErreurs = gestionnaireErreurs;
 const domain_1 = require("@ecoeats/domain");
-// Mappe les erreurs métier vers des codes HTTP appropriés
 const codesHttp = {
     PANIER_CONFLIT_RESTAURANT: 409,
     PLAT_EN_RUPTURE: 409,
@@ -27,4 +26,3 @@ function gestionnaireErreurs(err, req, res, next) {
     console.error("[Erreur inattendue]", err);
     res.status(500).json({ code: "ERREUR_INTERNE", message: "Une erreur inattendue s'est produite." });
 }
-//# sourceMappingURL=gestionnaireErreurs.js.map

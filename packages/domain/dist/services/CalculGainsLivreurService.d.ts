@@ -7,4 +7,3 @@ export declare class CalculGainsLivreurService {
      */
     calculerGains(distanceKm: number, pourboire?: Money): Money;
 }
-//# sourceMappingURL=CalculGainsLivreurService.d.ts.map

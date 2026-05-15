@@ -22,4 +22,3 @@ class ModifierRestaurantUseCase {
     }
 }
 exports.ModifierRestaurantUseCase = ModifierRestaurantUseCase;
-//# sourceMappingURL=ModifierRestaurantUseCase.js.map

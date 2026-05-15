@@ -49,7 +49,6 @@ function DeliveryCountdown({ creeLe, preparationMinutes }: { creeLe: string, pre
   const [timeLeft, setTimeLeft] = useState('');
 
   useEffect(() => {
-    // On estime la livraison à 10 min après la fin de préparation
     const deliveryTarget = new Date(creeLe).getTime() + (preparationMinutes + 10) * 60000;
     
     const update = () => {
@@ -100,7 +99,7 @@ export default function ClientHistory() {
         });
         if (res.ok) {
           const data = await res.json();
-          setCommandes(data.reverse()); // Plus récents d'abord
+          setCommandes(data.reverse());
         }
       } catch (err) {
         console.error("Erreur chargement commandes:", err);
@@ -110,7 +109,7 @@ export default function ClientHistory() {
     };
     
     fetchCommandes();
-    const interval = setInterval(fetchCommandes, 10000); // Polling toutes les 10s
+    const interval = setInterval(fetchCommandes, 10000);
     return () => clearInterval(interval);
   }, [user, token]);
 
@@ -137,7 +136,7 @@ export default function ClientHistory() {
         <p className="text-slate-500 font-medium mt-2">Suivez vos festins en temps réel ou retrouvez vos anciens plaisirs.</p>
       </div>
 
-      {/* TABS */}
+      
       <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[1.5rem] mb-10 w-fit mx-auto sm:mx-0 shadow-inner">
         <button 
           onClick={() => setActiveTab('tracking')}
@@ -179,14 +178,13 @@ export default function ClientHistory() {
             const isRefus = ['REFUSEE', 'ABANDONNEE'].includes(cmd.statut);
             const isEnCours = ['PAYEE', 'ACCEPTEE', 'EN_PREPARATION', 'PRETE', 'EN_LIVRAISON'].includes(cmd.statut);
             
-            // Pour la Timeline, on force le statut ACCEPTEE à correspondre à EN_PREPARATION visuellement
             let currentStepIdx = STEPS.findIndex(s => s.id === cmd.statut);
             if (cmd.statut === 'ACCEPTEE') currentStepIdx = 1;
-            if (cmd.statut === 'EN_LIVRAISON') currentStepIdx = 2; // avant livraison finale
+            if (cmd.statut === 'EN_LIVRAISON') currentStepIdx = 2;
 
             return (
               <div key={cmd.id} className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8 overflow-hidden relative group">
-                {/* Header Carte */}
+                
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-slate-100 pb-6 mb-6">
                   <div>
                     <div className="flex flex-wrap items-center gap-3 mb-2">
@@ -245,7 +243,7 @@ export default function ClientHistory() {
                   </div>
                 )}
 
-                {/* Détail de la commande */}
+                
                 <div className="mb-8">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Articles commandés</p>
                   <ul className="text-sm font-bold text-slate-700 space-y-2">
@@ -258,20 +256,20 @@ export default function ClientHistory() {
                   </ul>
                 </div>
 
-                {/* Timeline de progression (Seulement si commande active) */}
+                
                 {isEnCours && (
                   <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-100">
                     <div className="relative flex justify-between">
-                      {/* Ligne de fond */}
+                      
                       <div className="absolute top-5 left-8 right-8 h-1 bg-slate-200 rounded-full z-0 hidden sm:block"></div>
                       
-                      {/* Ligne de progression */}
+                      
                       <div 
                         className="absolute top-5 left-8 h-1 bg-emerald-500 rounded-full z-0 transition-all duration-1000 hidden sm:block delay-300" 
                         style={{ width: `${Math.max(0, currentStepIdx) * (100 / (STEPS.length - 1))}%` }}
                       ></div>
 
-                      {/* ÉTAPES */}
+                      
                       {STEPS.map((step, index) => {
                         const isCompleted = index <= currentStepIdx;
                         const isCurrent = index === currentStepIdx;
@@ -297,7 +295,7 @@ export default function ClientHistory() {
                   </div>
                 )}
 
-                {/* Map pour le suivi en direct */}
+                
                 {(cmd.statut === 'EN_LIVRAISON' || cmd.statut === 'PRETE') && cmd.restaurantPosition && cmd.clientPosition && (
                   <div className="mt-8 h-[300px] w-full rounded-2xl overflow-hidden relative border border-slate-100 shadow-inner">
                     <DeliveryMap 

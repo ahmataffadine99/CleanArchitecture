@@ -5,4 +5,3 @@ export declare class ObtenirLivreurUseCase {
     constructor(depotLivreurs: DepotLivreurs);
     executer(livreurId: string): Promise<Livreur>;
 }
-//# sourceMappingURL=ObtenirLivreurUseCase.d.ts.map

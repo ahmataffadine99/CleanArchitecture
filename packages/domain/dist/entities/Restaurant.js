@@ -18,4 +18,3 @@ class Restaurant {
     }
 }
 exports.Restaurant = Restaurant;
-//# sourceMappingURL=Restaurant.js.map

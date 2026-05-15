@@ -4,7 +4,6 @@ exports.Panier = void 0;
 const Money_1 = require("../value-objects/Money");
 const PanierConflitRestaurantError_1 = require("../errors/PanierConflitRestaurantError");
 const PlatEnRuptureError_1 = require("../errors/PlatEnRuptureError");
-// Règle métier : un panier ne peut contenir que des articles d'un seul restaurant
 class Panier {
     clientId;
     articles = [];
@@ -62,4 +61,3 @@ class Panier {
     }
 }
 exports.Panier = Panier;
-//# sourceMappingURL=Panier.js.map

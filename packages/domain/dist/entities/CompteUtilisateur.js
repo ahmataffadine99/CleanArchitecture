@@ -7,7 +7,7 @@ class CompteUtilisateur {
     motDePasseHache;
     role;
     profilId;
-    constructor(id, email, motDePasseHache, role, profilId // id du Client, Livreur ou Restaurant associé
+    constructor(id, email, motDePasseHache, role, profilId
     ) {
         this.id = id;
         this.email = email;
@@ -17,4 +17,3 @@ class CompteUtilisateur {
     }
 }
 exports.CompteUtilisateur = CompteUtilisateur;
-//# sourceMappingURL=CompteUtilisateur.js.map

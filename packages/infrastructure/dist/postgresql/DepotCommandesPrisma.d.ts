@@ -18,4 +18,3 @@ export declare class DepotCommandesPrisma implements DepotCommandes {
      */
     private retrouverTransitions;
 }
-//# sourceMappingURL=DepotCommandesPrisma.d.ts.map

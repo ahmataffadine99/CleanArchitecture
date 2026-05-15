@@ -8,4 +8,3 @@ export declare class Restaurant {
     imageUrl: string | null;
     constructor(id: string, nom: string, adresse: string, position: Coordonnees, proprietaireId: string, imageUrl?: string | null);
 }
-//# sourceMappingURL=Restaurant.d.ts.map

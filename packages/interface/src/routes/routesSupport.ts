@@ -12,7 +12,6 @@ export function routerSupport(
 ) {
   const router = Router();
 
-  // POST /api/support/tickets
   router.post("/tickets", async (req, res) => {
     try {
       const { auteurId, titre, messageInitial } = req.body;
@@ -23,7 +22,6 @@ export function routerSupport(
     }
   });
 
-  // GET /api/support/tickets/:auteurId
   router.get("/tickets/:auteurId", async (req, res) => {
     try {
       const { auteurId } = req.params;
@@ -34,7 +32,6 @@ export function routerSupport(
     }
   });
 
-  // POST /api/support/tickets/:id/message
   router.post("/tickets/:id/message", async (req, res) => {
     try {
       const { id } = req.params;

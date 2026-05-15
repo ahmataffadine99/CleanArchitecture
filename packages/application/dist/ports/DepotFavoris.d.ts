@@ -6,4 +6,3 @@ export interface DepotFavoris {
     retirerPlat(clientId: string, platId: string): Promise<void>;
     listerPlats(clientId: string): Promise<string[]>;
 }
-//# sourceMappingURL=DepotFavoris.d.ts.map

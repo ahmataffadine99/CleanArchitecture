@@ -51,7 +51,6 @@ export class PayerCommandeUseCase {
     await this.depotCommandes.sauvegarder(commande);
     await this.depotFactures.sauvegarder(facture);
 
-    // Créditer les points de fidélité : 1 point par euro dépensé
     if (this.depotClients) {
       try {
         const client = await this.depotClients.trouverParId(req.clientId);
@@ -61,7 +60,6 @@ export class PayerCommandeUseCase {
           await this.depotClients.sauvegarder(client);
         }
       } catch (_) {
-        // Non bloquant : si le client n'est pas trouvé, on log silencieusement
         console.warn(`[Fidélité] Client ${req.clientId} introuvable pour créditer les points.`);
       }
     }

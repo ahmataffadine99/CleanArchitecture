@@ -125,7 +125,7 @@ export default function LoyaltyPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      {/* Header */}
+      
       <div className="mb-12 text-center">
         <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4">
           <Zap size={14} /> Programme Fidélité
@@ -144,7 +144,7 @@ export default function LoyaltyPage() {
         </div>
       ) : (
         <>
-          {/* Carte Statut & Simulateur */}
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2 relative bg-slate-900 text-white rounded-[3rem] p-8 sm:p-10 overflow-hidden shadow-2xl shadow-slate-400/20">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
@@ -168,7 +168,7 @@ export default function LoyaltyPage() {
                   </div>
                 </div>
 
-                {/* Barre de progression vers le palier suivant */}
+                
                 {palierSuivant ? (
                   <div className="mt-auto">
                     <div className="flex justify-between text-xs font-bold mb-3">
@@ -195,7 +195,7 @@ export default function LoyaltyPage() {
               </div>
             </div>
 
-            {/* L'Arche de Simulation */}
+            
             <div className="bg-white rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/50 p-8 flex flex-col items-center justify-between group transition-transform hover:scale-[1.02]">
               <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6">Simulateur de Gain</h3>
               
@@ -246,7 +246,7 @@ export default function LoyaltyPage() {
             </div>
           </div>
 
-          {/* Grille des Paliers */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
             {PALIERS.map((palier) => {
               const Icon = palier.icon;
@@ -277,7 +277,7 @@ export default function LoyaltyPage() {
             })}
           </div>
 
-          {/* Mon Impact Éco */}
+          
           <div className="mb-16">
             <div className="flex items-center gap-4 mb-10">
               <div className="h-1.5 bg-emerald-500 w-16 rounded-full"></div>
@@ -285,7 +285,7 @@ export default function LoyaltyPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Card CO2 */}
+              
               <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl transition-all duration-700">
                 <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                 <div className="relative z-10">
@@ -303,7 +303,7 @@ export default function LoyaltyPage() {
                 </div>
               </div>
 
-              {/* Card Emballages */}
+              
               <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl transition-all duration-700">
                 <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 bg-indigo-50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                 <div className="relative z-10">
@@ -321,7 +321,7 @@ export default function LoyaltyPage() {
                 </div>
               </div>
 
-              {/* Card Eco-Score */}
+              
               <div className="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl shadow-emerald-900/20 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-transparent group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative z-10">
@@ -347,7 +347,7 @@ export default function LoyaltyPage() {
             </div>
           </div>
 
-          {/* CTA Commander */}
+          
           <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-[2.5rem] p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-8 shadow-2xl shadow-emerald-200 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
             <div className="relative z-10 text-white text-center sm:text-left">

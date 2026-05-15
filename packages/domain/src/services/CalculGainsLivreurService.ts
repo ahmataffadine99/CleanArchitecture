@@ -1,8 +1,8 @@
 import { Money } from "../value-objects/Money";
 
 export class CalculGainsLivreurService {
-  private static readonly PRISE_EN_CHARGE = 2.50; // Euros
-  private static readonly PRIX_KM = 1.00;        // Euros par KM
+  private static readonly PRISE_EN_CHARGE = 2.50;
+  private static readonly PRIX_KM = 1.00;
 
   /**
    * Formule : Prise en charge + (Distance * Prix_KM) + Pourboire

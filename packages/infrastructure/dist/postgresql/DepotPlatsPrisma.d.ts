@@ -9,4 +9,3 @@ export declare class DepotPlatsPrisma implements DepotPlats {
     trouverParRestaurant(restaurantId: string): Promise<PlatMenu[]>;
     supprimer(id: string): Promise<void>;
 }
-//# sourceMappingURL=DepotPlatsPrisma.d.ts.map

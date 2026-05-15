@@ -130,7 +130,7 @@ export default function AddressManagement() {
         )}
       </div>
 
-      {/* Modal Ajout/Modification */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeModal}></div>
@@ -171,14 +171,12 @@ export default function AddressManagement() {
                   <div className="bg-slate-50 rounded-xl p-1 border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
                     <AddressAutocomplete 
                       value={formData.rue ? `${formData.rue}, ${formData.codePostal} ${formData.ville}` : ''}
-                      onChange={() => {}} // L'utilisateur tape dans l'autocomplete
+                      onChange={() => {}}
                       onSelect={(fullAddress, lat, lon) => {
-                         // On tente d'extraire la rue, ville, CP depuis "27 Rue Cambronne, 75015 Paris" ou autre
-                         // Souvent Nominatim renvoie "Numéro Rue, Ville, etc..."
                          const parts = fullAddress.split(',');
                          let rue = parts[0]?.trim() || '';
                          if (parts.length > 1 && !isNaN(parseInt(parts[0]))) {
-                            rue = parts[0].trim() + ' ' + parts[1].trim(); // Numéro + Rue
+                            rue = parts[0].trim() + ' ' + parts[1].trim();
                          }
                          
                          const cpAndVille = fullAddress.match(/(\d{5})\s+([^,]+)/);

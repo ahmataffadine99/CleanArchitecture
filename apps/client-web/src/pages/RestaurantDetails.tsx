@@ -31,7 +31,6 @@ export default function RestaurantDetails() {
   useEffect(() => {
     if (!id) return;
 
-    // Récupérer les infos du restaurant et son menu
     Promise.all([
       fetch('/api/restaurants').then(res => res.json()),
       fetch(`/api/restaurants/${id}/menu`).then(res => res.json())
@@ -40,7 +39,6 @@ export default function RestaurantDetails() {
         const found = restosData.find((r: any) => r.id === id);
         if (found) setRestaurant(found);
         
-        // On n'affiche que les plats disponibles
         setMenu(menuData);
       })
       .catch((err) => console.error(err))
@@ -75,7 +73,7 @@ export default function RestaurantDetails() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      {/* Bouton retour */}
+      
       <button 
         onClick={() => navigate('/')}
         className="mb-6 flex items-center gap-2 text-slate-500 hover:text-emerald-500 transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100"
@@ -84,7 +82,7 @@ export default function RestaurantDetails() {
         <span className="font-medium text-sm">Retour aux restaurants</span>
       </button>
 
-      {/* Hero Restaurant */}
+      
       <div className="relative rounded-3xl overflow-hidden bg-slate-800 h-64 mb-10 shadow-lg animate-slide-up">
         <img 
           src={restaurant.imageUrl || `https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200&auto=format&fit=crop`} 
@@ -108,7 +106,7 @@ export default function RestaurantDetails() {
         </div>
       </div>
 
-      {/* Menu Section */}
+      
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Menu</h2>
       
       {menu.disponibles.length === 0 && menu.rupture.length === 0 ? (
@@ -117,7 +115,7 @@ export default function RestaurantDetails() {
         </div>
       ) : (
         <div className="space-y-10">
-          {/* Section Plats */}
+          
           {[...menu.disponibles, ...menu.rupture].filter(p => !p.categorie || p.categorie === 'PLAT').length > 0 && (
             <div>
               <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -134,7 +132,7 @@ export default function RestaurantDetails() {
             </div>
           )}
 
-          {/* Section Boissons */}
+          
           {[...menu.disponibles, ...menu.rupture].filter(p => p.categorie === 'BOISSON').length > 0 && (
             <div>
               <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -153,7 +151,7 @@ export default function RestaurantDetails() {
         </div>
       )}
 
-      {/* Modal Détails Plat */}
+      
       {selectedPlat && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
           <div 

@@ -28,7 +28,6 @@ export function routerAdmin(
 ) {
   const router = Router();
 
-  // GET /api/admin/livreurs
   router.get("/livreurs", async (req, res) => {
     try {
       const livreurs = await listerTousLesLivreurs.executer();
@@ -38,7 +37,6 @@ export function routerAdmin(
     }
   });
 
-  // GET /api/admin/stats
   router.get("/stats", async (req, res) => {
     try {
       const stats = await obtenirStatsGlobales.executer();
@@ -48,7 +46,6 @@ export function routerAdmin(
     }
   });
 
-  // GET /api/admin/restaurants/:id/stats
   router.get("/restaurants/:id/stats", async (req, res) => {
     try {
       const { id } = req.params;
@@ -59,7 +56,6 @@ export function routerAdmin(
     }
   });
 
-  // GET /api/admin/comptes
   router.get("/comptes", async (req, res) => {
     try {
       const comptes = await obtenirTousLesComptes.executer();
@@ -69,7 +65,6 @@ export function routerAdmin(
     }
   });
 
-  // GET /api/admin/restaurants
   router.get("/restaurants", async (req, res) => {
     try {
       const restaurants = await listerRestaurants.executer();
@@ -79,7 +74,6 @@ export function routerAdmin(
     }
   });
 
-  // GET /api/admin/commandes
   router.get("/commandes", async (req, res) => {
     try {
       const commandes = await listerToutesLesCommandes.executer();
@@ -89,9 +83,6 @@ export function routerAdmin(
     }
   });
 
-  // --- SUPPORT ---
-
-  // GET /api/admin/tickets
   router.get("/tickets", async (req, res) => {
     try {
       const tickets = await listerTickets.executer();
@@ -101,7 +92,6 @@ export function routerAdmin(
     }
   });
 
-  // POST /api/admin/tickets/:id/message
   router.post("/tickets/:id/message", async (req, res) => {
     try {
       const { id } = req.params;
@@ -113,7 +103,6 @@ export function routerAdmin(
     }
   });
 
-  // POST /api/admin/tickets/:id/cloturer
   router.post("/tickets/:id/cloturer", async (req, res) => {
     try {
       const { id } = req.params;
@@ -124,7 +113,6 @@ export function routerAdmin(
     }
   });
 
-  // POST /api/admin/tickets/:id/lire
   router.post("/tickets/:id/lire", async (req, res) => {
     try {
       const { id } = req.params;
@@ -135,7 +123,6 @@ export function routerAdmin(
     }
   });
 
-  // POST /api/admin/comptes/:id/statut
   router.post("/comptes/:id/statut", async (req, res) => {
     try {
       const { id } = req.params;

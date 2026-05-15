@@ -27,13 +27,11 @@ class PasserCommandeUseCase {
         const restaurant = await this.depotRestaurants.trouverParId(restaurantId);
         const positionLivraison = new domain_1.Coordonnees(req.latitude || 48.8566, req.longitude || 2.3522);
         const distanceKm = this.cartographie.calculerDistanceKm(restaurant.position, positionLivraison);
-        // Vérifier que les stocks sont toujours OK et les baisser
         for (const article of req.panier.getArticles()) {
             const plat = await this.depotPlats.trouverParId(article.menuItemId);
             plat.diminuerStock(article.quantite);
             await this.depotPlats.sauvegarder(plat);
         }
-        // Calculer la réduction basée sur les points de fidélité
         const points = client.getPointsFidelite ? client.getPointsFidelite() : 0;
         const tauxReduction = this.calculPrix.getTauxReduction(points);
         const { prixPlats, fraisLivraison, fraisService, reduction } = this.calculPrix.calculerTotal(req.panier.getArticles(), distanceKm, tauxReduction);
@@ -44,4 +42,3 @@ class PasserCommandeUseCase {
     }
 }
 exports.PasserCommandeUseCase = PasserCommandeUseCase;
-//# sourceMappingURL=PasserCommandeUseCase.js.map

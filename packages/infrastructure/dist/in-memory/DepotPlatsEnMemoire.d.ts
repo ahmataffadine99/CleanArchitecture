@@ -7,4 +7,3 @@ export declare class DepotPlatsEnMemoire implements DepotPlats {
     trouverParRestaurant(restaurantId: string): Promise<PlatMenu[]>;
     supprimer(id: string): Promise<void>;
 }
-//# sourceMappingURL=DepotPlatsEnMemoire.d.ts.map

@@ -34,7 +34,7 @@ describe("Panier", () => {
     panier.ajouterArticle(new ArticlePanier("plat-1", "Burger", Money.fromEuros(12), 2, "resto-A"));
     panier.ajouterArticle(new ArticlePanier("plat-2", "Frites", Money.fromEuros(4), 1, "resto-A"));
 
-    expect(panier.prixTotal().enEuros()).toBe(28); // 2*12 + 4
+    expect(panier.prixTotal().enEuros()).toBe(28);
   });
 
   it("se vide correctement", () => {

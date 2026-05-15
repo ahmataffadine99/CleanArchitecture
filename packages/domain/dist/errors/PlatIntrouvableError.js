@@ -10,4 +10,3 @@ class PlatIntrouvableError extends ErreurMetier_1.ErreurMetier {
     platId;
 }
 exports.PlatIntrouvableError = PlatIntrouvableError;
-//# sourceMappingURL=PlatIntrouvableError.js.map

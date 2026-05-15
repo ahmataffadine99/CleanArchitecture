@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArticlePanier = void 0;
-// Représente un article dans le panier — snapshot du prix au moment de l'ajout
 class ArticlePanier {
     menuItemId;
     nom;
@@ -26,4 +25,3 @@ class ArticlePanier {
     }
 }
 exports.ArticlePanier = ArticlePanier;
-//# sourceMappingURL=ArticlePanier.js.map

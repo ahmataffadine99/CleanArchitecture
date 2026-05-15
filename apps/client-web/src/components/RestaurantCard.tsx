@@ -10,7 +10,7 @@ type RestaurantCardProps = {
   tempsLivraison?: string;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
-  ecoScore?: number; // 1 to 100
+  ecoScore?: number;
 };
 
 export default function RestaurantCard({ 
@@ -25,7 +25,7 @@ export default function RestaurantCard({
 
   return (
     <Link to={`/restaurant/${id}`} className="group relative bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full block">
-      {/* Image Cover */}
+      
       <div className="relative h-48 w-full overflow-hidden bg-slate-100">
         <img 
           src={bgImage} 
@@ -33,7 +33,7 @@ export default function RestaurantCard({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
         />
         
-        {/* Favori */}
+        
         <button 
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(); }}
           className={`absolute top-4 right-4 z-10 p-2 rounded-xl backdrop-blur-md transition-all duration-300 ${isFavorite ? 'bg-rose-500 text-white' : 'bg-white/20 text-white hover:bg-white/40'}`}
@@ -41,14 +41,14 @@ export default function RestaurantCard({
           <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
         </button>
 
-        {/* Eco-Score Badge */}
+        
         <div className="absolute top-4 left-4 bg-emerald-500/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm border border-emerald-400/20 text-white">
           <Leaf size={12} fill="white" fillOpacity={0.2} />
           <span className="text-[10px] font-bold tracking-tight">Eco {ecoScore}</span>
         </div>
       </div>
 
-      {/* Content */}
+      
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors line-clamp-1">{nom}</h3>

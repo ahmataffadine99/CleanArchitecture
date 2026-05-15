@@ -4,7 +4,7 @@ export class Avis {
     public readonly commandeId: string,
     public readonly livreurId: string,
     public readonly clientId: string,
-    public readonly note: number, // 1 à 5
+    public readonly note: number,
     public readonly commentaire: string | null = null,
     public readonly creeLe: Date = new Date()
   ) {

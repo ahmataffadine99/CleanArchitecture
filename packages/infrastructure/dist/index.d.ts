@@ -15,4 +15,3 @@ export { DepotAvisPrisma } from "./postgresql/DepotAvisPrisma";
 export { DepotFavorisPrisma } from "./postgresql/DepotFavorisPrisma";
 export { CartographieHaversine } from "./services/CartographieHaversine";
 export { PaiementSimule } from "./services/PaiementSimule";
-//# sourceMappingURL=index.d.ts.map

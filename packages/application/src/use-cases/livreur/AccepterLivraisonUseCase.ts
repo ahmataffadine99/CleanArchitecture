@@ -25,7 +25,6 @@ export class AccepterLivraisonUseCase {
     await this.depotLivreurs.sauvegarder(livreur);
     await this.depotCommandes.sauvegarder(commande);
 
-    // Nettoyer les propositions chez tous les autres livreurs
     await this.depotLivreurs.retirerPropositionDeTous(req.commandeId);
   }
 }

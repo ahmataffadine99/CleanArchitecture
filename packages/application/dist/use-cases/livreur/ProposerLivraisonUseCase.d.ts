@@ -16,4 +16,3 @@ export declare class ProposerLivraisonUseCase {
     executer(req: Req): Promise<Livreur>;
 }
 export {};
-//# sourceMappingURL=ProposerLivraisonUseCase.d.ts.map

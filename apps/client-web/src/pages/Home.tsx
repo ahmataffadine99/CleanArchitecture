@@ -42,7 +42,7 @@ export default function Home() {
     setLoading(true);
     let url = `/api/restaurants?cat=${cat || 'all'}`;
     if (coords) {
-      url += `&lat=${coords.lat}&lon=${coords.lon}&rayon=10`; // 10km radius by default
+      url += `&lat=${coords.lat}&lon=${coords.lon}&rayon=10`;
     }
 
     fetch(url)
@@ -80,7 +80,7 @@ export default function Home() {
 
   return (
     <div className="pb-20">
-      {/* Hero Section */}
+      
       <section className="relative h-[500px] flex items-center justify-center mb-12">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img 
@@ -120,7 +120,7 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Categories Section */}
+        
         <section className="mb-12 overflow-hidden">
           <div className="flex items-center justify-between mb-6 px-1">
             <h2 className="text-xl font-black text-slate-800 tracking-tight">Explorez par envies</h2>
@@ -151,7 +151,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Restaurants Grid */}
+        
         <section>
           <div className="flex items-center justify-between mb-8 px-1">
             <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function Home() {
                   isFavorite={favIds.includes(resto.id)}
                   onToggleFavorite={() => toggleRestaurant(resto.id, user?.profilId, token || undefined)}
                   image={resto.imageUrl || `https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`}
-                  ecoScore={90 - (index * 5)} // Dummy data for visual
+                  ecoScore={90 - (index * 5)}
                 />
               ))}
             </div>

@@ -13,4 +13,3 @@ export declare class Facture {
     constructor(id: string, commandeId: string, clientId: string, articles: ReadonlyArray<ArticlePanier>, prixPlats: Money, fraisLivraison: Money, fraisService: Money, total: Money);
     afficher(): string;
 }
-//# sourceMappingURL=Facture.d.ts.map

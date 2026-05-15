@@ -11,8 +11,8 @@ export type PropositionDetaillee = {
   clientAdresse: string;
   tempsPreparationEstime?: number;
   montantLivraison: number;
-  distanceApprocheKm: number; // Distance Livreur -> Restaurant
-  distanceLivraisonKm: number; // Distance Restaurant -> Client
+  distanceApprocheKm: number;
+  distanceLivraisonKm: number;
 };
 
 export class ObtenirPropositionsLivreurUseCase {

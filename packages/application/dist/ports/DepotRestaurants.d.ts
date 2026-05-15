@@ -5,4 +5,3 @@ export interface DepotRestaurants {
     listerTous(): Promise<Restaurant[]>;
     trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null>;
 }
-//# sourceMappingURL=DepotRestaurants.d.ts.map

@@ -1,7 +1,6 @@
 import { ErreurMetier } from "@ecoeats/domain";
 import { Request, Response, NextFunction } from "express";
 
-// Mappe les erreurs métier vers des codes HTTP appropriés
 const codesHttp: Record<string, number> = {
   PANIER_CONFLIT_RESTAURANT: 409,
   PLAT_EN_RUPTURE: 409,

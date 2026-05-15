@@ -29,4 +29,3 @@ export { CalculPrixService } from "./services/CalculPrixService";
 export { SelectionLivreurService } from "./services/SelectionLivreurService";
 export { CalculGainsLivreurService } from "./services/CalculGainsLivreurService";
 export type { EvenementCommande, CommandeCreee, CommandePayee, CommandeAcceptee, CommandeRefusee, CommandePrete, CommandeLivree } from "./events/EvenementsCommande";
-//# sourceMappingURL=index.d.ts.map

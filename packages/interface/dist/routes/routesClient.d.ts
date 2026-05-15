@@ -10,4 +10,3 @@ export declare function creerRoutesClient(deps: {
     gererFavoris: GererFavorisUseCase;
     laisserAvis: LaisserAvisLivreurUseCase;
 }): Router;
-//# sourceMappingURL=routesClient.d.ts.map

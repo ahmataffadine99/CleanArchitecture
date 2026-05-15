@@ -21,4 +21,3 @@ class DepotRestaurantsEnMemoire {
     }
 }
 exports.DepotRestaurantsEnMemoire = DepotRestaurantsEnMemoire;
-//# sourceMappingURL=DepotRestaurantsEnMemoire.js.map

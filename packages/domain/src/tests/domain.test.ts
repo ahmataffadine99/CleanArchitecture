@@ -61,6 +61,6 @@ describe("Commande - workflow statuts", () => {
 
   it("calcule le prix total correctement", () => {
     const cmd = faireCommande();
-    expect(cmd.prixTotal().enEuros()).toBe(13); // 10 + 2 + 1
+    expect(cmd.prixTotal().enEuros()).toBe(13);
   });
 });

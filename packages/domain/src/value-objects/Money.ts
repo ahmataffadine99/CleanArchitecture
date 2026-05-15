@@ -1,4 +1,3 @@
-// Représente un montant monétaire en centimes pour éviter les erreurs de virgule flottante
 export class Money {
   private readonly centimes: number;
 

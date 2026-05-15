@@ -21,16 +21,11 @@ var __copyProps = (to2, from, except, desc) => {
   return to2;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../../node_modules/@prisma/client/runtime/library.js
 var require_library = __commonJS({
   "../../node_modules/@prisma/client/runtime/library.js"(exports, module) {
     "use strict";
@@ -204,7 +199,7 @@ var require_library = __commonJS({
       Wr.enginesVersion = oi().prisma.enginesVersion;
     });
     var Xo = Z((Gf, Yu) => {
-      Yu.exports = { name: "dotenv", version: "16.0.3", description: "Loads environment variables from .env file", main: "lib/main.js", types: "lib/main.d.ts", exports: { ".": { require: "./lib/main.js", types: "./lib/main.d.ts", default: "./lib/main.js" }, "./config": "./config.js", "./config.js": "./config.js", "./lib/env-options": "./lib/env-options.js", "./lib/env-options.js": "./lib/env-options.js", "./lib/cli-options": "./lib/cli-options.js", "./lib/cli-options.js": "./lib/cli-options.js", "./package.json": "./package.json" }, scripts: { "dts-check": "tsc --project tests/types/tsconfig.json", lint: "standard", "lint-readme": "standard-markdown", pretest: "npm run lint && npm run dts-check", test: "tap tests/*.js --100 -Rspec", prerelease: "npm test", release: "standard-version" }, repository: { type: "git", url: "git://github.com/motdotla/dotenv.git" }, keywords: ["dotenv", "env", ".env", "environment", "variables", "config", "settings"], readmeFilename: "README.md", license: "BSD-2-Clause", devDependencies: { "@types/node": "^17.0.9", decache: "^4.6.1", dtslint: "^3.7.0", sinon: "^12.0.1", standard: "^16.0.4", "standard-markdown": "^7.1.0", "standard-version": "^9.3.2", tap: "^15.1.6", tar: "^6.1.11", typescript: "^4.5.4" }, engines: { node: ">=12" } };
+      Yu.exports = { name: "dotenv", version: "16.0.3", description: "Loads environment variables from .env file", main: "lib/main.js", types: "lib/main.d.ts", exports: { ".": { require: "./lib/main.js", types: "./lib/main.d.ts", default: "./lib/main.js" }, "./config": "./config.js", "./config.js": "./config.js", "./lib/env-options": "./lib/env-options.js", "./lib/env-options.js": "./lib/env-options.js", "./lib/cli-options": "./lib/cli-options.js", "./lib/cli-options.js": "./lib/cli-options.js", "./package.json": "./package.json" }, scripts: { "dts-check": "tsc --project tests/types/tsconfig.json", lint: "standard", "lint-readme": "standard-markdown", pretest: "npm run lint && npm run dts-check", test: "tap tests/*.js --100 -Rspec", prerelease: "npm test", release: "standard-version" }, repository: { type: "git", url: "git:
     });
     var ts = Z((Qf, Kr) => {
       "use strict";
@@ -685,7 +680,7 @@ ${JSON.stringify(a, null, 2)}`), a;
         if (te(`The parsed libssl version is: ${o}`), o) return { libssl: o, strategy: "libssl-specific-path" };
       }
       te('Falling back to "ldconfig" and other generic paths');
-      let n = await Qr(`ldconfig -p | sed "s/.*=>s*//" | sed "s|.*/||" | grep libssl | sort | ${t}`);
+      let n = await Qr(`ldconfig -p | sed "s/.*=>s*
       if (n || (n = await Do(["/lib64", "/usr/lib64", "/lib"])), n) {
         te(`Found libssl.so file using "ldconfig" or other generic paths: ${n}`);
         let o = ko(n);
@@ -3827,7 +3822,7 @@ Please help us by answering a few questions: https://pris.ly/${e}`;
     }
     function Dn(e) {
       let { errorStack: t } = e;
-      return t?.match(/\/\.next|\/next@|\/next\//) ? `
+      return t?.match(/\/\.next|\/next@|\/next\
 
 We detected that you are using Next.js, learn how to fix this: https://pris.ly/d/engine-not-found-nextjs.` : "";
     }
@@ -3921,12 +3916,10 @@ ${l}
 
 ## Client Snippet
 \`\`\`ts
-// PLEASE FILL YOUR CODE SNIPPET HERE
 \`\`\`
 
 ## Schema
 \`\`\`prisma
-// PLEASE ADD YOUR SCHEMA HERE IF POSSIBLE
 \`\`\`
 
 ## Prisma Engine Query
@@ -4407,10 +4400,10 @@ ${r}`, A(n, true));
         try {
           i = new URL(n);
         } catch {
-          throw new at(`Error validating datasource \`${r}\`: the URL must start with the protocol \`prisma://\``, t);
+          throw new at(`Error validating datasource \`${r}\`: the URL must start with the protocol \`prisma:
         }
         let { protocol: o, host: s, searchParams: a } = i;
-        if (o !== "prisma:" && o !== "prisma+postgres:") throw new at(`Error validating datasource \`${r}\`: the URL must start with the protocol \`prisma://\``, t);
+        if (o !== "prisma:" && o !== "prisma+postgres:") throw new at(`Error validating datasource \`${r}\`: the URL must start with the protocol \`prisma:
         let l = a.get("api_key");
         if (l === null || l.length < 1) throw new at(`Error validating datasource \`${r}\`: the URL must contain a valid API key`, t);
         return [s, l];
@@ -4673,12 +4666,12 @@ ${a.backtrace}`, { clientVersion: this.config.clientVersion });
         r = Nt({ inlineDatasources: t.inlineDatasources, overrideDatasources: t.overrideDatasources, env: { ...t.env, ...process.env }, clientVersion: t.clientVersion });
       } catch {
       }
-      let n = !!(r?.startsWith("prisma://") || r?.startsWith("prisma+postgres://"));
+      let n = !!(r?.startsWith("prisma:
       e && n && tr("recommend--no-engine", "In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)");
       let i = Yt(t.generator), o = n || !e, s = !!t.adapter, a = i === "library", l = i === "binary";
       if (o && s || s && false) {
         let u;
-        throw e ? r?.startsWith("prisma://") ? u = ["Prisma Client was configured to use the `adapter` option but the URL was a `prisma://` URL.", "Please either use the `prisma://` URL or remove the `adapter` from the Prisma Client constructor."] : u = ["Prisma Client was configured to use both the `adapter` and Accelerate, please chose one."] : u = ["Prisma Client was configured to use the `adapter` option but `prisma generate` was run with `--no-engine`.", "Please run `prisma generate` without `--no-engine` to be able to use Prisma Client with the adapter."], new J(u.join(`
+        throw e ? r?.startsWith("prisma:
 `), { clientVersion: t.clientVersion });
       }
       if (o) return new Dr(t);
@@ -5419,7 +5412,6 @@ ${n}`;
   }
 });
 
-// ../../node_modules/.prisma/client/index.js
 var require_client = __commonJS({
   "../../node_modules/.prisma/client/index.js"(exports2) {
     "use strict";
@@ -5621,8 +5613,7 @@ var require_client = __commonJS({
           }
         }
       },
-      "inlineSchema": `// Sch\xE9ma Prisma pour PostgreSQL (adaptateur 2)
-// Pour activer : DB_ADAPTER=postgresql dans les variables d'environnement
+      "inlineSchema": `
 
 generator client {
   provider = "prisma-client-js"
@@ -5718,8 +5709,8 @@ model CompteUtilisateur {
   id              String   @id
   email           String   @unique
   motDePasseHache String
-  role            String // "CLIENT", "RESTAURATEUR", "LIVREUR"
-  profilId        String // ID du profil associ\xE9
+  role            String
+  profilId        String
   creeLe          DateTime @default(now())
 }
 `,
@@ -5757,7 +5748,6 @@ model CompteUtilisateur {
   }
 });
 
-// ../../node_modules/.prisma/client/default.js
 var require_default = __commonJS({
   "../../node_modules/.prisma/client/default.js"(exports2, module2) {
     "use strict";
@@ -5765,7 +5755,6 @@ var require_default = __commonJS({
   }
 });
 
-// ../../node_modules/@prisma/client/default.js
 var require_default2 = __commonJS({
   "../../node_modules/@prisma/client/default.js"(exports2, module2) {
     "use strict";
@@ -5775,7 +5764,6 @@ var require_default2 = __commonJS({
   }
 });
 
-// src/main.ts
 var main_exports = {};
 __export(main_exports, {
   default: () => main_default

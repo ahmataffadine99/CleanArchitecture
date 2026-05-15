@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AjouterAuPanierUseCase = void 0;
 const domain_1 = require("@ecoeats/domain");
 const domain_2 = require("@ecoeats/domain");
-// Retourne le panier mis à jour ou l'erreur si conflit de restaurant
 class AjouterAuPanierUseCase {
     depotPlats;
     depotClients;
@@ -13,14 +12,14 @@ class AjouterAuPanierUseCase {
         this.depotClients = depotClients;
     }
     async executer(req) {
-        await this.depotClients.trouverParId(req.clientId); // vérifie que le client existe
+        await this.depotClients.trouverParId(req.clientId);
         const plat = await this.depotPlats.trouverParId(req.platId);
         if (!plat.estDisponible()) {
             throw new domain_2.PlatEnRuptureError(plat.id);
         }
         const panier = this.obtenirOuCreerPanier(req.clientId);
         const article = new domain_1.ArticlePanier(plat.id, plat.nom, plat.prix, req.quantite, plat.restaurantId);
-        panier.ajouterArticle(article); // lève PanierConflitRestaurantError si conflit
+        panier.ajouterArticle(article);
         return panier;
     }
     viderPanier(clientId) {
@@ -48,4 +47,3 @@ class AjouterAuPanierUseCase {
     }
 }
 exports.AjouterAuPanierUseCase = AjouterAuPanierUseCase;
-//# sourceMappingURL=AjouterAuPanierUseCase.js.map

@@ -5,4 +5,3 @@ export interface DepotPlats {
     trouverParRestaurant(restaurantId: string): Promise<PlatMenu[]>;
     supprimer(id: string): Promise<void>;
 }
-//# sourceMappingURL=DepotPlats.d.ts.map

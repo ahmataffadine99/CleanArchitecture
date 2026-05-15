@@ -35,11 +35,11 @@ function App() {
 
   return (
     <Routes>
-      {/* Routes Publiques */}
+      
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} />
       <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" replace />} />
 
-      {/* Routes Protégées */}
+      
       <Route element={<ProtectedRoute />}>
         <Route path="/*" element={<Layout />} />
       </Route>

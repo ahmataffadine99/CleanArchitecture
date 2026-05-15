@@ -65,7 +65,6 @@ export default function Checkout() {
     fetchPoints();
   }, [clientId, token]);
 
-  // Calculate distance when coordinates or restaurant changes
   useEffect(() => {
     const calculateDistance = async () => {
       if (!latitude || !longitude || items.length === 0) {
@@ -80,7 +79,7 @@ export default function Checkout() {
         const resto = restaurants.find((r: any) => r.id === restoId);
         
         if (resto && resto.position) {
-          const R = 6371; // Rayon de la terre
+          const R = 6371;
           const dLat = (resto.position.lat - latitude) * Math.PI / 180;
           const dLon = (resto.position.lon - longitude) * Math.PI / 180;
           const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -121,13 +120,11 @@ export default function Checkout() {
     }
 
     try {
-      // 1. Vider l'ancien panier serveur
       await fetch(`/api/panier/${clientId}`, { 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      // 2. Synchroniser le panier local Zustand vers le Backend
       for (const item of items) {
         const resAdd = await fetch('/api/panier/articles', {
           method: 'POST',
@@ -140,7 +137,6 @@ export default function Checkout() {
         if (!resAdd.ok) throw new Error("Erreur synchro : " + item.nom);
       }
 
-      // 3. Passer la commande avec les coordonnées exactes (API Nominatim ou Adresses enregistrées)
       const resOrder = await fetch('/api/commandes', {
         method: 'POST',
         headers: { 
@@ -158,7 +154,6 @@ export default function Checkout() {
       if (!resOrder.ok) throw new Error("Erreur création commande.");
       const orderData = await resOrder.json();
 
-      // 4. Payer la commande
       const resPay = await fetch(`/api/commandes/${orderData.id}/payer`, {
         method: 'POST',
         headers: { 
@@ -274,7 +269,7 @@ export default function Checkout() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           
-          {/* Formulaire Adresse & Paiement */}
+          
           <div className="lg:col-span-3 space-y-6">
             <form onSubmit={processOrder} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 space-y-10">
               <section>
@@ -285,7 +280,7 @@ export default function Checkout() {
                   <h2 className="text-xl font-black text-slate-800 tracking-tight">Destination</h2>
                 </div>
                 
-                {/* Sélecteur d'adresses enregistrées */}
+                
                 {addresses.length > 0 && (
                   <div className="mb-8 space-y-3">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Utiliser une adresse enregistrée</p>
@@ -331,7 +326,7 @@ export default function Checkout() {
                           setVille(cpAndVille ? cpAndVille[2].trim() : (parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || ''));
                           setLatitude(lat);
                           setLongitude(lon);
-                          setSelectedAddressId(null); // On désélectionne car on tape une nouvelle adresse
+                          setSelectedAddressId(null);
                         }}
                         placeholder="Rechercher une adresse de livraison..."
                       />
@@ -446,7 +441,7 @@ export default function Checkout() {
             </form>
           </div>
 
-          {/* Récapitulatif Panier Vertical */}
+          
           <div className="lg:col-span-2">
             <div className="sticky top-8 space-y-8">
               <div className="bg-slate-900 text-white p-10 rounded-[3.5rem] shadow-2xl shadow-slate-300 relative overflow-hidden group">

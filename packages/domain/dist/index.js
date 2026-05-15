@@ -17,7 +17,6 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/index.ts
 var index_exports = {};
 __export(index_exports, {
   ArticlePanier: () => ArticlePanier,
@@ -53,7 +52,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/value-objects/Money.ts
 var Money = class _Money {
   centimes;
   constructor(centimes) {
@@ -95,7 +93,6 @@ var Money = class _Money {
   }
 };
 
-// src/value-objects/StatutCommande.ts
 var StatutCommande = /* @__PURE__ */ ((StatutCommande2) => {
   StatutCommande2["EN_ATTENTE"] = "EN_ATTENTE";
   StatutCommande2["PAYEE"] = "PAYEE";
@@ -121,7 +118,6 @@ function transitionAutorisee(depuis, vers) {
   return TRANSITIONS_AUTORISEES[depuis].includes(vers);
 }
 
-// src/errors/ErreurMetier.ts
 var ErreurMetier = class extends Error {
   constructor(code, message) {
     super(message);
@@ -130,7 +126,6 @@ var ErreurMetier = class extends Error {
   }
 };
 
-// src/errors/TransitionStatutInvalideError.ts
 var TransitionStatutInvalideError = class extends ErreurMetier {
   constructor(depuis, vers) {
     super(
@@ -140,7 +135,6 @@ var TransitionStatutInvalideError = class extends ErreurMetier {
   }
 };
 
-// src/entities/Commande.ts
 var Commande = class {
   constructor(id, clientId, restaurantId, articles, prixPlats, fraisLivraison, fraisService, adresseLivraison, positionLivraison, reduction = Money.zero(), creeLe) {
     this.id = id;
@@ -157,7 +151,6 @@ var Commande = class {
   }
   statut = "EN_ATTENTE" /* EN_ATTENTE */;
   tempsPreparationEstime = null;
-  // en minutes
   livreurId = null;
   creeLe;
   changerStatut(nouveauStatut) {
@@ -227,7 +220,6 @@ var Commande = class {
   }
 };
 
-// src/entities/PlatMenu.ts
 var PlatMenu = class {
   constructor(id, nom, description, prix, allergenes, stockJournalier, restaurantId, imageUrl = null, actif = true, categorie = "PLAT") {
     this.id = id;
@@ -262,7 +254,6 @@ var PlatMenu = class {
   }
 };
 
-// src/entities/Restaurant.ts
 var Restaurant = class {
   constructor(id, nom, adresse, position, proprietaireId, imageUrl = null) {
     this.id = id;
@@ -274,7 +265,6 @@ var Restaurant = class {
   }
 };
 
-// src/errors/PanierConflitRestaurantError.ts
 var PanierConflitRestaurantError = class extends ErreurMetier {
   constructor(restaurantActuelId, nouvelArticleRestaurantId) {
     super(
@@ -288,7 +278,6 @@ var PanierConflitRestaurantError = class extends ErreurMetier {
   nouvelArticleRestaurantId;
 };
 
-// src/errors/PlatEnRuptureError.ts
 var PlatEnRuptureError = class extends ErreurMetier {
   constructor(platId) {
     super("PLAT_EN_RUPTURE", `Le plat ${platId} n'est plus disponible (stock \xE9puis\xE9).`);
@@ -297,7 +286,6 @@ var PlatEnRuptureError = class extends ErreurMetier {
   platId;
 };
 
-// src/entities/Panier.ts
 var Panier = class {
   constructor(clientId) {
     this.clientId = clientId;
@@ -357,7 +345,6 @@ var Panier = class {
   }
 };
 
-// src/entities/Client.ts
 var Client = class {
   constructor(id, nom, email, adresse, telephone, pointsFidelite = 0) {
     this.id = id;
@@ -376,7 +363,6 @@ var Client = class {
   }
 };
 
-// src/value-objects/StatutLivreur.ts
 var StatutLivreur = /* @__PURE__ */ ((StatutLivreur2) => {
   StatutLivreur2["DISPONIBLE"] = "DISPONIBLE";
   StatutLivreur2["INDISPONIBLE"] = "INDISPONIBLE";
@@ -384,7 +370,6 @@ var StatutLivreur = /* @__PURE__ */ ((StatutLivreur2) => {
   return StatutLivreur2;
 })(StatutLivreur || {});
 
-// src/entities/Livreur.ts
 var Livreur = class {
   constructor(id, nom, position, telephone, estExpert = false, portefeuille = Money.zero(), propositionsIds = [], currentRestaurantId) {
     this.id = id;
@@ -476,7 +461,6 @@ var Livreur = class {
   }
 };
 
-// src/entities/Facture.ts
 var Facture = class {
   constructor(id, commandeId, clientId, articles, prixPlats, fraisLivraison, fraisService, total) {
     this.id = id;
@@ -511,7 +495,6 @@ var Facture = class {
   }
 };
 
-// src/entities/Avis.ts
 var Avis = class {
   constructor(id, commandeId, livreurId, clientId, note, commentaire = null, creeLe = /* @__PURE__ */ new Date()) {
     this.id = id;
@@ -527,7 +510,6 @@ var Avis = class {
   }
 };
 
-// src/entities/CompteUtilisateur.ts
 var CompteUtilisateur = class {
   constructor(id, email, motDePasseHache, role, profilId) {
     this.id = id;
@@ -538,7 +520,6 @@ var CompteUtilisateur = class {
   }
 };
 
-// src/value-objects/Coordonnees.ts
 var Coordonnees = class {
   constructor(latitude, longitude) {
     this.latitude = latitude;
@@ -558,7 +539,6 @@ var Coordonnees = class {
   }
 };
 
-// src/value-objects/ArticlePanier.ts
 var ArticlePanier = class _ArticlePanier {
   constructor(menuItemId, nom, prixSnapshot, quantite, restaurantId) {
     this.menuItemId = menuItemId;
@@ -584,7 +564,6 @@ var ArticlePanier = class _ArticlePanier {
   }
 };
 
-// src/errors/CommandeIntrouvableError.ts
 var CommandeIntrouvableError = class extends ErreurMetier {
   constructor(commandeId) {
     super("COMMANDE_INTROUVABLE", `Aucune commande trouv\xE9e avec l'identifiant : ${commandeId}`);
@@ -593,7 +572,6 @@ var CommandeIntrouvableError = class extends ErreurMetier {
   commandeId;
 };
 
-// src/errors/AucunLivreurDisponibleError.ts
 var AucunLivreurDisponibleError = class extends ErreurMetier {
   constructor(restaurantId) {
     super(
@@ -605,7 +583,6 @@ var AucunLivreurDisponibleError = class extends ErreurMetier {
   restaurantId;
 };
 
-// src/errors/RestaurantIntrouvableError.ts
 var RestaurantIntrouvableError = class extends ErreurMetier {
   constructor(restaurantId) {
     super("RESTAURANT_INTROUVABLE", `Restaurant introuvable : ${restaurantId}`);
@@ -614,7 +591,6 @@ var RestaurantIntrouvableError = class extends ErreurMetier {
   restaurantId;
 };
 
-// src/errors/ClientIntrouvableError.ts
 var ClientIntrouvableError = class extends ErreurMetier {
   constructor(clientId) {
     super("CLIENT_INTROUVABLE", `Client introuvable : ${clientId}`);
@@ -623,7 +599,6 @@ var ClientIntrouvableError = class extends ErreurMetier {
   clientId;
 };
 
-// src/errors/PlatIntrouvableError.ts
 var PlatIntrouvableError = class extends ErreurMetier {
   constructor(platId) {
     super("PLAT_INTROUVABLE", `Plat introuvable : ${platId}`);
@@ -632,21 +607,18 @@ var PlatIntrouvableError = class extends ErreurMetier {
   platId;
 };
 
-// src/errors/IdentifiantsInvalidesError.ts
 var IdentifiantsInvalidesError = class extends ErreurMetier {
   constructor() {
     super("IDENTIFIANTS_INVALIDES", "Email ou mot de passe incorrect.");
   }
 };
 
-// src/errors/EmailDejaUtiliseError.ts
 var EmailDejaUtiliseError = class extends ErreurMetier {
   constructor(email) {
     super("EMAIL_DEJA_UTILISE", `L'email "${email}" est d\xE9j\xE0 associ\xE9 \xE0 un compte.`);
   }
 };
 
-// src/services/CalculDistanceService.ts
 var CalculDistanceService = class _CalculDistanceService {
   static RAYON_TERRE_KM = 6371;
   calculerKm(pointA, pointB) {
@@ -663,12 +635,9 @@ var CalculDistanceService = class _CalculDistanceService {
   }
 };
 
-// src/services/CalculPrixService.ts
 var CalculPrixService = class _CalculPrixService {
   static TARIF_KM = 0.5;
-  // euros par km
   static TAUX_FRAIS_SERVICE = 0.1;
-  // 10%
   calculerFraisLivraison(distanceKm) {
     return Money.fromEuros(distanceKm * _CalculPrixService.TARIF_KM);
   }
@@ -697,7 +666,6 @@ var CalculPrixService = class _CalculPrixService {
   }
 };
 
-// src/services/SelectionLivreurService.ts
 var SelectionLivreurService = class {
   calculDistance = new CalculDistanceService();
   trouverLePlusProche(livreurs, positionRestaurant, restaurantId) {
@@ -713,12 +681,9 @@ var SelectionLivreurService = class {
   }
 };
 
-// src/services/CalculGainsLivreurService.ts
 var CalculGainsLivreurService = class _CalculGainsLivreurService {
   static PRISE_EN_CHARGE = 2.5;
-  // Euros
   static PRIX_KM = 1;
-  // Euros par KM
   /**
    * Formule : Prise en charge + (Distance * Prix_KM) + Pourboire
    */
@@ -728,7 +693,6 @@ var CalculGainsLivreurService = class _CalculGainsLivreurService {
     return priseEnCharge.ajouter(montantKm).ajouter(pourboire);
   }
 };
-// Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   ArticlePanier,
   AucunLivreurDisponibleError,

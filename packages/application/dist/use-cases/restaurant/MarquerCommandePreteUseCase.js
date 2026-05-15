@@ -12,7 +12,6 @@ class MarquerCommandePreteUseCase {
         const commande = await this.depotCommandes.trouverParId(commandeId);
         commande.marquerPrete();
         await this.depotCommandes.sauvegarder(commande);
-        // Tenter de trouver un livreur immédiatement
         try {
             await this.proposerLivraison.executer({ commandeId });
         }
@@ -23,4 +22,3 @@ class MarquerCommandePreteUseCase {
     }
 }
 exports.MarquerCommandePreteUseCase = MarquerCommandePreteUseCase;
-//# sourceMappingURL=MarquerCommandePreteUseCase.js.map

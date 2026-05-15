@@ -19,7 +19,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [facture, setFacture] = useState<any>(null);
 
-  const clientId = "client-1"; // Identifiant du Client du Seed
+  const clientId = "client-1";
 
   const processOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +29,8 @@ export default function Checkout() {
     setError(null);
 
     try {
-      // 1. Vider l'ancien panier serveur du client courant
       await fetch(`/api/panier/${clientId}`, { method: 'DELETE' });
 
-      // 2. Synchroniser le panier local Zustand vers le Backend
       for (const item of items) {
         const resAdd = await fetch('/api/panier/articles', {
           method: 'POST',
@@ -42,7 +40,6 @@ export default function Checkout() {
         if (!resAdd.ok) throw new Error("Erreur lors de la synchronisation de l'article : " + item.nom);
       }
 
-      // 3. Passer la commande
       const resOrder = await fetch('/api/commandes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -55,7 +52,6 @@ export default function Checkout() {
       if (!resOrder.ok) throw new Error("Erreur lors de la création de la commande.");
       const orderData = await resOrder.json();
 
-      // 4. Payer la commande simulée
       const resPay = await fetch(`/api/commandes/${orderData.id}/payer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -65,7 +61,6 @@ export default function Checkout() {
       if (!resPay.ok) throw new Error("Plateforme de paiement momentanément indisponible.");
       const factureData = await resPay.json();
 
-      // Succès !
       setFacture(factureData);
       clearCart();
       setStep('success');
@@ -139,7 +134,7 @@ export default function Checkout() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           
-          {/* Formulaire Adresse */}
+          
           <form onSubmit={processOrder} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm h-fit">
             <div className="flex items-center gap-2 mb-6">
               <MapPin className="text-emerald-500" size={20} />
@@ -178,7 +173,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Paiement */}
+            
             <div className="mt-8 pt-8 border-t border-slate-100">
               <div className="flex items-center gap-2 mb-6">
                 <CreditCard className="text-emerald-500" size={20} />
@@ -242,7 +237,7 @@ export default function Checkout() {
             </div>
           </form>
 
-          {/* Récap panier */}
+          
           <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 h-fit">
             <h2 className="text-xl font-bold text-slate-800 mb-6">Votre commande</h2>
             <ul className="space-y-4">

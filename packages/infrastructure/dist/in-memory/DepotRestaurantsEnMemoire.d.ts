@@ -7,4 +7,3 @@ export declare class DepotRestaurantsEnMemoire implements DepotRestaurants {
     listerTous(): Promise<Restaurant[]>;
     trouverParProprietaireId(proprietaireId: string): Promise<Restaurant | null>;
 }
-//# sourceMappingURL=DepotRestaurantsEnMemoire.d.ts.map

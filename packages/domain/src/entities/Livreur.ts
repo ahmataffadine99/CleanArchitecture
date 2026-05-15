@@ -74,7 +74,6 @@ export class Livreur {
     const nbMax = this.estExpert ? 2 : 1;
     if (this.commandesEnCoursIds.length >= nbMax) return false;
 
-    // Si déjà 1 commande, on n'en accepte une 2ème que si c'est le même restaurant
     if (restaurantId && this.currentRestaurantId && this.currentRestaurantId !== restaurantId) {
        return false;
     }

@@ -28,7 +28,6 @@ function creerAuthMiddleware(secretJwt) {
         }
     };
 }
-// Helper pour vérifier le rôle d'une route spécifique
 function requireRole(role) {
     return (req, res, next) => {
         if (!req.user || req.user.role !== role) {
@@ -37,4 +36,3 @@ function requireRole(role) {
         next();
     };
 }
-//# sourceMappingURL=authMiddleware.js.map

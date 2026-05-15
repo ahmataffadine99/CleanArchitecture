@@ -98,7 +98,7 @@ export default function ProfileInfo() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Résumé de compte */}
+        
         <div className="lg:col-span-1">
           <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/50 sticky top-24">
             <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function ProfileInfo() {
           </div>
         </div>
 
-        {/* Formulaire de modification */}
+        
         <div className="lg:col-span-2">
           <form onSubmit={handleSave} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-200/50 space-y-6">
             <div className="space-y-4">

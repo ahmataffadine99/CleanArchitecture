@@ -50,14 +50,13 @@ export default function OrdersDashboard() {
       if (resCmd.ok) {
         const data = await resCmd.json();
         if (Array.isArray(data)) {
-          // Calcul du numéro de commande quotidien
           const dateCounts: Record<string, number> = {};
           const sorted = [...data].sort((a, b) => new Date(a.creeLe).getTime() - new Date(b.creeLe).getTime());
           const enriched = sorted.map(cmd => {
             const dStr = new Date(cmd.creeLe).toDateString();
             dateCounts[dStr] = (dateCounts[dStr] || 0) + 1;
             return { ...cmd, numJour: dateCounts[dStr] };
-          }).reverse(); // Plus récentes en premier
+          }).reverse();
           
           setCommandes(enriched);
         }
@@ -184,7 +183,7 @@ export default function OrdersDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* Nouvelles demandes */}
+        
         <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 h-fit">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">
@@ -242,7 +241,7 @@ export default function OrdersDashboard() {
           </div>
         </div>
 
-        {/* En cuisine */}
+        
         <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 h-fit">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
@@ -295,7 +294,7 @@ export default function OrdersDashboard() {
           </div>
         </div>
 
-        {/* En attente de collecte */}
+        
         <div className="bg-white rounded-[2rem] p-8 border border-blue-100 shadow-xl shadow-slate-200/50 h-fit lg:col-span-2">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center">

@@ -1,4 +1,3 @@
-// Domain events — simples records immuables pour tracer ce qui s'est passé
 export type CommandeCreee = {
   type: "CommandeCreee";
   commandeId: string;

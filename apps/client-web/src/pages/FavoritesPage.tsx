@@ -12,14 +12,12 @@ export default function FavoritesPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // 1. Charger les IDs de favoris au montage pour synchroniser le store
   useEffect(() => {
     if (user?.profilId && token) {
       loadFavorites(user.profilId, token);
     }
   }, [user?.profilId, token]);
 
-  // 2. Charger les détails complets (nom, prix, image) quand les favoris changent
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -85,7 +83,7 @@ export default function FavoritesPage() {
         </div>
       ) : (
         <div className="space-y-12">
-          {/* Section Restaurants */}
+          
           {data.restaurants.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-6">
@@ -110,7 +108,7 @@ export default function FavoritesPage() {
             </section>
           )}
 
-          {/* Section Plats */}
+          
           {data.plats.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-6">

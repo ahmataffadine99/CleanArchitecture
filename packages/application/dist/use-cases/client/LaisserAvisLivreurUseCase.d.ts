@@ -10,4 +10,3 @@ export declare class LaisserAvisLivreurUseCase {
         commentaire?: string;
     }): Promise<void>;
 }
-//# sourceMappingURL=LaisserAvisLivreurUseCase.d.ts.map

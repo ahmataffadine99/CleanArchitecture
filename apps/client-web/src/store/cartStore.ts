@@ -30,7 +30,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     const { items, restaurantId } = get();
     const clientId = useAuthStore.getState().user?.profilId || "guest";
 
-    // Logic for single restaurant rule
     if (restaurantId && restaurantId !== restoId && items.length > 0) {
       if (!confirm("Votre panier contient déjà des plats d'un autre restaurant. Voulez-vous le vider pour commander ici ?")) {
         return;
@@ -39,7 +38,6 @@ export const useCartStore = create<CartState>((set, get) => ({
       await fetch(`/api/panier/${clientId}`, { method: 'DELETE' });
     }
 
-    // Sync with server
     try {
       await fetch('/api/panier/articles', {
         method: 'POST',

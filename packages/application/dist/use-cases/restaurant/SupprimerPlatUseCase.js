@@ -7,9 +7,8 @@ class SupprimerPlatUseCase {
         this.depotPlats = depotPlats;
     }
     async executer(platId) {
-        await this.depotPlats.trouverParId(platId); // s'assure qu'il existe
+        await this.depotPlats.trouverParId(platId);
         await this.depotPlats.supprimer(platId);
     }
 }
 exports.SupprimerPlatUseCase = SupprimerPlatUseCase;
-//# sourceMappingURL=SupprimerPlatUseCase.js.map

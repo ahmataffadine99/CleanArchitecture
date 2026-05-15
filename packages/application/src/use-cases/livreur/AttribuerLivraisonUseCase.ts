@@ -13,7 +13,6 @@ type Resultat = {
   livreur: Livreur;
 };
 
-// Trouve le livreur le plus proche du restaurant et lui attribue la commande
 export class AttribuerLivraisonUseCase {
   private readonly selectionLivreur = new SelectionLivreurService();
 

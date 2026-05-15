@@ -12,8 +12,6 @@ export class ListerToutesLesCommandesUseCase {
   async executer(): Promise<any[]> {
     const commandes = await this.depotCommandes.trouverTout();
     
-    // Pour des raisons de performance, on pourrait faire des requêtes groupées
-    // Mais pour l'admin avec peu de commandes, c'est acceptable ici
     const resultats = [];
     for (const c of commandes) {
       const client = await this.depotClients.trouverParId(c.clientId);

@@ -9,4 +9,3 @@ export declare class Client {
     getPointsFidelite(): number;
     crediterPoints(points: number): void;
 }
-//# sourceMappingURL=Client.d.ts.map

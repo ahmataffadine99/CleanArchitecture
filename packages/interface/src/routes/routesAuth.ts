@@ -7,7 +7,6 @@ export function creerRoutesAuth(deps: {
 }): Router {
   const router = Router();
 
-  // POST /auth/register
   router.post("/register", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { nom, email, motDePasse, role, adresse, latitude, longitude, telephone } = req.body;
@@ -16,12 +15,11 @@ export function creerRoutesAuth(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /auth/login
   router.post("/login", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, motDePasse } = req.body;
       const resultat = await deps.connexion.executer({ email, motDePasse });
-      res.json(resultat); // Retourne le token JWT et les infos
+      res.json(resultat);
     } catch (err) { next(err); }
   });
 

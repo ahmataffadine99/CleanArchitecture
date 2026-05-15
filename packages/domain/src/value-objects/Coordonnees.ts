@@ -1,4 +1,3 @@
-// Coordonnées GPS — immuable
 export class Coordonnees {
   constructor(
     readonly latitude: number,

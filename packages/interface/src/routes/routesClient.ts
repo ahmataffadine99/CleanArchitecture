@@ -28,7 +28,6 @@ export function creerRoutesClient(deps: {
 }): Router {
   const router = Router();
 
-  // GET /restaurants
   router.get("/restaurants", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lat, lon, rayon, cat } = req.query;
@@ -49,7 +48,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /restaurants/:id/menu
   router.get("/restaurants/:id/menu", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { disponibles, rupture } = await deps.voirMenu.executer(req.params.id);
@@ -68,7 +66,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /panier/articles
   router.post("/panier/articles", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { clientId, platId, quantite } = req.body;
@@ -84,19 +81,16 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // DELETE /panier/:clientId
   router.delete("/panier/:clientId", (req: Request, res: Response) => {
     deps.ajouterAuPanier.viderPanier(req.params.clientId);
     res.status(204).send();
   });
 
-  // DELETE /panier/:clientId/articles/:platId
   router.delete("/panier/:clientId/articles/:platId", (req: Request, res: Response) => {
     deps.ajouterAuPanier.retirerDuPanier(req.params.clientId, req.params.platId);
     res.status(204).send();
   });
 
-  // POST /commandes
   router.post("/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { clientId, adresseLivraison, latitude, longitude } = req.body;
@@ -117,7 +111,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // POST /commandes/:id/payer
   router.post("/commandes/:id/payer", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { clientId } = req.body;
@@ -126,7 +119,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /clients/:clientId/commandes
   router.get("/clients/:clientId/commandes", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const commandes = await deps.listerCommandesClient.executer(req.params.clientId);
@@ -155,12 +147,10 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // GET /clients/:clientId/points - Points de fidélité du client
   router.get("/clients/:clientId/points", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const clientId = req.params.clientId;
       const commandes = await deps.listerCommandesClient.executer(clientId);
-      // Calculer le total de points depuis les commandes payées/terminées
       const totalPoints = commandes
         .filter((c: any) => {
           const s = typeof c.getStatut === 'function' ? c.getStatut() : c.statut;
@@ -175,8 +165,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // --- FAVORIS ---
-  // Favoris Restaurants
   router.get('/favoris/restaurants/:clientId', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const ids = await deps.gererFavoris.listerRestaurants(req.params.clientId);
@@ -198,7 +186,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // Favoris Plats
   router.get('/favoris/plats/:clientId', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const ids = await deps.gererFavoris.listerPlats(req.params.clientId);
@@ -237,7 +224,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // Avis
   router.post("/commandes/:id/avis", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { note, commentaire } = req.body;
@@ -246,7 +232,6 @@ export function creerRoutesClient(deps: {
     } catch (err) { next(err); }
   });
 
-  // Profil
   router.put("/profil", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { clientId, nom, email, telephone } = req.body;

@@ -13,7 +13,6 @@ var StatutCommande;
     StatutCommande["EN_LIVRAISON"] = "EN_LIVRAISON";
     StatutCommande["LIVREE"] = "LIVREE";
 })(StatutCommande || (exports.StatutCommande = StatutCommande = {}));
-// Transitions autorisées dans le workflow d'une commande
 const TRANSITIONS_AUTORISEES = {
     [StatutCommande.EN_ATTENTE]: [StatutCommande.PAYEE],
     [StatutCommande.PAYEE]: [StatutCommande.ACCEPTEE, StatutCommande.REFUSEE],
@@ -27,4 +26,3 @@ const TRANSITIONS_AUTORISEES = {
 function transitionAutorisee(depuis, vers) {
     return TRANSITIONS_AUTORISEES[depuis].includes(vers);
 }
-//# sourceMappingURL=StatutCommande.js.map

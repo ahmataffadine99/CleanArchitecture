@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SelectionLivreurService = void 0;
 const CalculDistanceService_1 = require("./CalculDistanceService");
 const AucunLivreurDisponibleError_1 = require("../errors/AucunLivreurDisponibleError");
-// Sélectionne le livreur disponible le plus proche du restaurant
 class SelectionLivreurService {
     calculDistance = new CalculDistanceService_1.CalculDistanceService();
     trouverLePlusProche(livreurs, positionRestaurant, restaurantId) {
@@ -19,4 +18,3 @@ class SelectionLivreurService {
     }
 }
 exports.SelectionLivreurService = SelectionLivreurService;
-//# sourceMappingURL=SelectionLivreurService.js.map

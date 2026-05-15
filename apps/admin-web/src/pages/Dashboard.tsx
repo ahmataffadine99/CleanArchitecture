@@ -73,7 +73,6 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
       fetchStats();
   };
 
-  // ... (loading logic)
 
   const renderContent = () => {
     if (selectedRestaurant) return <RestaurantDetailsView restaurant={selectedRestaurant} onBack={() => setSelectedRestaurant(null)} />;
@@ -118,10 +117,10 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar */}
+      
       <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-30">
         <div className="p-6">
-          {/* Logo */}
+          
           <div className="flex items-center gap-3 mb-8">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <BarChart3 size={16} />
@@ -165,7 +164,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
           </nav>
         </div>
 
-        {/* Logout */}
+        
         <div className="mt-auto p-6 border-t border-slate-800">
           <button 
             onClick={onLogout}
@@ -177,7 +176,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
         </div>
       </aside>
 
-      {/* Main Content */}
+      
       <main className="flex-1 ml-64 p-8">
         <header className="flex justify-between items-center mb-10">
           <div>
@@ -233,7 +232,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
   );
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      {/* Stats Cards */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <StatCard 
           label="Chiffre d'Affaires" 
@@ -277,7 +276,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
         />
       </div>
 
-      {/* Recent Orders Section */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden h-fit">
           <div className="p-8 border-b border-slate-50 flex justify-between items-center">
@@ -719,12 +718,10 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
       });
       if (res.ok) {
         setReply('');
-        fetchTickets(); // Refresh
-        // Optionally update selectedTicket locally
+        fetchTickets();
         const updatedRes = await fetch(`/api/admin/tickets/${selectedTicket.id}`, {
              headers: { 'Authorization': `Bearer ${token}` }
         });
-        // We don't have a single ticket fetch route yet but fetchTickets will do for now
       }
     } catch (err) {
       console.error(err);
@@ -766,7 +763,7 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
                       method: 'POST',
                       headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    t.estLu = true; // Local update
+                    t.estLu = true;
                     onTicketRead();
                   } catch (err) {
                     console.error(err);
@@ -866,9 +863,6 @@ function SupportView({ searchTerm, onTicketRead }: { searchTerm: string, onTicke
   );
 }
 
-// --- NEW VIEWS ---
-
-
 function LivreursPerformanceView() {
   const [livreurs, setLivreurs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -946,8 +940,6 @@ function LivreursPerformanceView() {
     </div>
   );
 }
-
-// --- HELPER COMPONENTS (PREMIUM UI) ---
 
 function NavItem({ icon: Icon, label, active = false, onClick }: any) {
   return (

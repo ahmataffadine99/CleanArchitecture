@@ -8,4 +8,3 @@ export declare class ListerCommandesRestaurantUseCase {
     constructor(depotCommandes: DepotCommandes, depotClients?: DepotClients | undefined, depotLivreurs?: DepotLivreurs | undefined);
     executer(restaurantId: string): Promise<any[]>;
 }
-//# sourceMappingURL=ListerCommandesRestaurantUseCase.d.ts.map

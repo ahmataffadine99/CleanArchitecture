@@ -15,4 +15,3 @@ export declare class CalculPrixService {
         total: Money;
     };
 }
-//# sourceMappingURL=CalculPrixService.d.ts.map

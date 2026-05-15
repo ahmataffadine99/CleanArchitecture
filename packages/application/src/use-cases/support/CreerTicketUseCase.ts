@@ -15,7 +15,7 @@ export class CreerTicketUseCase {
       ticketId,
       auteurId,
       messageInitial,
-      false, // Pas un admin (l'auteur crée le ticket)
+      false,
       maintenant
     );
 

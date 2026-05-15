@@ -39,4 +39,3 @@ class DepotComptesPrisma {
     }
 }
 exports.DepotComptesPrisma = DepotComptesPrisma;
-//# sourceMappingURL=DepotComptesPrisma.js.map

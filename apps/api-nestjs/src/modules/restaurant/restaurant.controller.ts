@@ -12,7 +12,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard, Roles } from '../../guards/roles.guard';
 
 @Controller('restaurant')
-@UseGuards(AuthGuard, RolesGuard) // Applique l'authentification et la vérification des rôles
+@UseGuards(AuthGuard, RolesGuard)
 export class RestaurantController {
   constructor(
     private readonly ajouterPlat: AjouterPlatUseCase,

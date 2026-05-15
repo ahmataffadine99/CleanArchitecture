@@ -5,4 +5,3 @@ export declare class RefuserCommandeUseCase {
     constructor(depotCommandes: DepotCommandes);
     executer(commandeId: string): Promise<Commande>;
 }
-//# sourceMappingURL=RefuserCommandeUseCase.d.ts.map

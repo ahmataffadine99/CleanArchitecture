@@ -22,7 +22,7 @@ export class AjouterPlatUseCase {
   ) {}
 
   async executer(req: Req): Promise<PlatMenu> {
-    await this.depotRestaurants.trouverParId(req.restaurantId); // vérifie que le resto existe
+    await this.depotRestaurants.trouverParId(req.restaurantId);
 
     const plat = new PlatMenu(
       uuid(),

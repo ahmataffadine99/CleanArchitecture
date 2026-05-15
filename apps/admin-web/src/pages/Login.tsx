@@ -28,7 +28,6 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
         onLogin();
         navigate('/');
       } else {
-        // Le message vient soit de data.message (ErreurMetier) soit de data.error (Route)
         const errorMessage = data.message || data.error || (data.user?.role !== 'ADMIN' ? "Accès refusé. Réservé aux administrateurs." : "Erreur inconnue");
         setError(errorMessage);
       }
@@ -41,7 +40,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-slate-900 overflow-hidden relative">
-      {/* Background Decor */}
+      
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[120px] animate-pulse transition-all duration-1000"></div>

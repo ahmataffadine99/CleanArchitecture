@@ -17,4 +17,3 @@ export declare class ChangerStatutLivreurUseCase {
     executer(req: Req): Promise<Livreur>;
 }
 export {};
-//# sourceMappingURL=ChangerStatutLivreurUseCase.d.ts.map

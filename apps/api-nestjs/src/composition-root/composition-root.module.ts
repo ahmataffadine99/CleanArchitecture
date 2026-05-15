@@ -8,7 +8,6 @@ import {
   DepotCommandesPrisma, DepotRestaurantsPrisma, DepotPlatsPrisma, DepotClientsPrisma, DepotLivreursPrisma, DepotComptesPrisma
 } from '@ecoeats/infrastructure';
 
-// Injection Tokens pour NestJS (car les interfaces TS n'existent pas au runtime)
 export const DEPOT_COMMANDES = 'DEPOT_COMMANDES';
 export const DEPOT_RESTAURANTS = 'DEPOT_RESTAURANTS';
 export const DEPOT_PLATS = 'DEPOT_PLATS';
@@ -64,7 +63,7 @@ const providers: Provider[] = [
 @Global()
 @Module({
   providers: providers,
-  exports: providers, // Exporté globalement pour tous les autres modules météo (Auth, Client...)
+  exports: providers,
 })
 export class CompositionRootModule {
   constructor() {

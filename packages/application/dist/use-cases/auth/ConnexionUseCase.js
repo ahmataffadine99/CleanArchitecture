@@ -15,15 +15,12 @@ class ConnexionUseCase {
         this.secretJwt = secretJwt;
     }
     async executer(req) {
-        // Trouver le compte par email
         const compte = await this.depotComptes.trouverParEmail(req.email);
         if (!compte)
             throw new domain_1.IdentifiantsInvalidesError();
-        // Vérifier le mot de passe contre le hash
         const motDePasseValide = await bcrypt_1.default.compare(req.motDePasse, compte.motDePasseHache);
         if (!motDePasseValide)
             throw new domain_1.IdentifiantsInvalidesError();
-        // Générer le token JWT avec les infos utiles
         const token = jsonwebtoken_1.default.sign({
             sub: compte.id,
             role: compte.role,
@@ -42,4 +39,3 @@ class ConnexionUseCase {
     }
 }
 exports.ConnexionUseCase = ConnexionUseCase;
-//# sourceMappingURL=ConnexionUseCase.js.map

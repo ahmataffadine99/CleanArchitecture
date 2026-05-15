@@ -24,4 +24,3 @@ export declare class PlatMenu {
         categorie?: string;
     }): void;
 }
-//# sourceMappingURL=PlatMenu.d.ts.map

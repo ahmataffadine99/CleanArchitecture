@@ -4,4 +4,3 @@ export declare class CalculDistanceService {
     calculerKm(pointA: Coordonnees, pointB: Coordonnees): number;
     private versRadians;
 }
-//# sourceMappingURL=CalculDistanceService.d.ts.map

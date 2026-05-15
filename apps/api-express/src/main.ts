@@ -7,10 +7,6 @@ import { creerRoutesAuth } from "@ecoeats/interface";
 import { gestionnaireErreurs } from "@ecoeats/interface";
 import { creerAuthMiddleware, requireRole, routerAdmin, routerSupport } from "@ecoeats/interface";
 
-// =====================================================================
-// COMPOSITION ROOT — c'est ici qu'on choisit les adaptateurs à injecter
-// Changer DB_ADAPTER=postgresql pour passer sur PostgreSQL
-// =====================================================================
 import {
   DepotCommandesEnMemoire, DepotRestaurantsEnMemoire, DepotPlatsEnMemoire,
   DepotClientsEnMemoire, DepotLivreursEnMemoire, DepotFacturesEnMemoire, DepotComptesEnMemoire,
@@ -51,7 +47,6 @@ console.log(`[Config] Adaptateur DB : ${utiliserPostgres ? "PostgreSQL (Prisma)"
 
 const prismaClient = utiliserPostgres ? new PrismaClient() : null;
 
-// --- Sélection des adaptateurs ---
 const depotCommandes   = utiliserPostgres ? new DepotCommandesPrisma(prismaClient!)   : new DepotCommandesEnMemoire();
 const depotRestaurants = utiliserPostgres ? new DepotRestaurantsPrisma(prismaClient!) : new DepotRestaurantsEnMemoire();
 const depotPlats       = utiliserPostgres ? new DepotPlatsPrisma(prismaClient!)       : new DepotPlatsEnMemoire();
@@ -65,7 +60,6 @@ const depotFactures    = new DepotFacturesEnMemoire();
 const cartographie     = new CartographieHaversine();
 const paiement         = new PaiementSimule();
 
-// --- Instanciation des Use Cases ---
 const listerRestaurants = new ListerRestaurantsUseCase(depotRestaurants);
 const voirMenu          = new VoirMenuRestaurantUseCase(depotPlats);
 const ajouterAuPanier   = new AjouterAuPanierUseCase(depotPlats, depotClients);
@@ -113,12 +107,10 @@ const obtenirAvis       = new ObtenirAvisLivreurUseCase(depotAvis);
 
 import cors from "cors";
 
-// --- JWT Secret (en dur pour la démo, normalement dans .env) ---
 const SECRET_JWT = process.env.JWT_SECRET || "mon_super_secret_jwt_hyper_securise";
 const inscription       = new InscriptionUseCase(depotComptes, depotClients, depotRestaurants, depotLivreurs, SECRET_JWT);
 const connexion         = new ConnexionUseCase(depotComptes, SECRET_JWT);
 
-// --- Serveur Express ---
 const app = express();
 app.use(cors({
   origin: "*",
@@ -133,7 +125,6 @@ app.get("/health", (_req, res) => res.json({ status: "ok", adapter: utiliserPost
 
 app.use("/api/auth", creerRoutesAuth({ inscription, connexion }));
 
-// Routes ADMIN
 app.use("/api/admin", requireAuth, requireRole("ADMIN"), routerAdmin(
   obtenirStats,
   obtenirTousComptes,
@@ -148,14 +139,12 @@ app.use("/api/admin", requireAuth, requireRole("ADMIN"), routerAdmin(
   new ListerTousLesLivreursUseCase(depotLivreurs)
 ));
 
-// Routes SUPPORT (Client, Resto, Livreur)
 app.use("/api/support", requireAuth, routerSupport(
   creerTicket,
   envoyerMessageTicket,
   listerTickets
 ));
 
-// Routes publiques
 app.use("/api", creerRoutesClient({ 
   listerRestaurants, 
   voirMenu, 
@@ -170,7 +159,6 @@ app.use("/api", creerRoutesClient({
   obtenirProfil: obtenirProfilClient
 }));
 
-// Routes nécessitant une authentification
 app.use("/api", requireAuth, (req, res, next) => {
   const restoPaths = ["/restaurant", "/plats", "/commandes"];
   const isRestoCommand = (req.path.includes("/accepter") || req.path.includes("/refuser") || req.path.includes("/prete")) && !req.path.includes("/livreurs");

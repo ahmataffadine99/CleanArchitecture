@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ token: null, user: null }),
     }),
     {
-      name: 'ecoeats-auth-livreur', // Unique key for delivery person app
+      name: 'ecoeats-auth-livreur',
     }
   )
 );

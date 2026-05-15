@@ -7,7 +7,7 @@ import { DepotRestaurants } from "../../ports/DepotRestaurants";
 type Req = {
   commandeId: string;
   livreurId: string;
-  pourboire?: number; // en euros
+  pourboire?: number;
 };
 
 export class TerminerLivraisonUseCase {
@@ -30,13 +30,11 @@ export class TerminerLivraisonUseCase {
     const restaurant = await this.depotRestaurants.trouverParId(commande.restaurantId);
     if (!restaurant) throw new Error("Restaurant introuvable");
 
-    // Calcul distance restaurant → client (réelle)
     const distanceKm = this.cartographie.calculerDistanceKm(
       restaurant.position,
       commande.getPositionLivraison()
     );
 
-    // Sécurité : on plafonne la distance de calcul à 50km pour éviter les bugs de coordonnées (0,0)
     const distancePourGains = Math.min(distanceKm, 50.0);
 
     const gains = this.calculGains.calculerGains(
@@ -47,7 +45,6 @@ export class TerminerLivraisonUseCase {
     commande.marquerLivree();
     livreur.terminerLivraison(commande.id, gains);
 
-    // Promotion Expert automatique après 5 livraisons terminées
     try {
       const historique = await this.depotCommandes.trouverParLivreur(livreur.id);
       const nbLivrees = historique.filter(c => c.getStatut() === 'LIVREE').length;

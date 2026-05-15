@@ -3,4 +3,3 @@ export declare class ClientIntrouvableError extends ErreurMetier {
     constructor(clientId: string);
     readonly clientId: string;
 }
-//# sourceMappingURL=ClientIntrouvableError.d.ts.map

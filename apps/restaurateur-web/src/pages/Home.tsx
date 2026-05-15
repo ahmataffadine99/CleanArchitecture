@@ -14,7 +14,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Appel via le proxy Vite vers l'API Express
     fetch('/api/restaurants')
       .then((res) => {
         if (!res.ok) throw new Error('Erreur lors de la récupération des restaurants');
@@ -34,7 +33,7 @@ export default function Home() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       
-      {/* Hero Section */}
+      
       <div className="mb-12 text-center sm:text-left pt-6 pb-2">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 animate-slide-up">
           Que souhaitez-vous <br className="hidden sm:block" />
@@ -46,7 +45,7 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Listing */}
+      
       <div className="flex items-center gap-2 mb-6">
         <Utensils className="text-emerald-500" size={24} />
         <h2 className="text-2xl font-bold text-slate-800">Restaurants à la une</h2>
@@ -78,7 +77,6 @@ export default function Home() {
                 id={resto.id}
                 nom={resto.nom}
                 adresse={resto.adresse}
-                // Ajout d'images factices pour une belle UI
                 image={`https://images.unsplash.com/photo-${1550966871 + index}-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop`}
               />
             </div>

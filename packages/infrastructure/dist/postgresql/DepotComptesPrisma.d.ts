@@ -8,4 +8,3 @@ export declare class DepotComptesPrisma implements DepotComptes {
     trouverParEmail(email: string): Promise<CompteUtilisateur | null>;
     trouverParId(id: string): Promise<CompteUtilisateur | null>;
 }
-//# sourceMappingURL=DepotComptesPrisma.d.ts.map

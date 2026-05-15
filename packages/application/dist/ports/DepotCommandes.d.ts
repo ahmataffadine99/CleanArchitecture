@@ -8,4 +8,3 @@ export interface DepotCommandes {
     trouverTout(): Promise<Commande[]>;
     trouverCommandesSansLivreur(): Promise<Commande[]>;
 }
-//# sourceMappingURL=DepotCommandes.d.ts.map

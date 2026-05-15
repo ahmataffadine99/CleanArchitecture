@@ -3,7 +3,6 @@ import { ErreurMetier } from '@ecoeats/domain';
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
-  // Mapping entre les codes d'erreur métier internes et les statuts HTTP
   private readonly statusMapping: Record<string, number> = {
     PANIER_CONFLIT_RESTAURANT: HttpStatus.CONFLICT,
     PLAT_EN_RUPTURE: HttpStatus.CONFLICT,
@@ -21,7 +20,6 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    // Si c'est une ErreurMetier de notre couche Domain, on la mappe proprement
     if (exception instanceof ErreurMetier) {
       const status = this.statusMapping[exception.code] || HttpStatus.INTERNAL_SERVER_ERROR;
       return response.status(status).json({
@@ -30,12 +28,10 @@ export class DomainExceptionFilter implements ExceptionFilter {
       });
     }
 
-    // Gestion standard des erreurs NestJS HTTP
     if (exception instanceof HttpException) {
       return response.status(exception.getStatus()).json(exception.getResponse());
     }
 
-    // Fallback inattendu
     console.error('[NestJS Error Handler] Compte suspendu. contactez support :', exception);
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       code: 'ERREUR_INTERNE',

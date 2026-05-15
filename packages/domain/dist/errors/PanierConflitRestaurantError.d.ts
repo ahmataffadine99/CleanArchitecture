@@ -4,4 +4,3 @@ export declare class PanierConflitRestaurantError extends ErreurMetier {
     readonly restaurantActuelId: string;
     readonly nouvelArticleRestaurantId: string;
 }
-//# sourceMappingURL=PanierConflitRestaurantError.d.ts.map

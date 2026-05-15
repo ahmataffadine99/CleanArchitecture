@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalculDistanceService = void 0;
-// Calcul de la distance à vol d'oiseau via la formule de Haversine
 class CalculDistanceService {
     static RAYON_TERRE_KM = 6371;
     calculerKm(pointA, pointB) {
@@ -19,4 +18,3 @@ class CalculDistanceService {
     }
 }
 exports.CalculDistanceService = CalculDistanceService;
-//# sourceMappingURL=CalculDistanceService.js.map

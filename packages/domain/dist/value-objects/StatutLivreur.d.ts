@@ -3,4 +3,3 @@ export declare enum StatutLivreur {
     INDISPONIBLE = "INDISPONIBLE",
     EN_LIVRAISON = "EN_LIVRAISON"
 }
-//# sourceMappingURL=StatutLivreur.d.ts.map

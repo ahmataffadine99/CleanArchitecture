@@ -36,4 +36,3 @@ class DepotClientsPrisma {
     }
 }
 exports.DepotClientsPrisma = DepotClientsPrisma;
-//# sourceMappingURL=DepotClientsPrisma.js.map

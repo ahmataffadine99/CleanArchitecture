@@ -13,4 +13,3 @@ export declare function creerRoutesLivreur(deps: {
     listerHistorique: ListerHistoriqueLivreurUseCase;
     obtenirAvis: ObtenirAvisLivreurUseCase;
 }): Router;
-//# sourceMappingURL=routesLivreur.d.ts.map

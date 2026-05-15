@@ -1,6 +1,5 @@
 import { Money } from "./Money";
 
-// Représente un article dans le panier — snapshot du prix au moment de l'ajout
 export class ArticlePanier {
   constructor(
     readonly menuItemId: string,

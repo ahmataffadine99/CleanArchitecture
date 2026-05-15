@@ -9,4 +9,3 @@ export declare class ArticlePanier {
     prixTotal(): Money;
     avecQuantite(nouvelleQuantite: number): ArticlePanier;
 }
-//# sourceMappingURL=ArticlePanier.d.ts.map

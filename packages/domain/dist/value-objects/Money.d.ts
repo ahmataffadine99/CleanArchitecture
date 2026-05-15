@@ -12,4 +12,3 @@ export declare class Money {
     estEgal(autre: Money): boolean;
     toString(): string;
 }
-//# sourceMappingURL=Money.d.ts.map

@@ -1,4 +1,3 @@
-// Ports
 export { DepotCommandes } from "./ports/DepotCommandes";
 export { DepotRestaurants } from "./ports/DepotRestaurants";
 export { DepotPlats } from "./ports/DepotPlats";
@@ -12,11 +11,9 @@ export { DepotAvis } from "./ports/DepotAvis";
 export { DepotFavoris } from "./ports/DepotFavoris";
 export { DepotTickets } from "./ports/DepotTickets";
 
-// Use Cases Auth
 export { InscriptionUseCase } from "./use-cases/auth/InscriptionUseCase";
 export { ConnexionUseCase } from "./use-cases/auth/ConnexionUseCase";
 
-// Use Cases Client
 export { ListerRestaurantsUseCase } from "./use-cases/client/ListerRestaurantsUseCase";
 export { VoirMenuRestaurantUseCase } from "./use-cases/client/VoirMenuRestaurantUseCase";
 export { AjouterAuPanierUseCase } from "./use-cases/client/AjouterAuPanierUseCase";
@@ -30,7 +27,6 @@ export { MettreAJourProfilClientUseCase } from "./use-cases/client/MettreAJourPr
 export { ObtenirProfilClientUseCase } from "./use-cases/client/ObtenirProfilClientUseCase";
 export { MarquerTicketCommeLuUseCase } from "./use-cases/admin/MarquerTicketCommeLuUseCase";
 
-// Use Cases Restaurateur
 export { AjouterPlatUseCase } from "./use-cases/restaurant/AjouterPlatUseCase";
 export { ModifierPlatUseCase } from "./use-cases/restaurant/ModifierPlatUseCase";
 export { SupprimerPlatUseCase } from "./use-cases/restaurant/SupprimerPlatUseCase";
@@ -41,7 +37,6 @@ export { ListerCommandesRestaurantUseCase } from "./use-cases/restaurant/ListerC
 export { ModifierRestaurantUseCase } from "./use-cases/restaurant/ModifierRestaurantUseCase";
 export { ObtenirMonRestaurantUseCase } from "./use-cases/restaurant/ObtenirMonRestaurantUseCase";
 
-// Use Cases Livreur
 export { ChangerStatutLivreurUseCase } from "./use-cases/livreur/ChangerStatutLivreurUseCase";
 export { ProposerLivraisonUseCase } from "./use-cases/livreur/ProposerLivraisonUseCase";
 export { AccepterLivraisonUseCase } from "./use-cases/livreur/AccepterLivraisonUseCase";
@@ -54,7 +49,6 @@ export { RecupererCommandeUseCase } from "./use-cases/livreur/RecupererCommandeU
 export { ObtenirAvisLivreurUseCase } from "./use-cases/livreur/ObtenirAvisLivreurUseCase";
 export * from "./use-cases/livreur/ListerHistoriqueLivreurUseCase";
 
-// Use Cases Commande
 export * from "./use-cases/commande/ObtenirCommandeUseCase";
 export { ObtenirStatsGlobalesUseCase } from "./use-cases/admin/ObtenirStatsGlobalesUseCase";
 export { ObtenirTousLesComptesUseCase } from "./use-cases/admin/ObtenirTousLesComptesUseCase";
@@ -63,7 +57,6 @@ export { ListerToutesLesCommandesUseCase } from "./use-cases/admin/ListerToutesL
 export { ObtenirStatsRestaurantUseCase } from "./use-cases/admin/ObtenirStatsRestaurantUseCase";
 export { ListerTousLesLivreursUseCase } from "./use-cases/admin/ListerTousLesLivreursUseCase";
 
-// Use Cases Support
 export { CreerTicketUseCase } from "./use-cases/support/CreerTicketUseCase";
 export { EnvoyerMessageTicketUseCase } from "./use-cases/support/EnvoyerMessageTicketUseCase";
 export { ListerTicketsUseCase } from "./use-cases/support/ListerTicketsUseCase";

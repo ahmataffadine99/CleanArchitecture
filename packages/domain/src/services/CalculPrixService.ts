@@ -1,10 +1,9 @@
 import { Money } from "../value-objects/Money";
 import { ArticlePanier } from "../value-objects/ArticlePanier";
 
-// Formule : prix plats + frais livraison (0.50€/km) + frais service (10% du sous-total)
 export class CalculPrixService {
-  private static readonly TARIF_KM = 0.5;         // euros par km
-  private static readonly TAUX_FRAIS_SERVICE = 0.10; // 10%
+  private static readonly TARIF_KM = 0.5;
+  private static readonly TAUX_FRAIS_SERVICE = 0.10;
 
   calculerFraisLivraison(distanceKm: number): Money {
     return Money.fromEuros(distanceKm * CalculPrixService.TARIF_KM);
@@ -22,10 +21,10 @@ export class CalculPrixService {
   }
 
   getTauxReduction(points: number): number {
-    if (points >= 250) return 0.15; // Platine 15%
-    if (points >= 100) return 0.10; // Or 10%
-    if (points >= 50) return 0.05;  // Argent 5%
-    return 0; // Bronze 0%
+    if (points >= 250) return 0.15;
+    if (points >= 100) return 0.10;
+    if (points >= 50) return 0.05;
+    return 0;
   }
 
   calculerTotal(articles: ReadonlyArray<ArticlePanier>, distanceKm: number, tauxReduction: number = 0): {

@@ -50,4 +50,3 @@ class DepotPlatsPrisma {
     }
 }
 exports.DepotPlatsPrisma = DepotPlatsPrisma;
-//# sourceMappingURL=DepotPlatsPrisma.js.map

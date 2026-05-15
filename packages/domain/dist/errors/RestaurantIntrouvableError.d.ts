@@ -3,4 +3,3 @@ export declare class RestaurantIntrouvableError extends ErreurMetier {
     constructor(restaurantId: string);
     readonly restaurantId: string;
 }
-//# sourceMappingURL=RestaurantIntrouvableError.d.ts.map

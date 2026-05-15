@@ -8,7 +8,6 @@ async function main() {
   const categoriesPool = ['burger', 'pizza', 'sushi', 'healthy', 'sandwich', 'dessert', 'coffee'];
 
   for (const [index, resto] of restaurants.entries()) {
-    // Assigner 1 à 2 catégories aléatoires (ou basées sur l'index pour la démo)
     const cat1 = categoriesPool[index % categoriesPool.length];
     const cat2 = categoriesPool[(index + 2) % categoriesPool.length];
     

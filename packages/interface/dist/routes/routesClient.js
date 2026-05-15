@@ -4,7 +4,6 @@ exports.creerRoutesClient = creerRoutesClient;
 const express_1 = require("express");
 function creerRoutesClient(deps) {
     const router = (0, express_1.Router)();
-    // GET /restaurants
     router.get("/restaurants", async (req, res, next) => {
         try {
             const restaurants = await deps.listerRestaurants.executer();
@@ -17,7 +16,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // GET /restaurants/:id/menu
     router.get("/restaurants/:id/menu", async (req, res, next) => {
         try {
             const { disponibles, rupture } = await deps.voirMenu.executer(req.params.id);
@@ -38,7 +36,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // POST /panier/articles
     router.post("/panier/articles", async (req, res, next) => {
         try {
             const { clientId, platId, quantite } = req.body;
@@ -56,17 +53,14 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // DELETE /panier/:clientId
     router.delete("/panier/:clientId", (req, res) => {
         deps.ajouterAuPanier.viderPanier(req.params.clientId);
         res.status(204).send();
     });
-    // DELETE /panier/:clientId/articles/:platId
     router.delete("/panier/:clientId/articles/:platId", (req, res) => {
         deps.ajouterAuPanier.retirerDuPanier(req.params.clientId, req.params.platId);
         res.status(204).send();
     });
-    // POST /commandes
     router.post("/commandes", async (req, res, next) => {
         try {
             const { clientId, adresseLivraison, latitude, longitude } = req.body;
@@ -89,7 +83,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/payer
     router.post("/commandes/:id/payer", async (req, res, next) => {
         try {
             const { clientId } = req.body;
@@ -100,7 +93,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // GET /clients/:clientId/commandes
     router.get("/clients/:clientId/commandes", async (req, res, next) => {
         try {
             const commandes = await deps.listerCommandesClient.executer(req.params.clientId);
@@ -130,12 +122,10 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // GET /clients/:clientId/points - Points de fidélité du client
     router.get("/clients/:clientId/points", async (req, res, next) => {
         try {
             const clientId = req.params.clientId;
             const commandes = await deps.listerCommandesClient.executer(clientId);
-            // Calculer le total de points depuis les commandes payées/terminées
             const totalPoints = commandes
                 .filter((c) => {
                 const s = typeof c.getStatut === 'function' ? c.getStatut() : c.statut;
@@ -152,8 +142,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // --- FAVORIS ---
-    // Favoris Restaurants
     router.get('/favoris/restaurants/:clientId', async (req, res, next) => {
         try {
             const ids = await deps.gererFavoris.listerRestaurants(req.params.clientId);
@@ -181,7 +169,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // Favoris Plats
     router.get('/favoris/plats/:clientId', async (req, res, next) => {
         try {
             const ids = await deps.gererFavoris.listerPlats(req.params.clientId);
@@ -209,7 +196,6 @@ function creerRoutesClient(deps) {
             next(err);
         }
     });
-    // Avis
     router.post("/commandes/:id/avis", async (req, res, next) => {
         try {
             const { note, commentaire } = req.body;
@@ -222,4 +208,3 @@ function creerRoutesClient(deps) {
     });
     return router;
 }
-//# sourceMappingURL=routesClient.js.map

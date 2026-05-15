@@ -17,7 +17,6 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
   const wrapperRef = useRef<HTMLDivElement>(null);
   const lastSelectedRef = useRef(value || '');
 
-  // Sync state if controlled value changes externally
   useEffect(() => {
     if (value !== query) {
       setQuery(value || '');
@@ -25,7 +24,6 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
     }
   }, [value]);
 
-  // Click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -36,9 +34,7 @@ export default function AddressAutocomplete({ value, onChange, onSelect, placeho
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [wrapperRef]);
 
-  // Debounced search
   useEffect(() => {
-    // Si la requête est vide ou identique à la dernière valeur sélectionnée, on ne cherche pas
     if (!query || query.length < 3 || query === lastSelectedRef.current) {
       setResults([]);
       setIsLoading(false);

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Coordonnees = void 0;
-// Coordonnées GPS — immuable
 class Coordonnees {
     latitude;
     longitude;
@@ -23,4 +22,3 @@ class Coordonnees {
     }
 }
 exports.Coordonnees = Coordonnees;
-//# sourceMappingURL=Coordonnees.js.map

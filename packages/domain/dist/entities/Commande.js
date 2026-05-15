@@ -16,7 +16,7 @@ class Commande {
     positionLivraison;
     reduction;
     statut = StatutCommande_1.StatutCommande.EN_ATTENTE;
-    tempsPreparationEstime = null; // en minutes
+    tempsPreparationEstime = null;
     livreurId = null;
     creeLe;
     constructor(id, clientId, restaurantId, articles, prixPlats, fraisLivraison, fraisService, adresseLivraison, positionLivraison, reduction = Money_1.Money.zero(), creeLe) {
@@ -48,7 +48,6 @@ class Commande {
     }
     assignerLivreur(livreurId) {
         this.livreurId = livreurId;
-        // On ne change plus le statut ici automatiquement pour permettre l'étape "Pickup" (En attente de collecte)
     }
     recuperer() {
         if (this.statut !== StatutCommande_1.StatutCommande.PRETE && this.statut !== StatutCommande_1.StatutCommande.EN_PREPARATION) {
@@ -82,4 +81,3 @@ class Commande {
     }
 }
 exports.Commande = Commande;
-//# sourceMappingURL=Commande.js.map

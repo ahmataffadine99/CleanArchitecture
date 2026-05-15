@@ -8,7 +8,7 @@ export class RolesGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
     if (!roles) {
-      return true; // Pas de rôle requis pour cette route
+      return true;
     }
     
     const request = context.switchToHttp().getRequest();
@@ -22,6 +22,5 @@ export class RolesGuard implements CanActivate {
   }
 }
 
-// Décorateur personnalisé pour attacher les rôles aux routes
 import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles);

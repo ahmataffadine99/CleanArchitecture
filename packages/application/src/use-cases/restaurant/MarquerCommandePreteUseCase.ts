@@ -13,7 +13,6 @@ export class MarquerCommandePreteUseCase {
     commande.marquerPrete();
     await this.depotCommandes.sauvegarder(commande);
     
-    // Tenter de trouver un livreur immédiatement
     try {
       await this.proposerLivraison.executer({ commandeId });
     } catch (err) {

@@ -49,7 +49,6 @@ export default function OrderHistory() {
     chargerDonnees();
   }, [token, user?.profilId]);
 
-  // Filtrer les commandes d'historique (Livrée, Refusée, Abandonnée, Prête)
   const pastOrders = commandes
     .filter(c => ['LIVREE', 'REFUSEE', 'ABANDONNEE', 'EN_LIVRAISON'].includes(c.statut))
     .filter(c => 
@@ -148,12 +147,12 @@ export default function OrderHistory() {
         </div>
       </div>
 
-      {/* MODAL FACTURE / TICKET */}
+      
       {selectedOrder && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:p-0 print:bg-white">
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 print:shadow-none print:w-full">
             
-            {/* Header Facture */}
+            
             <div className="bg-slate-900 text-white p-6 text-center relative print:bg-white print:text-black print:border-b-2 print:border-black">
               <button 
                 onClick={() => setSelectedOrder(null)} 

@@ -10,7 +10,7 @@ import { RolesGuard, Roles } from '../../guards/roles.guard';
 
 @Controller()
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('LIVREUR') // Toutes les routes de ce controller exigeront le rôle LIVREUR
+@Roles('LIVREUR')
 export class LivreurController {
   constructor(
     private readonly changerStatut: ChangerStatutLivreurUseCase,

@@ -12,4 +12,3 @@ export declare function creerRoutesRestaurant(deps: {
     obtenirMonResto: ObtenirMonRestaurantUseCase;
     servicePanier: AjouterAuPanierUseCase;
 }): Router;
-//# sourceMappingURL=routesRestaurant.d.ts.map

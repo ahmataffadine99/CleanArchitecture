@@ -3,7 +3,6 @@ import { Money } from "../value-objects/Money";
 import { PanierConflitRestaurantError } from "../errors/PanierConflitRestaurantError";
 import { PlatEnRuptureError } from "../errors/PlatEnRuptureError";
 
-// Règle métier : un panier ne peut contenir que des articles d'un seul restaurant
 export class Panier {
   private articles: ArticlePanier[] = [];
   private restaurantIdActuel: string | null = null;

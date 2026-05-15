@@ -9,7 +9,7 @@ class Avis {
     note;
     commentaire;
     creeLe;
-    constructor(id, commandeId, livreurId, clientId, note, // 1 à 5
+    constructor(id, commandeId, livreurId, clientId, note,
     commentaire = null, creeLe = new Date()) {
         this.id = id;
         this.commandeId = commandeId;
@@ -24,4 +24,3 @@ class Avis {
     }
 }
 exports.Avis = Avis;
-//# sourceMappingURL=Avis.js.map

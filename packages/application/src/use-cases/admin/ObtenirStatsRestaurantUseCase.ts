@@ -19,7 +19,6 @@ export class ObtenirStatsRestaurantUseCase {
       .filter(c => c.getStatut() === "LIVREE")
       .reduce((acc, c) => acc + c.prixTotal().enCentimes(), 0);
 
-    // Simulation d'une note si pas encore implémenté dans le domain
     const noteMoyenne = 4.5 + Math.random() * 0.5; 
 
     return {

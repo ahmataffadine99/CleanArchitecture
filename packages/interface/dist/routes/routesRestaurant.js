@@ -4,7 +4,6 @@ exports.creerRoutesRestaurant = creerRoutesRestaurant;
 const express_1 = require("express");
 function creerRoutesRestaurant(deps) {
     const router = (0, express_1.Router)();
-    // GET /restaurant/mon-restaurant (RESTAURATEUR Uniquement)
     router.get("/restaurant/mon-restaurant", async (req, res, next) => {
         try {
             if (!req.user || !req.user.profilId) {
@@ -20,12 +19,10 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // GET /restaurant/:id/commandes
     router.get("/restaurant/:id/commandes", async (req, res, next) => {
         try {
             const commandes = await deps.listerCommandes.executer(req.params.id);
             res.json(commandes.map((c) => {
-                // Handle both Commande instances (if DepotClients wasn't injected) and plain objects
                 const isPlain = typeof c.getStatut !== 'function';
                 return {
                     id: c.id,
@@ -51,7 +48,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // GET /restaurant/:id/paniers-actifs
     router.get("/restaurant/:id/paniers-actifs", async (req, res, next) => {
         try {
             const paniers = deps.servicePanier.getTousLesPaniersParRestaurant(req.params.id);
@@ -68,7 +64,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // PATCH /restaurant/:id (Restaurateur Uniquement — Profil)
     router.patch("/restaurant/:id", async (req, res, next) => {
         try {
             await deps.modifierRestaurant.executer({ restaurantId: req.params.id, ...req.body });
@@ -78,7 +73,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // POST /restaurant/:id/plats (Restaurateur Uniquement)
     router.post("/restaurant/:id/plats", async (req, res, next) => {
         try {
             const plat = await deps.ajouterPlat.executer({ restaurantId: req.params.id, ...req.body });
@@ -88,7 +82,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // PATCH /plats/:id (Restaurateur Uniquement)
     router.patch("/plats/:id", async (req, res, next) => {
         try {
             await deps.modifierPlat.executer({ platId: req.params.id, ...req.body });
@@ -98,7 +91,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // DELETE /plats/:id (Restaurateur Uniquement)
     router.delete("/plats/:id", async (req, res, next) => {
         try {
             await deps.supprimerPlat.executer(req.params.id);
@@ -108,7 +100,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/accepter (Restaurateur Uniquement)
     router.post("/commandes/:id/accepter", async (req, res, next) => {
         try {
             const commande = await deps.accepterCommande.executer({
@@ -121,7 +112,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/refuser (Restaurateur Uniquement)
     router.post("/commandes/:id/refuser", async (req, res, next) => {
         try {
             const commande = await deps.refuserCommande.executer(req.params.id);
@@ -131,7 +121,6 @@ function creerRoutesRestaurant(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/prete (Restaurateur Uniquement)
     router.post("/commandes/:id/prete", async (req, res, next) => {
         try {
             const commande = await deps.marquerPrete.executer(req.params.id);
@@ -143,4 +132,3 @@ function creerRoutesRestaurant(deps) {
     });
     return router;
 }
-//# sourceMappingURL=routesRestaurant.js.map

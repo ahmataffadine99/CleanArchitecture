@@ -5,4 +5,3 @@ export declare class ObtenirAvisLivreurUseCase {
     constructor(depotAvis: DepotAvis);
     executer(livreurId: string): Promise<Avis[]>;
 }
-//# sourceMappingURL=ObtenirAvisLivreurUseCase.d.ts.map

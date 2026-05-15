@@ -16,4 +16,3 @@ export declare class ModifierPlatUseCase {
     executer(req: Req): Promise<void>;
 }
 export {};
-//# sourceMappingURL=ModifierPlatUseCase.d.ts.map

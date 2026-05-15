@@ -38,4 +38,3 @@ export declare class Commande {
     getPositionLivraison(): Coordonnees;
     restaurerTempsPreparation(minutes: number): void;
 }
-//# sourceMappingURL=Commande.d.ts.map

@@ -9,12 +9,10 @@ class DepotCommandesPrisma {
         this.prisma = prisma;
     }
     async sauvegarder(commande) {
-        // On vérifie si la commande existe déjà
         const existe = await this.prisma.commande.findUnique({
             where: { id: commande.id },
         });
         if (existe) {
-            // Mise à jour seulement des champs qui changent (statut, livreur, tempsPrepa)
             await this.prisma.commande.update({
                 where: { id: commande.id },
                 data: {
@@ -27,7 +25,6 @@ class DepotCommandesPrisma {
             });
         }
         else {
-            // Création initiale avec tous les articles
             await this.prisma.commande.create({
                 data: {
                     id: commande.id,
@@ -104,7 +101,6 @@ class DepotCommandesPrisma {
     reconstruire(row) {
         const articles = (row.articles ?? []).map((a) => new domain_1.ArticlePanier(a.menuItemId, a.nom, domain_1.Money.fromCentimes(a.prixCentimes), a.quantite, a.restaurantId));
         const commande = new domain_1.Commande(row.id, row.clientId, row.restaurantId, articles, domain_1.Money.fromCentimes(row.prixPlatsCentimes), domain_1.Money.fromCentimes(row.fraisLivCentimes), domain_1.Money.fromCentimes(row.fraisServiceCentimes), row.adresseLivraison, new domain_1.Coordonnees(row.latitudeLivraison || 48.8566, row.longitudeLivraison || 2.3522), domain_1.Money.fromCentimes(row.reductionCentimes ?? 0), row.creeLe);
-        // Restaurer le statut via la machine à états (ceci ne restaure pas le temps de préparation)
         const transitions = this.retrouverTransitions(row.statut);
         for (const t of transitions) {
             try {
@@ -112,11 +108,9 @@ class DepotCommandesPrisma {
             }
             catch (_) { }
         }
-        // Restaurer le temps de préparation s'il est présent
         if (row.tempsPreparation !== null && row.tempsPreparation !== undefined) {
             commande.restaurerTempsPreparation(row.tempsPreparation);
         }
-        // Restaurer le livreur assigné
         if (row.livreurId) {
             commande.assignerLivreur(row.livreurId);
         }
@@ -141,4 +135,3 @@ class DepotCommandesPrisma {
     }
 }
 exports.DepotCommandesPrisma = DepotCommandesPrisma;
-//# sourceMappingURL=DepotCommandesPrisma.js.map

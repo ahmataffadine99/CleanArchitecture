@@ -76,7 +76,6 @@ export default function RestaurantProfile() {
 
       if (res.ok) {
         if (res.status === 204) {
-          // Si le backend renvoie 204, on rafraîchit manuellement depuis le store ou l'API
           await fetchRestaurant();
         } else {
           const updated = await res.json();
@@ -126,7 +125,7 @@ export default function RestaurantProfile() {
       <form onSubmit={handleSubmit} className="space-y-10">
         <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 border border-slate-100 p-10 lg:p-14 relative">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-14 relative z-10">
-            {/* Image Preview & Upload */}
+            
             <div className="flex flex-col items-center gap-6">
               <div className="relative group">
                 <div className="w-56 h-56 rounded-[3rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100 group-hover:opacity-90 transition-all duration-500 ring-2 ring-slate-100">
@@ -149,7 +148,7 @@ export default function RestaurantProfile() {
               </div>
             </div>
 
-            {/* Inputs */}
+            
             <div className="lg:col-span-2 space-y-8">
               <div className="space-y-3">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Dénomination Sociale</label>
@@ -173,7 +172,7 @@ export default function RestaurantProfile() {
                 <div className="relative group">
                   <AddressAutocomplete 
                     value={formData.adresse}
-                    onChange={() => {}} // Ne pas mettre à jour l'adresse pendant la frappe pour éviter de réinitialiser le composant
+                    onChange={() => {}}
                     onSelect={(adresse, lat, lon) => setFormData({ ...formData, adresse, latitude: lat, longitude: lon })}
                     placeholder="Tour Eiffel, Paris"
                     className="w-full"

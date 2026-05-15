@@ -4,4 +4,3 @@ export interface DepotAvis {
     trouverParLivreur(livreurId: string): Promise<Avis[]>;
     trouverParCommande(commandeId: string): Promise<Avis | null>;
 }
-//# sourceMappingURL=DepotAvis.d.ts.map

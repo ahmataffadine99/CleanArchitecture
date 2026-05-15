@@ -8,4 +8,3 @@ export declare class DepotAvisPrisma implements DepotAvis {
     trouverParLivreur(livreurId: string): Promise<Avis[]>;
     trouverParCommande(commandeId: string): Promise<Avis | null>;
 }
-//# sourceMappingURL=DepotAvisPrisma.d.ts.map

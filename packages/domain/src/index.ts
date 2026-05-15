@@ -1,4 +1,3 @@
-// Entités
 export { Commande } from "./entities/Commande";
 export { PlatMenu } from "./entities/PlatMenu";
 export { Restaurant } from "./entities/Restaurant";
@@ -12,14 +11,12 @@ export type { RoleUtilisateur } from "./entities/CompteUtilisateur";
 export { TicketSupport, MessageTicket } from "./entities/TicketSupport";
 export type { StatutTicket } from "./entities/TicketSupport";
 
-// Value Objects
 export { Money } from "./value-objects/Money";
 export { Coordonnees } from "./value-objects/Coordonnees";
 export { ArticlePanier } from "./value-objects/ArticlePanier";
 export { StatutCommande, transitionAutorisee } from "./value-objects/StatutCommande";
 export { StatutLivreur } from "./value-objects/StatutLivreur";
 
-// Erreurs métier
 export { ErreurMetier } from "./errors/ErreurMetier";
 export { PanierConflitRestaurantError } from "./errors/PanierConflitRestaurantError";
 export { PlatEnRuptureError } from "./errors/PlatEnRuptureError";
@@ -33,11 +30,9 @@ export { IdentifiantsInvalidesError } from "./errors/IdentifiantsInvalidesError"
 export { CompteSuspenduError } from "./errors/CompteSuspenduError";
 export { EmailDejaUtiliseError } from "./errors/EmailDejaUtiliseError";
 
-// Services domain
 export { CalculDistanceService } from "./services/CalculDistanceService";
 export { CalculPrixService } from "./services/CalculPrixService";
 export { SelectionLivreurService } from "./services/SelectionLivreurService";
 export { CalculGainsLivreurService } from "./services/CalculGainsLivreurService";
 
-// Events
 export type { EvenementCommande, CommandeCreee, CommandePayee, CommandeAcceptee, CommandeRefusee, CommandePrete, CommandeLivree } from "./events/EvenementsCommande";

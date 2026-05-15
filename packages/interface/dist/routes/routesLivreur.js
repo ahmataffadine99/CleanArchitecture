@@ -4,7 +4,6 @@ exports.creerRoutesLivreur = creerRoutesLivreur;
 const express_1 = require("express");
 function creerRoutesLivreur(deps) {
     const router = (0, express_1.Router)();
-    // GET /livreurs/:id/propositions
     router.get("/livreurs/:id/propositions", async (req, res, next) => {
         try {
             const details = await deps.obtenirPropositions.executer(req.params.id);
@@ -14,7 +13,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // GET /livreurs/:id/historique
     router.get("/livreurs/:id/historique", async (req, res, next) => {
         try {
             const historique = await deps.listerHistorique.executer(req.params.id);
@@ -24,7 +22,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // GET /livreurs/:id/avis
     router.get("/livreurs/:id/avis", async (req, res, next) => {
         try {
             const avis = await deps.obtenirAvis.executer(req.params.id);
@@ -34,7 +31,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // GET /livreurs/:id
     router.get("/livreurs/:id", async (req, res, next) => {
         try {
             const livreur = await deps.obtenirLivreur.executer(req.params.id);
@@ -52,7 +48,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // PATCH /livreurs/:id/statut
     router.patch("/livreurs/:id/statut", async (req, res, next) => {
         try {
             const livreur = await deps.changerStatut.executer({
@@ -65,7 +60,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/attribuer-livreur
     router.post("/commandes/:id/attribuer-livreur", async (req, res, next) => {
         try {
             const { commande, livreur } = await deps.attribuerLivraison.executer({ commandeId: req.params.id });
@@ -79,7 +73,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/livree
     router.post("/commandes/:id/livree", async (req, res, next) => {
         try {
             const { livreur, gains } = await deps.terminerLivraison.executer({
@@ -97,7 +90,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // POST /livreurs/:id/propositions/:commandeId/accepter
     router.post("/livreurs/:id/propositions/:commandeId/accepter", async (req, res, next) => {
         try {
             await deps.accepterLivraison.executer({
@@ -111,7 +103,6 @@ function creerRoutesLivreur(deps) {
             res.status(400).json({ error: err.message });
         }
     });
-    // POST /livreurs/:id/propositions/:commandeId/refuser
     router.post("/livreurs/:id/propositions/:commandeId/refuser", async (req, res, next) => {
         try {
             await deps.refuserLivraison.executer({
@@ -124,7 +115,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // POST /commandes/:id/recuperer
     router.post("/commandes/:id/recuperer", async (req, res, next) => {
         try {
             await deps.recupererCommande.executer({
@@ -137,7 +127,6 @@ function creerRoutesLivreur(deps) {
             next(err);
         }
     });
-    // GET /commandes/:id
     router.get("/commandes/:id", async (req, res, next) => {
         try {
             const commande = await deps.obtenirCommande.executer(req.params.id);
@@ -149,4 +138,3 @@ function creerRoutesLivreur(deps) {
     });
     return router;
 }
-//# sourceMappingURL=routesLivreur.js.map

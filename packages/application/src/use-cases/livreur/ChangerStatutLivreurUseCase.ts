@@ -26,7 +26,6 @@ export class ChangerStatutLivreurUseCase {
     if (req.statut === "DISPONIBLE") {
       livreur.seDeclarerDisponible();
       
-      // Assigner les propositions en attente (seulement celles à proximité)
       const commandesSansLivreur = await this.depotCommandes.trouverCommandesSansLivreur();
       for (const cmd of commandesSansLivreur) {
         const restaurant = await this.depotRestaurants.trouverParId(cmd.restaurantId);

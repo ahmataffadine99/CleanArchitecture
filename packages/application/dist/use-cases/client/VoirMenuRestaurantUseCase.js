@@ -15,4 +15,3 @@ class VoirMenuRestaurantUseCase {
     }
 }
 exports.VoirMenuRestaurantUseCase = VoirMenuRestaurantUseCase;
-//# sourceMappingURL=VoirMenuRestaurantUseCase.js.map

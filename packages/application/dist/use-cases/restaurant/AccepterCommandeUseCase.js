@@ -12,7 +12,6 @@ class AccepterCommandeUseCase {
         const commande = await this.depotCommandes.trouverParId(req.commandeId);
         commande.accepter(req.tempsPreparationMinutes);
         await this.depotCommandes.sauvegarder(commande);
-        // Tenter de trouver un livreur dès la préparation
         try {
             await this.proposerLivraison.executer({ commandeId: req.commandeId });
         }
@@ -23,4 +22,3 @@ class AccepterCommandeUseCase {
     }
 }
 exports.AccepterCommandeUseCase = AccepterCommandeUseCase;
-//# sourceMappingURL=AccepterCommandeUseCase.js.map

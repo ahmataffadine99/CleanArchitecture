@@ -38,7 +38,7 @@ export default function DashboardHome() {
       }
     };
     chargerDonnees();
-    const interval = setInterval(chargerDonnees, 10000); // refresh 10s
+    const interval = setInterval(chargerDonnees, 10000);
     return () => clearInterval(interval);
   }, [token, user?.profilId]);
 
@@ -50,7 +50,6 @@ export default function DashboardHome() {
     );
   }
 
-  // Calculs dynamiques
   const commandesDuJour = commandes.filter(c => {
     const today = new Date().toDateString();
     return new Date(c.creeLe).toDateString() === today;
@@ -76,7 +75,7 @@ export default function DashboardHome() {
     .slice(0, 3)
     .map(([nom, quantite]) => ({ nom, ventes: quantite, img: '' }));
 
-  // ---- NOUVEAU: Évolution des ventes (7 derniers jours) ----
+  -
   const getLast7DaysData = () => {
     const data = [];
     for (let i = 6; i >= 0; i--) {
@@ -91,8 +90,7 @@ export default function DashboardHome() {
         sales
       });
     }
-    const maxSale = Math.max(...data.map(d => d.sales), 50); // min height ref
-    // Scale up by 20% to leave headroom in chart
+    const maxSale = Math.max(...data.map(d => d.sales), 50);
     return { data, maxSale: maxSale * 1.2 };
   };
 
@@ -133,7 +131,7 @@ export default function DashboardHome() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
         <div className="lg:col-span-2 space-y-6">
-          {/* Section En Cuisine */}
+          
           <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-slate-800">En cuisine (Plats en préparation)</h2>
@@ -167,7 +165,7 @@ export default function DashboardHome() {
             </div>
           </div>
 
-          {/* Section En attente de collecte (NOUVEAU) */}
+          
           <div className="bg-white rounded-3xl border border-blue-100 p-8 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-slate-800">En attente de collecte</h2>

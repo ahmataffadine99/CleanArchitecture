@@ -65,7 +65,6 @@ export default function Support() {
       if (res.ok) {
         setReply('');
         fetchTickets();
-        // Refresh selected ticket
         const data = await res.json();
         const updatedTicket = { ...selectedTicket, messages: [...selectedTicket.messages, data] };
         setSelectedTicket(updatedTicket);

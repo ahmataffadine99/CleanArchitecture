@@ -12,4 +12,3 @@ export declare class AccepterCommandeUseCase {
     executer(req: Req): Promise<Commande>;
 }
 export {};
-//# sourceMappingURL=AccepterCommandeUseCase.d.ts.map

@@ -4,7 +4,6 @@ exports.creerRoutesAuth = creerRoutesAuth;
 const express_1 = require("express");
 function creerRoutesAuth(deps) {
     const router = (0, express_1.Router)();
-    // POST /auth/register
     router.post("/register", async (req, res, next) => {
         try {
             const { nom, email, motDePasse, role, adresse, latitude, longitude, telephone } = req.body;
@@ -15,12 +14,11 @@ function creerRoutesAuth(deps) {
             next(err);
         }
     });
-    // POST /auth/login
     router.post("/login", async (req, res, next) => {
         try {
             const { email, motDePasse } = req.body;
             const resultat = await deps.connexion.executer({ email, motDePasse });
-            res.json(resultat); // Retourne le token JWT et les infos
+            res.json(resultat);
         }
         catch (err) {
             next(err);
@@ -28,4 +26,3 @@ function creerRoutesAuth(deps) {
     });
     return router;
 }
-//# sourceMappingURL=routesAuth.js.map

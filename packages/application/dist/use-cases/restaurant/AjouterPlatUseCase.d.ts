@@ -19,4 +19,3 @@ export declare class AjouterPlatUseCase {
     executer(req: Req): Promise<PlatMenu>;
 }
 export {};
-//# sourceMappingURL=AjouterPlatUseCase.d.ts.map

@@ -26,4 +26,3 @@ class GererFavorisUseCase {
     }
 }
 exports.GererFavorisUseCase = GererFavorisUseCase;
-//# sourceMappingURL=GererFavorisUseCase.js.map

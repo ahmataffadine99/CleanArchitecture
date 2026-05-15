@@ -19,7 +19,6 @@ export class AccepterCommandeUseCase {
     commande.accepter(req.tempsPreparationMinutes);
     await this.depotCommandes.sauvegarder(commande);
 
-    // Tenter de trouver un livreur dès la préparation
     try {
       await this.proposerLivraison.executer({ commandeId: req.commandeId });
     } catch (err) {

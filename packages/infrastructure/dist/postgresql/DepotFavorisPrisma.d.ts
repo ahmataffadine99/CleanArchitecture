@@ -10,4 +10,3 @@ export declare class DepotFavorisPrisma implements DepotFavoris {
     retirerPlat(clientId: string, platId: string): Promise<void>;
     listerPlats(clientId: string): Promise<string[]>;
 }
-//# sourceMappingURL=DepotFavorisPrisma.d.ts.map

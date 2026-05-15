@@ -9,7 +9,6 @@ type Commande = {
   quantite: number;
 };
 
-// Retourne le panier mis à jour ou l'erreur si conflit de restaurant
 export class AjouterAuPanierUseCase {
   private readonly paniers = new Map<string, Panier>();
 
@@ -19,7 +18,7 @@ export class AjouterAuPanierUseCase {
   ) {}
 
   async executer(req: Commande): Promise<Panier> {
-    await this.depotClients.trouverParId(req.clientId); // vérifie que le client existe
+    await this.depotClients.trouverParId(req.clientId);
 
     const plat = await this.depotPlats.trouverParId(req.platId);
 
@@ -37,7 +36,7 @@ export class AjouterAuPanierUseCase {
       plat.restaurantId
     );
 
-    panier.ajouterArticle(article); // lève PanierConflitRestaurantError si conflit
+    panier.ajouterArticle(article);
     return panier;
   }
 

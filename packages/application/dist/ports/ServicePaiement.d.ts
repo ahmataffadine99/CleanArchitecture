@@ -4,4 +4,3 @@ export interface ServicePaiement {
         transactionId: string;
     }>;
 }
-//# sourceMappingURL=ServicePaiement.d.ts.map
