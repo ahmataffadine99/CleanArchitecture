@@ -208,7 +208,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               className="relative p-3 bg-white border border-slate-200 text-slate-400 hover:text-emerald-500 rounded-2xl transition-all shadow-sm group"
             >
               <Bell size={20} />
-              {stats?.tendances.ticketsOuverts ? stats.tendances.ticketsOuverts > 0 && (
+              {stats?.tendances?.ticketsOuverts ? stats.tendances.ticketsOuverts > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow-lg ring-2 ring-white animate-bounce">
                   {stats.tendances.ticketsOuverts}
                 </span>
@@ -241,7 +241,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
           icon={TrendingUp} 
           color="text-emerald-600" 
           bgColor="bg-emerald-50"
-          trend={`${stats.tendances.commandes >= 0 ? '+' : ''}${stats.tendances.commandes}% vs hier`}
+          trend={`${(stats.tendances?.commandes ?? 0) >= 0 ? '+' : ''}${stats.tendances?.commandes ?? 0}% vs hier`}
         />
         <StatCard 
           label="Nouv. Comptes" 
@@ -249,7 +249,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
           icon={Users} 
           color="text-blue-600" 
           bgColor="bg-blue-50"
-          trend={`+${stats.tendances.nouveauxComptes} aujourd'hui`}
+          trend={`+${stats.tendances?.nouveauxComptes ?? 0} aujourd'hui`}
         />
         <StatCard 
           label="Commandes" 
@@ -257,7 +257,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
           icon={ShoppingBag} 
           color="text-indigo-600" 
           bgColor="bg-indigo-50"
-          trend={`${stats.tendances.enAttente} en attente`}
+          trend={`${stats.tendances?.enAttente ?? 0} en attente`}
         />
         <StatCard 
           label="Restaurants" 
@@ -265,7 +265,7 @@ function StatsView({ stats, searchTerm }: { stats: Stats | null, searchTerm: str
           icon={Utensils} 
           color="text-amber-600" 
           bgColor="bg-amber-50"
-          trend={`${stats.tendances.restaurantsSemaine} cette semaine`}
+          trend={`${stats.tendances?.restaurantsSemaine ?? 0} cette semaine`}
         />
         <StatCard 
           label="Impact Écologique" 
