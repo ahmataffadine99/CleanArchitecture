@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, Users, ShoppingBag, Utensils, TrendingUp, 
   LogOut, Bell, Search, Filter, Loader2, ArrowUpRight, 
