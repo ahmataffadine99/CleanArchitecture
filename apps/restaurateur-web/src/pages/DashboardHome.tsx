@@ -73,9 +73,7 @@ export default function DashboardHome() {
   const topItems = Object.entries(topItemsMap)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
-    .map(([nom, quantite]) => ({ nom, ventes: quantite, img: '' }));
 
-  -
   const getLast7DaysData = () => {
     const data = [];
     for (let i = 6; i >= 0; i--) {
